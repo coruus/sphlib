@@ -1,10 +1,14 @@
-// $Id: SkeinSmallCore.java 214 2010-06-03 17:25:08Z tp $
+// $Id: SkeinSmallCore.java 253 2011-06-07 18:33:10Z tp $
 
 package fr.cryptohash;
 
 /**
- * This class implements Skein-224 and Skein-256 (Skein-256-224 and
- * Skein-256-256, respectively, in the Skein specification).
+ * This class implements the Skein core function when used with a
+ * 256-bit internal state ("Skein-256" in the Skein specification
+ * terminology). This class is not currently used, since the recommended
+ * parameters for the SHA-3 competition call for a 512-bit internal
+ * state ("Skein-512") for all output sizes (224, 256, 384 and 512
+ * bits).
  *
  * <pre>
  * ==========================(LICENSE BEGIN)============================
@@ -33,7 +37,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 214 $
+ * @version   $Revision: 253 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -220,7 +224,7 @@ abstract class SkeinSmallCore implements Digest {
 		long p1 = m1;
 		long p2 = m2;
 		long p3 = m3;
-		long h4 = (h0 ^ h1) ^ (h2 ^ h3) ^ 0x5555555555555555L;
+		long h4 = (h0 ^ h1) ^ (h2 ^ h3) ^ 0x1BD11BDAA9FC1A22L;
 		long t0 = (bcount << 5) + (long)extra;
 		long t1 = (bcount >>> 59) + ((long)etype << 55);
 		long t2 = t0 ^ t1;

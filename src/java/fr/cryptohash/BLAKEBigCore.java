@@ -1,11 +1,10 @@
-// $Id: BLAKEBigCore.java 214 2010-06-03 17:25:08Z tp $
+// $Id: BLAKEBigCore.java 252 2011-06-07 17:55:14Z tp $
 
 package fr.cryptohash;
 
 /**
- * This class implements BLAKE-384 and BLAKE-512 (BLAKE-48 and BLAKE-64,
- * respectively, in the BLAKE specification), which differ only by the IV,
- * output length, and one bit in the padding.
+ * This class implements BLAKE-384 and BLAKE-512, which differ only by
+ * the IV, output length, and one bit in the padding.
  *
  * <pre>
  * ==========================(LICENSE BEGIN)============================
@@ -34,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 214 $
+ * @version   $Revision: 252 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -54,7 +53,9 @@ abstract class BLAKEBigCore extends DigestEngine {
 		 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
 		14, 10,  4,  8,  9, 15, 13,  6,  1, 12,  0,  2, 11,  7,  5,  3,
 		11,  8, 12,  0,  5,  2, 15, 13, 10, 14,  3,  6,  7,  1,  9,  4,
-		 7,  9,  3,  1, 13, 12, 11, 14,  2,  6,  5, 10,  4,  0, 15,  8
+		 7,  9,  3,  1, 13, 12, 11, 14,  2,  6,  5, 10,  4,  0, 15,  8,
+		 9,  0,  5,  7,  2,  4, 10, 15, 14,  1, 11, 12,  6,  8,  3, 13,
+		 2, 12,  6, 10,  0, 11,  8,  3,  4, 13,  7,  5, 15, 14,  1,  9
 	};
 
 	private static final long[] CB = {
@@ -269,7 +270,7 @@ abstract class BLAKEBigCore extends DigestEngine {
 		long[] m = tmpM;
 		for (int i = 0; i < 16; i ++)
 			m[i] = decodeBELong(data, 8 * i);
-		for (int r = 0; r < 14; r ++) {
+		for (int r = 0; r < 16; r ++) {
 			int o0 = SIGMA[(r << 4) + 0x0];
 			int o1 = SIGMA[(r << 4) + 0x1];
 			v0 += v4 + (m[o0] ^ CB[o1]);

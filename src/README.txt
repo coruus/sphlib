@@ -1,4 +1,4 @@
-sphlib 2.1
+sphlib 3.0
 ==========
 
 Overview
@@ -12,6 +12,18 @@ an API somewhat similar to that of java.security.MessageDigest.
 The C source code also provides two standalone tools:
 - sphspeed   performs speed tests on various hash functions
 - sphsum     computes and verifies checksums over files
+
+
+*************************************************************************
+IMPORTANT NOTE: for users of the previous version (sphlib-2.1)
+--------------------------------------------------------------
+BLAKE, Groestl, JH, Keccak and Skein have been updated, to match the
+"tweaked" specifications published for the third round of the SHA-3
+competition. Thus, these function now return distinct values from what
+they were producing previously. Also, for Skein with a 224-bit or
+256-bit output, the size of the context structure has changed, so
+calling code must be recompiled as well.
+*************************************************************************
 
 
 License
@@ -70,20 +82,21 @@ vectors. Some functions have several variants; for instance, there
 are three distinct "Whirlpool" which sphlib implements, under the
 names "Whirlpool-0", "Whirlpool-1" and "Whirlpool".
 
-For the SHA-3 candidates, sphlib follows the "round 2" specifications,
+For the SHA-3 candidates, sphlib follows the "round 3" specifications,
 thus including the "tweaks" that some of the candidates added right
-after round 1. For some of those functions, the officially submitted
-code and test vectors turned out to be flawed (non conforming to the
+after round 1 and all also the tweaks that the "finalists" added after
+round 2. For some of those functions, the officially submitted code and
+test vectors turned out to be flawed (non conforming to the
 specification), and corrections were published by their authors; sphlib
 follows the specification and agrees with those corrected versions.
 
-For two of the SHA-3 candidates (Hamsi and SHAvite-3), the most
-recently published specifications (as of June 18th, 2010) have some
+For two of the second round SHA-3 candidates (Hamsi and SHAvite-3), the
+most recently published specifications (as of June 18th, 2010) have some
 flaws which do not alter the function robustness or performance, but
 still mean that some or all of the published implementations and test
-vectors are wrong. The respective designers of those functions are
-aware of those flaws and intend to publish corrections for round 3.
-sphlib anticipates on those corrections and already implements them.
+vectors are wrong. The respective designers of those functions are aware
+of those flaws and intend to publish corrections at some point. sphlib
+anticipates on those corrections and already implements them.
 
 
 Installation (C code)
@@ -521,6 +534,11 @@ standalone tools
 
 Change log
 ==========
+
+** new in sphlib-3.0
+   - Updated BLAKE, Groestl, JH, Keccak and Skein to SHA-3 round 3 tweaks
+   - Fixed suboptimal code in Keccak
+   - Fixed a data-management bug in Hamsi
 
 ** new in sphlib-2.1
    - Added implementations of CubeHash, Groestl, Hamsi, Keccak and

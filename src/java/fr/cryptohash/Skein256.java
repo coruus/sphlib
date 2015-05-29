@@ -1,11 +1,11 @@
-// $Id: Skein256.java 156 2010-04-26 17:55:11Z tp $
+// $Id: Skein256.java 253 2011-06-07 18:33:10Z tp $
 
 package fr.cryptohash;
 
 /**
  * <p>This class implements the Skein-256 digest algorithm under the
  * {@link Digest} API. In the Skein specification, that function is
- * called under the full name "Skein-256-256".</p>
+ * called under the full name "Skein-512-256".</p>
  *
  * <pre>
  * ==========================(LICENSE BEGIN)============================
@@ -34,11 +34,11 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 253 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
-public class Skein256 extends SkeinSmallCore {
+public class Skein256 extends SkeinBigCore {
 
 	/**
 	 * Create the engine.
@@ -50,11 +50,13 @@ public class Skein256 extends SkeinSmallCore {
 
 	/** The initial value for Skein-256. */
 	private static final long[] initVal = {
-		0x164290A9D4EEEF1DL, 0x8E7EAF44B1B0CD15L,
-		0xA8BA0822F69D09AEL, 0x0AF25C5E364A6468L
+		0xCCD044A12FDB3E13L, 0xE83590301A79A9EBL,
+		0x55AEA0614F816E6FL, 0x2A2767A4AE9B94DBL,
+		0xEC06025E74DD7683L, 0xE7A436CDC4746251L,
+		0xC36FBAF9393AD185L, 0x3EEDBA1833EDFC13L
 	};
 
-	/** @see SkeinSmallCore */
+	/** @see SkeinBigCore */
 	long[] getInitVal()
 	{
 		return initVal;
@@ -66,8 +68,8 @@ public class Skein256 extends SkeinSmallCore {
 		return 32;
 	}
 
-	/** @see SkeinSmallCore */
-	SkeinSmallCore dup()
+	/** @see SkeinBigCore */
+	SkeinBigCore dup()
 	{
 		return new Skein256();
 	}

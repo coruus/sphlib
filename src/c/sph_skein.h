@@ -1,13 +1,13 @@
-/* $Id: sph_skein.h 216 2010-06-08 09:46:57Z tp $ */
+/* $Id: sph_skein.h 253 2011-06-07 18:33:10Z tp $ */
 /**
- * Skein interface. There are three main Skein functions, which the
- * Skein specification calls, respectively, Skein-256, Skein-512 and
- * Skein-1024. Each can be used to produce outputs of several lengths.
- * This code implements Skein-256 with an output of length 224 or 256
- * bits, and Skein-512 with an output of length 384 or 512 bits. Thus,
- * what we call hereafter Skein-224, Skein-256, Skein-384 and Skein-512
- * are what the Skein specification calls Skein-256-224, Skein-256-256,
- * Skein-512-384 and Skein-512-512, respectively.
+ * Skein interface. The Skein specification defines three main
+ * functions, called Skein-256, Skein-512 and Skein-1024, which can be
+ * further parameterized with an output length. For the SHA-3
+ * competition, Skein-512 is used for output sizes of 224, 256, 384 and
+ * 512 bits; this is what this code implements. Thus, we hereafter call
+ * Skein-224, Skein-256, Skein-384 and Skein-512 what the Skein
+ * specification defines as Skein-512-224, Skein-512-256, Skein-512-384
+ * and Skein-512-512, respectively.
  *
  * ==========================(LICENSE BEGIN)============================
  *
@@ -67,35 +67,6 @@
 #define SPH_SIZE_skein512   512
 
 /**
- * This structure is a context for Skein computations (with a 224- or
- * 256-bit output): it contains the intermediate values and some data
- * from the last entered block. Once a Skein computation has been
- * performed, the context can be reused for another computation.
- *
- * The contents of this structure are private. A running Skein computation
- * can be cloned by copying the context (e.g. with a simple
- * <code>memcpy()</code>).
- */
-typedef struct {
-#ifndef DOXYGEN_IGNORE
-	unsigned char buf[32];    /* first field, for alignment */
-	size_t ptr;
-	sph_u64 h0, h1, h2, h3;
-	sph_u64 bcount;
-#endif
-} sph_skein_small_context;
-
-/**
- * Type for a Skein-224 context (identical to the common "small" context).
- */
-typedef sph_skein_small_context sph_skein224_context;
-
-/**
- * Type for a Skein-256 context (identical to the common "small" context).
- */
-typedef sph_skein_small_context sph_skein256_context;
-
-/**
  * This structure is a context for Skein computations (with a 384- or
  * 512-bit output): it contains the intermediate values and some data
  * from the last entered block. Once a Skein computation has been
@@ -113,6 +84,16 @@ typedef struct {
 	sph_u64 bcount;
 #endif
 } sph_skein_big_context;
+
+/**
+ * Type for a Skein-224 context (identical to the common "big" context).
+ */
+typedef sph_skein_big_context sph_skein224_context;
+
+/**
+ * Type for a Skein-256 context (identical to the common "big" context).
+ */
+typedef sph_skein_big_context sph_skein256_context;
 
 /**
  * Type for a Skein-384 context (identical to the common "big" context).

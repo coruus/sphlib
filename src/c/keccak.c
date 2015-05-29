@@ -1,4 +1,4 @@
-/* $Id: keccak.c 238 2010-06-21 12:55:10Z tp $ */
+/* $Id: keccak.c 259 2011-07-19 22:11:27Z tp $ */
 /*
  * Keccak implementation.
  *
@@ -46,63 +46,75 @@
  * If there is no usable 64-bit type, the code automatically switches
  * back to the 32-bit implementation.
  *
- * Some tests on an Intel Core2 Q6600 (both 64-bit and 32-bit), a
- * small MIPS-compatible CPU (Broadcom BCM3302), an a PowerPC (G3),
- * seem to show that the following:
+ * Some tests on an Intel Core2 Q6600 (both 64-bit and 32-bit, 32 kB L1
+ * code cache), a PowerPC (G3, 32 kB L1 code cache), an ARM920T core
+ * (16 kB L1 code cache), and a small MIPS-compatible CPU (Broadcom BCM3302,
+ * 8 kB L1 code cache), seem to show that the following are optimal:
  *
  * -- x86, 64-bit: use the 64-bit implementation, unroll 8 rounds,
- * do not copy the state.
- * -- x86, 32-bit: use the 32-bit implementation, unroll 4 rounds,
- * interleave, do not copy the state.
- * -- PowerPC: use the 64-bit implementation, unroll 4 rounds, copy
- * the state. Using the 32-bit implementation, with 4-rounds unrolling
- * and interleaving, provides good performance also, _if_ the state
- * is copied.
- * -- MIPS: use the 32-bit implementation, unroll 2 rounds, interleave,
- * and copy the state.
+ * do not copy the state; unrolling 2, 6 or all rounds also provides
+ * near-optimal performance.
+ * -- x86, 32-bit: use the 32-bit implementation, unroll 6 rounds,
+ * interleave, do not copy the state. Unrolling 1, 2, 4 or 8 rounds
+ * also provides near-optimal performance.
+ * -- PowerPC: use the 64-bit implementation, unroll 8 rounds,
+ * copy the state. Unrolling 4 or 6 rounds is near-optimal.
+ * -- ARM: use the 64-bit implementation, unroll 2 or 4 rounds,
+ * copy the state.
+ * -- MIPS: use the 64-bit implementation, unroll 2 rounds, copy
+ * the state. Unrolling only 1 round is also near-optimal.
  *
- * Hence:
- * -- we use the 64-bit type only if the machine is natively 64-bit
- * -- when using the 32-bit code, we interleave
- * -- on "big" machines, we unroll 8 rounds in 64-bit, 4 rounds in 32-bit
- * -- on "small" machines, we unroll 2 rounds
- * -- we copy the state, except when we detect a machine with few
- * registers (i.e. an x86 compatible)
+ * Also, interleaving does not always yield actual improvements when
+ * using a 32-bit implementation; in particular when the architecture
+ * does not offer a native rotation opcode (interleaving replaces one
+ * 64-bit rotation with two 32-bit rotations, which is a gain only if
+ * there is a native 32-bit rotation opcode and not a native 64-bit
+ * rotation opcode; also, interleaving implies a small overhead when
+ * processing input words).
+ *
+ * To sum up:
+ * -- when possible, use the 64-bit code
+ * -- exception: on 32-bit x86, use 32-bit code
+ * -- when using 32-bit code, use interleaving
+ * -- copy the state, except on x86
+ * -- unroll 8 rounds on "big" machine, 2 rounds on "small" machines
  */
 
 #if SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_KECCAK
 #define SPH_SMALL_FOOTPRINT_KECCAK   1
 #endif
 
-#if !defined SPH_KECCAK_64 && SPH_64_TRUE
+/*
+ * By default, we select the 64-bit implementation if a 64-bit type
+ * is available, unless a 32-bit x86 is detected.
+ */
+#if !defined SPH_KECCAK_64 && SPH_64 \
+	&& !(defined __i386__ || SPH_I386_GCC || SPH_I386_MSVC)
 #define SPH_KECCAK_64   1
 #endif
-#if SPH_KECCAK_64 && !SPH_64
-#undef SPH_KECCAK_64
-#endif
 
+/*
+ * If using a 32-bit implementation, we prefer to interleave.
+ */
 #if !SPH_KECCAK_64 && !defined SPH_KECCAK_INTERLEAVE
 #define SPH_KECCAK_INTERLEAVE   1
 #endif
 
+/*
+ * Unroll 8 rounds on big systems, 2 rounds on small systems.
+ */
+#ifndef SPH_KECCAK_UNROLL
 #if SPH_SMALL_FOOTPRINT_KECCAK
-
-#ifndef SPH_KECCAK_UNROLL
 #define SPH_KECCAK_UNROLL   2
-#endif
-
 #else
-
-#ifndef SPH_KECCAK_UNROLL
-#if SPH_KECCAK_64
 #define SPH_KECCAK_UNROLL   8
-#else
-#define SPH_KECCAK_UNROLL   4
 #endif
 #endif
 
-#endif
-
+/*
+ * We do not want to copy the state to local variables on x86 (32-bit
+ * and 64-bit alike).
+ */
 #ifndef SPH_KECCAK_NOCOPY
 #if defined __i386__ || defined __x86_64 || SPH_I386_MSVC || SPH_I386_GCC
 #define SPH_KECCAK_NOCOPY   1
@@ -944,20 +956,15 @@ static const struct {
 		DECL64(tt1); \
 		DECL64(tt2); \
 		DECL64(tt3); \
-		DECL64(tt4); \
-		ROL64(tt0, d0, 1); \
-		ROL64(tt1, d1, 1); \
-		ROL64(tt2, d2, 1); \
-		ROL64(tt3, d3, 1); \
-		ROL64(tt4, d4, 1); \
-		XOR64(tt0, tt0, c0); \
-		XOR64(tt1, tt1, c1); \
-		XOR64(tt2, tt2, c2); \
-		XOR64(tt3, tt3, c3); \
-		XOR64(tt4, tt4, c4); \
+		XOR64(tt0, d0, d1); \
+		XOR64(tt1, d2, d3); \
+		XOR64(tt0, tt0, d4); \
 		XOR64(tt0, tt0, tt1); \
+		ROL64(tt0, tt0, 1); \
+		XOR64(tt2, c0, c1); \
+		XOR64(tt3, c2, c3); \
+		XOR64(tt0, tt0, c4); \
 		XOR64(tt2, tt2, tt3); \
-		XOR64(tt0, tt0, tt4); \
 		XOR64(t, tt0, tt2); \
 	} while (0)
 
@@ -1597,22 +1604,31 @@ keccak_core(sph_keccak_context *kc, const void *data, size_t len, size_t lim)
 	static void keccak_close ## d( \
 		sph_keccak_context *kc, unsigned ub, unsigned n, void *dst) \
 	{ \
-		unsigned char extra[4]; \
+		unsigned eb; \
 		union { \
-			unsigned char tmp[lim]; \
+			unsigned char tmp[lim + 1]; \
 			sph_u64 dummy;   /* for alignment */ \
 		} u; \
 		size_t j; \
  \
-		extra[0] = (0x100 | (ub & 0xFF)) >> (8 - n); \
-		extra[1] = d; \
-		extra[2] = lim; \
-		extra[3] = 0x01; \
-		keccak_core(kc, extra, sizeof extra, lim); \
-		if (kc->ptr != 0) { \
-			memset(u.tmp, 0, lim - kc->ptr); \
-			keccak_core(kc, u.tmp, lim - kc->ptr, lim); \
+		eb = (0x100 | (ub & 0xFF)) >> (8 - n); \
+		if (kc->ptr == (lim - 1)) { \
+			if (n == 7) { \
+				u.tmp[0] = eb; \
+				memset(u.tmp + 1, 0, lim - 1); \
+				u.tmp[lim] = 0x80; \
+				j = 1 + lim; \
+			} else { \
+				u.tmp[0] = eb | 0x80; \
+				j = 1; \
+			} \
+		} else { \
+			j = lim - kc->ptr; \
+			u.tmp[0] = eb; \
+			memset(u.tmp + 1, 0, j - 2); \
+			u.tmp[j - 1] = 0x80; \
 		} \
+		keccak_core(kc, u.tmp, j, lim); \
 		/* Finalize the "lane complement" */ \
 		kc->u.wide[ 1] = ~kc->u.wide[ 1]; \
 		kc->u.wide[ 2] = ~kc->u.wide[ 2]; \
@@ -1632,22 +1648,31 @@ keccak_core(sph_keccak_context *kc, const void *data, size_t len, size_t lim)
 	static void keccak_close ## d( \
 		sph_keccak_context *kc, unsigned ub, unsigned n, void *dst) \
 	{ \
-		unsigned char extra[4]; \
+		unsigned eb; \
 		union { \
-			unsigned char tmp[lim]; \
-			sph_u32 dummy;   /* for alignment */ \
+			unsigned char tmp[lim + 1]; \
+			sph_u64 dummy;   /* for alignment */ \
 		} u; \
 		size_t j; \
  \
-		extra[0] = (0x100 | (ub & 0xFF)) >> (8 - n); \
-		extra[1] = d; \
-		extra[2] = lim; \
-		extra[3] = 0x01; \
-		keccak_core(kc, extra, sizeof extra, lim); \
-		if (kc->ptr != 0) { \
-			memset(u.tmp, 0, lim - kc->ptr); \
-			keccak_core(kc, u.tmp, lim - kc->ptr, lim); \
+		eb = (0x100 | (ub & 0xFF)) >> (8 - n); \
+		if (kc->ptr == (lim - 1)) { \
+			if (n == 7) { \
+				u.tmp[0] = eb; \
+				memset(u.tmp + 1, 0, lim - 1); \
+				u.tmp[lim] = 0x80; \
+				j = 1 + lim; \
+			} else { \
+				u.tmp[0] = eb | 0x80; \
+				j = 1; \
+			} \
+		} else { \
+			j = lim - kc->ptr; \
+			u.tmp[0] = eb; \
+			memset(u.tmp + 1, 0, j - 2); \
+			u.tmp[j - 1] = 0x80; \
 		} \
+		keccak_core(kc, u.tmp, j, lim); \
 		/* Finalize the "lane complement" */ \
 		kc->u.narrow[ 2] = ~kc->u.narrow[ 2]; \
 		kc->u.narrow[ 3] = ~kc->u.narrow[ 3]; \

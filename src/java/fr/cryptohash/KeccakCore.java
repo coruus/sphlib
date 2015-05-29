@@ -1,4 +1,4 @@
-// $Id: KeccakCore.java 214 2010-06-03 17:25:08Z tp $
+// $Id: KeccakCore.java 258 2011-07-15 22:16:50Z tp $
 
 package fr.cryptohash;
 
@@ -33,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 214 $
+ * @version   $Revision: 258 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -127,76 +127,57 @@ abstract class KeccakCore extends DigestEngine {
 		 * Unrolling two rounds appears to be fine.
 		 */
 		for (int j = 0; j < 24; j += 2) {
-			tt0 = (A[ 1] << 1) | (A[ 1] >>> (64 - 1));
-			tt1 = (A[ 6] << 1) | (A[ 6] >>> (64 - 1));
-			tt2 = (A[11] << 1) | (A[11] >>> (64 - 1));
-			tt3 = (A[16] << 1) | (A[16] >>> (64 - 1));
-			tt4 = (A[21] << 1) | (A[21] >>> (64 - 1));
-			tt0 = tt0 ^ A[ 4];
-			tt1 = tt1 ^ A[ 9];
-			tt2 = tt2 ^ A[14];
-			tt3 = tt3 ^ A[19];
-			tt4 = tt4 ^ A[24];
-			tt0 = tt0 ^ tt1;
-			tt2 = tt2 ^ tt3;
-			tt0 = tt0 ^ tt4;
+
+			tt0 = A[ 1] ^ A[ 6];
+			tt1 = A[11] ^ A[16];
+			tt0 ^= A[21] ^ tt1;
+			tt0 = (tt0 << 1) | (tt0 >>> 63);
+			tt2 = A[ 4] ^ A[ 9];
+			tt3 = A[14] ^ A[19];
+			tt0 ^= A[24];
+			tt2 ^= tt3;
 			t0 = tt0 ^ tt2;
-			tt0 = (A[ 2] << 1) | (A[ 2] >>> (64 - 1));
-			tt1 = (A[ 7] << 1) | (A[ 7] >>> (64 - 1));
-			tt2 = (A[12] << 1) | (A[12] >>> (64 - 1));
-			tt3 = (A[17] << 1) | (A[17] >>> (64 - 1));
-			tt4 = (A[22] << 1) | (A[22] >>> (64 - 1));
-			tt0 = tt0 ^ A[ 0];
-			tt1 = tt1 ^ A[ 5];
-			tt2 = tt2 ^ A[10];
-			tt3 = tt3 ^ A[15];
-			tt4 = tt4 ^ A[20];
-			tt0 = tt0 ^ tt1;
-			tt2 = tt2 ^ tt3;
-			tt0 = tt0 ^ tt4;
+
+			tt0 = A[ 2] ^ A[ 7];
+			tt1 = A[12] ^ A[17];
+			tt0 ^= A[22] ^ tt1;
+			tt0 = (tt0 << 1) | (tt0 >>> 63);
+			tt2 = A[ 0] ^ A[ 5];
+			tt3 = A[10] ^ A[15];
+			tt0 ^= A[20];
+			tt2 ^= tt3;
 			t1 = tt0 ^ tt2;
-			tt0 = (A[ 3] << 1) | (A[ 3] >>> (64 - 1));
-			tt1 = (A[ 8] << 1) | (A[ 8] >>> (64 - 1));
-			tt2 = (A[13] << 1) | (A[13] >>> (64 - 1));
-			tt3 = (A[18] << 1) | (A[18] >>> (64 - 1));
-			tt4 = (A[23] << 1) | (A[23] >>> (64 - 1));
-			tt0 = tt0 ^ A[ 1];
-			tt1 = tt1 ^ A[ 6];
-			tt2 = tt2 ^ A[11];
-			tt3 = tt3 ^ A[16];
-			tt4 = tt4 ^ A[21];
-			tt0 = tt0 ^ tt1;
-			tt2 = tt2 ^ tt3;
-			tt0 = tt0 ^ tt4;
+
+			tt0 = A[ 3] ^ A[ 8];
+			tt1 = A[13] ^ A[18];
+			tt0 ^= A[23] ^ tt1;
+			tt0 = (tt0 << 1) | (tt0 >>> 63);
+			tt2 = A[ 1] ^ A[ 6];
+			tt3 = A[11] ^ A[16];
+			tt0 ^= A[21];
+			tt2 ^= tt3;
 			t2 = tt0 ^ tt2;
-			tt0 = (A[ 4] << 1) | (A[ 4] >>> (64 - 1));
-			tt1 = (A[ 9] << 1) | (A[ 9] >>> (64 - 1));
-			tt2 = (A[14] << 1) | (A[14] >>> (64 - 1));
-			tt3 = (A[19] << 1) | (A[19] >>> (64 - 1));
-			tt4 = (A[24] << 1) | (A[24] >>> (64 - 1));
-			tt0 = tt0 ^ A[ 2];
-			tt1 = tt1 ^ A[ 7];
-			tt2 = tt2 ^ A[12];
-			tt3 = tt3 ^ A[17];
-			tt4 = tt4 ^ A[22];
-			tt0 = tt0 ^ tt1;
-			tt2 = tt2 ^ tt3;
-			tt0 = tt0 ^ tt4;
+
+			tt0 = A[ 4] ^ A[ 9];
+			tt1 = A[14] ^ A[19];
+			tt0 ^= A[24] ^ tt1;
+			tt0 = (tt0 << 1) | (tt0 >>> 63);
+			tt2 = A[ 2] ^ A[ 7];
+			tt3 = A[12] ^ A[17];
+			tt0 ^= A[22];
+			tt2 ^= tt3;
 			t3 = tt0 ^ tt2;
-			tt0 = (A[ 0] << 1) | (A[ 0] >>> (64 - 1));
-			tt1 = (A[ 5] << 1) | (A[ 5] >>> (64 - 1));
-			tt2 = (A[10] << 1) | (A[10] >>> (64 - 1));
-			tt3 = (A[15] << 1) | (A[15] >>> (64 - 1));
-			tt4 = (A[20] << 1) | (A[20] >>> (64 - 1));
-			tt0 = tt0 ^ A[ 3];
-			tt1 = tt1 ^ A[ 8];
-			tt2 = tt2 ^ A[13];
-			tt3 = tt3 ^ A[18];
-			tt4 = tt4 ^ A[23];
-			tt0 = tt0 ^ tt1;
-			tt2 = tt2 ^ tt3;
-			tt0 = tt0 ^ tt4;
+
+			tt0 = A[ 0] ^ A[ 5];
+			tt1 = A[10] ^ A[15];
+			tt0 ^= A[20] ^ tt1;
+			tt0 = (tt0 << 1) | (tt0 >>> 63);
+			tt2 = A[ 3] ^ A[ 8];
+			tt3 = A[13] ^ A[18];
+			tt0 ^= A[23];
+			tt2 ^= tt3;
 			t4 = tt0 ^ tt2;
+
 			A[ 0] = A[ 0] ^ t0;
 			A[ 5] = A[ 5] ^ t0;
 			A[10] = A[10] ^ t0;
@@ -327,76 +308,57 @@ abstract class KeccakCore extends DigestEngine {
 			A[15] = c3;
 			A[21] = c4;
 			A[ 0] = A[ 0] ^ RC[j + 0];
-			tt0 = (A[ 6] << 1) | (A[ 6] >>> (64 - 1));
-			tt1 = (A[ 9] << 1) | (A[ 9] >>> (64 - 1));
-			tt2 = (A[ 7] << 1) | (A[ 7] >>> (64 - 1));
-			tt3 = (A[ 5] << 1) | (A[ 5] >>> (64 - 1));
-			tt4 = (A[ 8] << 1) | (A[ 8] >>> (64 - 1));
-			tt0 = tt0 ^ A[24];
-			tt1 = tt1 ^ A[22];
-			tt2 = tt2 ^ A[20];
-			tt3 = tt3 ^ A[23];
-			tt4 = tt4 ^ A[21];
-			tt0 = tt0 ^ tt1;
-			tt2 = tt2 ^ tt3;
-			tt0 = tt0 ^ tt4;
+
+			tt0 = A[ 6] ^ A[ 9];
+			tt1 = A[ 7] ^ A[ 5];
+			tt0 ^= A[ 8] ^ tt1;
+			tt0 = (tt0 << 1) | (tt0 >>> 63);
+			tt2 = A[24] ^ A[22];
+			tt3 = A[20] ^ A[23];
+			tt0 ^= A[21];
+			tt2 ^= tt3;
 			t0 = tt0 ^ tt2;
-			tt0 = (A[12] << 1) | (A[12] >>> (64 - 1));
-			tt1 = (A[10] << 1) | (A[10] >>> (64 - 1));
-			tt2 = (A[13] << 1) | (A[13] >>> (64 - 1));
-			tt3 = (A[11] << 1) | (A[11] >>> (64 - 1));
-			tt4 = (A[14] << 1) | (A[14] >>> (64 - 1));
-			tt0 = tt0 ^ A[ 0];
-			tt1 = tt1 ^ A[ 3];
-			tt2 = tt2 ^ A[ 1];
-			tt3 = tt3 ^ A[ 4];
-			tt4 = tt4 ^ A[ 2];
-			tt0 = tt0 ^ tt1;
-			tt2 = tt2 ^ tt3;
-			tt0 = tt0 ^ tt4;
+
+			tt0 = A[12] ^ A[10];
+			tt1 = A[13] ^ A[11];
+			tt0 ^= A[14] ^ tt1;
+			tt0 = (tt0 << 1) | (tt0 >>> 63);
+			tt2 = A[ 0] ^ A[ 3];
+			tt3 = A[ 1] ^ A[ 4];
+			tt0 ^= A[ 2];
+			tt2 ^= tt3;
 			t1 = tt0 ^ tt2;
-			tt0 = (A[18] << 1) | (A[18] >>> (64 - 1));
-			tt1 = (A[16] << 1) | (A[16] >>> (64 - 1));
-			tt2 = (A[19] << 1) | (A[19] >>> (64 - 1));
-			tt3 = (A[17] << 1) | (A[17] >>> (64 - 1));
-			tt4 = (A[15] << 1) | (A[15] >>> (64 - 1));
-			tt0 = tt0 ^ A[ 6];
-			tt1 = tt1 ^ A[ 9];
-			tt2 = tt2 ^ A[ 7];
-			tt3 = tt3 ^ A[ 5];
-			tt4 = tt4 ^ A[ 8];
-			tt0 = tt0 ^ tt1;
-			tt2 = tt2 ^ tt3;
-			tt0 = tt0 ^ tt4;
+
+			tt0 = A[18] ^ A[16];
+			tt1 = A[19] ^ A[17];
+			tt0 ^= A[15] ^ tt1;
+			tt0 = (tt0 << 1) | (tt0 >>> 63);
+			tt2 = A[ 6] ^ A[ 9];
+			tt3 = A[ 7] ^ A[ 5];
+			tt0 ^= A[ 8];
+			tt2 ^= tt3;
 			t2 = tt0 ^ tt2;
-			tt0 = (A[24] << 1) | (A[24] >>> (64 - 1));
-			tt1 = (A[22] << 1) | (A[22] >>> (64 - 1));
-			tt2 = (A[20] << 1) | (A[20] >>> (64 - 1));
-			tt3 = (A[23] << 1) | (A[23] >>> (64 - 1));
-			tt4 = (A[21] << 1) | (A[21] >>> (64 - 1));
-			tt0 = tt0 ^ A[12];
-			tt1 = tt1 ^ A[10];
-			tt2 = tt2 ^ A[13];
-			tt3 = tt3 ^ A[11];
-			tt4 = tt4 ^ A[14];
-			tt0 = tt0 ^ tt1;
-			tt2 = tt2 ^ tt3;
-			tt0 = tt0 ^ tt4;
+
+			tt0 = A[24] ^ A[22];
+			tt1 = A[20] ^ A[23];
+			tt0 ^= A[21] ^ tt1;
+			tt0 = (tt0 << 1) | (tt0 >>> 63);
+			tt2 = A[12] ^ A[10];
+			tt3 = A[13] ^ A[11];
+			tt0 ^= A[14];
+			tt2 ^= tt3;
 			t3 = tt0 ^ tt2;
-			tt0 = (A[ 0] << 1) | (A[ 0] >>> (64 - 1));
-			tt1 = (A[ 3] << 1) | (A[ 3] >>> (64 - 1));
-			tt2 = (A[ 1] << 1) | (A[ 1] >>> (64 - 1));
-			tt3 = (A[ 4] << 1) | (A[ 4] >>> (64 - 1));
-			tt4 = (A[ 2] << 1) | (A[ 2] >>> (64 - 1));
-			tt0 = tt0 ^ A[18];
-			tt1 = tt1 ^ A[16];
-			tt2 = tt2 ^ A[19];
-			tt3 = tt3 ^ A[17];
-			tt4 = tt4 ^ A[15];
-			tt0 = tt0 ^ tt1;
-			tt2 = tt2 ^ tt3;
-			tt0 = tt0 ^ tt4;
+
+			tt0 = A[ 0] ^ A[ 3];
+			tt1 = A[ 1] ^ A[ 4];
+			tt0 ^= A[ 2] ^ tt1;
+			tt0 = (tt0 << 1) | (tt0 >>> 63);
+			tt2 = A[18] ^ A[16];
+			tt3 = A[19] ^ A[17];
+			tt0 ^= A[15];
+			tt2 ^= tt3;
 			t4 = tt0 ^ tt2;
+
 			A[ 0] = A[ 0] ^ t0;
 			A[ 3] = A[ 3] ^ t0;
 			A[ 1] = A[ 1] ^ t0;
@@ -559,24 +521,24 @@ abstract class KeccakCore extends DigestEngine {
 	/** @see DigestEngine */
 	protected void doPadding(byte[] out, int off)
 	{
-		int dlen = getDigestLength();
-		update((byte)0x01);
-		update((byte)dlen);
-		update((byte)getBlockLength());
-		update((byte)0x01);
 		int ptr = flush();
-		if (ptr != 0) {
-			byte[] buf = getBlockBuffer();
-			for (int i = ptr; i < buf.length; i ++)
+		byte[] buf = getBlockBuffer();
+		if ((ptr + 1) == buf.length) {
+			buf[ptr] = (byte)0x81;
+		} else {
+			buf[ptr] = (byte)0x01;
+			for (int i = ptr + 1; i < (buf.length - 1); i ++)
 				buf[i] = 0;
-			processBlock(buf);
+			buf[buf.length - 1] = (byte)0x80;
 		}
+		processBlock(buf);
 		A[ 1] = ~A[ 1];
 		A[ 2] = ~A[ 2];
 		A[ 8] = ~A[ 8];
 		A[12] = ~A[12];
 		A[17] = ~A[17];
 		A[20] = ~A[20];
+		int dlen = getDigestLength();
 		for (int i = 0; i < dlen; i += 8)
 			encodeLELong(A[i >>> 3], tmpOut, i);
 		System.arraycopy(tmpOut, 0, out, off, dlen);

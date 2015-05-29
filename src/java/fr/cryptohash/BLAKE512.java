@@ -1,11 +1,10 @@
-// $Id: BLAKE512.java 156 2010-04-26 17:55:11Z tp $
+// $Id: BLAKE512.java 252 2011-06-07 17:55:14Z tp $
 
 package fr.cryptohash;
 
 /**
  * <p>This class implements the BLAKE-512 digest algorithm under the
- * {@link Digest} API. BLAKE-512 is specified by the BLAKE specification
- * under the name "BLAKE-64".</p>
+ * {@link Digest} API.</p>
  *
  * <pre>
  * ==========================(LICENSE BEGIN)============================
@@ -34,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 252 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 

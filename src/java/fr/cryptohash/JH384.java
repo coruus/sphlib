@@ -1,4 +1,4 @@
-// $Id: JH384.java 156 2010-04-26 17:55:11Z tp $
+// $Id: JH384.java 255 2011-06-07 19:50:20Z tp $
 
 package fr.cryptohash;
 
@@ -33,21 +33,21 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 255 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
 public class JH384 extends JHCore {
 
 	private static final long[] IV = {
-		0x079c23ab64ab2d40L, 0x8cb51ce447dee98dL,
-		0x8d9bb1627ec25269L, 0xbab62d2b002ffc80L,
-		0xcbafbcef308c173aL, 0xad6fa3aa31194031L,
-		0x898977423a6f4ce3L, 0xbf2e732b440ddb7dL,
-		0xf2c43ecaa63a54e5L, 0x8a37b80afc4422c5L,
-		0xa397c3bc04e9e091L, 0x37a80453e14860faL,
-		0x7131d33a5fd4bea6L, 0xdcda4af8f4338512L,
-		0x6ec7f8f4c84958d0L, 0x8b9e94a34695b6a9L
+		0x481e3bc6d813398aL, 0x6d3b5e894ade879bL,
+		0x63faea68d480ad2eL, 0x332ccb21480f8267L,
+		0x98aec84d9082b928L, 0xd455ea3041114249L,
+		0x36f555b2924847ecL, 0xc7250a93baf43ce1L,
+		0x569b7f8a27db454cL, 0x9efcbd496397af0eL,
+		0x589fc27d26aa80cdL, 0x80c08b8c9deb2edaL,
+		0x8a7981e8f8d5373aL, 0xf43967adddd17a71L,
+		0xa9b4d3bda475d394L, 0x976c3fba9842737fL
 	};
 
 	/**

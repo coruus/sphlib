@@ -1,4 +1,4 @@
-/* $Id: blake.c 227 2010-06-16 17:28:38Z tp $ */
+/* $Id: blake.c 252 2011-06-07 17:55:14Z tp $ */
 /*
  * BLAKE implementation.
  *
@@ -86,7 +86,7 @@ static const sph_u64 IV512[8] = {
 
 #if SPH_COMPACT_BLAKE_32 || SPH_COMPACT_BLAKE_64
 
-static const unsigned sigma[14][16] = {
+static const unsigned sigma[16][16] = {
 	{  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15 },
 	{ 14, 10,  4,  8,  9, 15, 13,  6,  1, 12,  0,  2, 11,  7,  5,  3 },
 	{ 11,  8, 12,  0,  5,  2, 15, 13, 10, 14,  3,  6,  7,  1,  9,  4 },
@@ -100,7 +100,9 @@ static const unsigned sigma[14][16] = {
 	{  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15 },
 	{ 14, 10,  4,  8,  9, 15, 13,  6,  1, 12,  0,  2, 11,  7,  5,  3 },
 	{ 11,  8, 12,  0,  5,  2, 15, 13, 10, 14,  3,  6,  7,  1,  9,  4 },
-	{  7,  9,  3,  1, 13, 12, 11, 14,  2,  6,  5, 10,  4,  0, 15,  8 }
+	{  7,  9,  3,  1, 13, 12, 11, 14,  2,  6,  5, 10,  4,  0, 15,  8 },
+	{  9,  0,  5,  7,  2,  4, 10, 15, 14,  1, 11, 12,  6,  8,  3, 13 },
+	{  2, 12,  6, 10,  0, 11,  8,  3,  4, 13,  7,  5, 15, 14,  1,  9 }
 };
 
 /*
@@ -542,7 +544,7 @@ static const sph_u64 CB[16] = {
 		M[0xD] = sph_dec32be_aligned(buf + 52); \
 		M[0xE] = sph_dec32be_aligned(buf + 56); \
 		M[0xF] = sph_dec32be_aligned(buf + 60); \
-		for (r = 0; r < 10; r ++) \
+		for (r = 0; r < 14; r ++) \
 			ROUND_S(r); \
 		H0 ^= S0 ^ V0 ^ V8; \
 		H1 ^= S1 ^ V1 ^ V9; \
@@ -603,6 +605,10 @@ static const sph_u64 CB[16] = {
 		ROUND_S(7); \
 		ROUND_S(8); \
 		ROUND_S(9); \
+		ROUND_S(0); \
+		ROUND_S(1); \
+		ROUND_S(2); \
+		ROUND_S(3); \
 		H0 ^= S0 ^ V0 ^ V8; \
 		H1 ^= S1 ^ V1 ^ V9; \
 		H2 ^= S2 ^ V2 ^ VA; \
@@ -694,7 +700,7 @@ static const sph_u64 CB[16] = {
 		M[0xD] = sph_dec64be_aligned(buf + 104); \
 		M[0xE] = sph_dec64be_aligned(buf + 112); \
 		M[0xF] = sph_dec64be_aligned(buf + 120); \
-		for (r = 0; r < 14; r ++) \
+		for (r = 0; r < 16; r ++) \
 			ROUND_B(r); \
 		H0 ^= S0 ^ V0 ^ V8; \
 		H1 ^= S1 ^ V1 ^ V9; \
@@ -759,6 +765,8 @@ static const sph_u64 CB[16] = {
 		ROUND_B(1); \
 		ROUND_B(2); \
 		ROUND_B(3); \
+		ROUND_B(4); \
+		ROUND_B(5); \
 		H0 ^= S0 ^ V0 ^ V8; \
 		H1 ^= S1 ^ V1 ^ V9; \
 		H2 ^= S2 ^ V2 ^ VA; \

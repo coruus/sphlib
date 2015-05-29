@@ -1,4 +1,4 @@
-/* $Id: test_types.c 216 2010-06-08 09:46:57Z tp $ */
+/* $Id: test_types.c 250 2010-09-10 20:23:02Z tp $ */
 /*
  * Unit tests for the basic integer types and functions for encoding and
  * decoding such integer types to and from byte streams.
@@ -291,6 +291,10 @@ print_macros(void)
 		"amd64 with GCC"
 #elif SPH_AMD64_MSVC
 		"amd64 with Visual C"
+#elif SPH_PPC32_GCC
+		"PowerPC 32-bit with GCC"
+#elif SPH_PPC64_GCC
+		"PowerPC 64-bit with GCC"
 #else
 		"[none]"
 #endif

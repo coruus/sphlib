@@ -1,4 +1,4 @@
-// $Id: Skein512.java 156 2010-04-26 17:55:11Z tp $
+// $Id: Skein512.java 253 2011-06-07 18:33:10Z tp $
 
 package fr.cryptohash;
 
@@ -34,7 +34,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 253 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -50,10 +50,10 @@ public class Skein512 extends SkeinBigCore {
 
 	/** The initial value for Skein-512. */
 	private static final long[] initVal = {
-		0x1A9A721C8A265CA5L, 0xC9ABACF5AA853978L,
-		0x4AF6652AB80A2883L, 0x66F5E8A809A773C7L,
-		0x7FA984B781BAAF5BL, 0x0FE5D2D93233F397L,
-		0x6E29F932DCB412D7L, 0xD40CD9472F225C23L
+		0x4903ADFF749C51CEL, 0x0D95DE399746DF03L,
+		0x8FD1934127C79BCEL, 0x9A255629FF352CB1L,
+		0x5DB62599DF6CA7B0L, 0xEABE394CA9D5C3F4L,
+		0x991112C71A75B523L, 0xAE18A40B660FCC33L
 	};
 
 	/** @see SkeinBigCore */

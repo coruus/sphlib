@@ -1,4 +1,4 @@
-// $Id: Skein384.java 156 2010-04-26 17:55:11Z tp $
+// $Id: Skein384.java 253 2011-06-07 18:33:10Z tp $
 
 package fr.cryptohash;
 
@@ -34,7 +34,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 253 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -50,10 +50,10 @@ public class Skein384 extends SkeinBigCore {
 
 	/** The initial value for Skein-384. */
 	private static final long[] initVal = {
-		0x755C495716D7512BL, 0xB458712714DF4CEFL,
-		0x677D2E8C027C060AL, 0x8DA4F59205232716L,
-		0xCE454B58C445AD7FL, 0x23048344ACA8BC96L,
-		0xF719BCC338768323L, 0xD77E368650579DECL
+		0xA3F6C6BF3A75EF5FL, 0xB0FEF9CCFD84FAA4L,
+		0x9D77DD663D770CFEL, 0xD798CBF3B468FDDAL,
+		0x1BC4A6668A0E4465L, 0x7ED7D434E5807407L,
+		0x548FC1ACD4EC44D6L, 0x266E17546AA18FF8L
 	};
 
 	/** @see SkeinBigCore */

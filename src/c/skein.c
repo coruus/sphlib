@@ -1,4 +1,4 @@
-/* $Id: skein.c 227 2010-06-16 17:28:38Z tp $ */
+/* $Id: skein.c 254 2011-06-07 19:38:58Z tp $ */
 /*
  * Skein implementation.
  *
@@ -45,6 +45,8 @@
 
 #if SPH_64
 
+#if 0
+/* obsolete */
 /*
  * M5_ ## s ## _ ## i  evaluates to s+i mod 5 (0 <= s <= 18, 0 <= i <= 3).
  */
@@ -143,6 +145,7 @@
 #define M5_18_1   4
 #define M5_18_2   0
 #define M5_18_3   1
+#endif
 
 /*
  * M9_ ## s ## _ ## i  evaluates to s+i mod 9 (0 <= s <= 18, 0 <= i <= 7).
@@ -365,29 +368,38 @@
 #define XCAT(x, y)     XCAT_(x, y)
 #define XCAT_(x, y)    x ## y
 
+#if 0
+/* obsolete */
 #define SKSI(k, s, i)   XCAT(k, XCAT(XCAT(XCAT(M5_, s), _), i))
 #define SKST(t, s, v)   XCAT(t, XCAT(XCAT(XCAT(M3_, s), _), v))
+#endif
 
 #define SKBI(k, s, i)   XCAT(k, XCAT(XCAT(XCAT(M9_, s), _), i))
 #define SKBT(t, s, v)   XCAT(t, XCAT(XCAT(XCAT(M3_, s), _), v))
 
+#if 0
+/* obsolete */
 #define TFSMALL_KINIT(k0, k1, k2, k3, k4, t0, t1, t2)   do { \
-		k4 = (k0 ^ k1) ^ (k2 ^ k3) ^ SPH_C64(0x5555555555555555); \
+		k4 = (k0 ^ k1) ^ (k2 ^ k3) ^ SPH_C64(0x1BD11BDAA9FC1A22); \
 		t2 = t0 ^ t1; \
 	} while (0)
+#endif
 
 #define TFBIG_KINIT(k0, k1, k2, k3, k4, k5, k6, k7, k8, t0, t1, t2)   do { \
 		k8 = ((k0 ^ k1) ^ (k2 ^ k3)) ^ ((k4 ^ k5) ^ (k6 ^ k7)) \
-			^ SPH_C64(0x5555555555555555); \
+			^ SPH_C64(0x1BD11BDAA9FC1A22); \
 		t2 = t0 ^ t1; \
 	} while (0)
 
+#if 0
+/* obsolete */
 #define TFSMALL_ADDKEY(w0, w1, w2, w3, k, t, s)   do { \
 		w0 = SPH_T64(w0 + SKSI(k, s, 0)); \
 		w1 = SPH_T64(w1 + SKSI(k, s, 1) + SKST(t, s, 0)); \
 		w2 = SPH_T64(w2 + SKSI(k, s, 2) + SKST(t, s, 1)); \
 		w3 = SPH_T64(w3 + SKSI(k, s, 3) + (sph_u64)s); \
 	} while (0)
+#endif
 
 #if SPH_SMALL_FOOTPRINT_SKEIN
 
@@ -417,20 +429,26 @@
 
 #endif
 
+#if 0
+/* obsolete */
 #define TFSMALL_MIX(x0, x1, rc)   do { \
 		x0 = SPH_T64(x0 + x1); \
 		x1 = SPH_ROTL64(x1, rc) ^ x0; \
 	} while (0)
+#endif
 
 #define TFBIG_MIX(x0, x1, rc)   do { \
 		x0 = SPH_T64(x0 + x1); \
 		x1 = SPH_ROTL64(x1, rc) ^ x0; \
 	} while (0)
 
+#if 0
+/* obsolete */
 #define TFSMALL_MIX4(w0, w1, w2, w3, rc0, rc1)  do { \
 		TFSMALL_MIX(w0, w1, rc0); \
 		TFSMALL_MIX(w2, w3, rc1); \
 	} while (0)
+#endif
 
 #define TFBIG_MIX8(w0, w1, w2, w3, w4, w5, w6, w7, rc0, rc1, rc2, rc3)  do { \
 		TFBIG_MIX(w0, w1, rc0); \
@@ -439,6 +457,8 @@
 		TFBIG_MIX(w6, w7, rc3); \
 	} while (0)
 
+#if 0
+/* obsolete */
 #define TFSMALL_4e(s)   do { \
 		TFSMALL_ADDKEY(p0, p1, p2, p3, h, t, s); \
 		TFSMALL_MIX4(p0, p1, p2, p3, 14, 16); \
@@ -454,6 +474,7 @@
 		TFSMALL_MIX4(p0, p1, p2, p3, 58, 22); \
 		TFSMALL_MIX4(p0, p3, p2, p1, 32, 32); \
 	} while (0)
+#endif
 
 #if SPH_SMALL_FOOTPRINT_SKEIN
 
@@ -493,6 +514,8 @@
 
 #endif
 
+#if 0
+/* obsolete */
 #define UBI_SMALL(etype, extra)  do { \
 		sph_u64 h4, t0, t1, t2; \
 		sph_u64 m0 = sph_dec64le(buf +  0); \
@@ -530,6 +553,7 @@
 		h2 = m2 ^ p2; \
 		h3 = m3 ^ p3; \
 	} while (0)
+#endif
 
 #if SPH_SMALL_FOOTPRINT_SKEIN
 
@@ -636,6 +660,8 @@
 
 #endif
 
+#if 0
+/* obsolete */
 #define DECL_STATE_SMALL \
 	sph_u64 h0, h1, h2, h3; \
 	sph_u64 bcount;
@@ -655,6 +681,7 @@
 		(sc)->h3 = h3; \
 		sc->bcount = bcount; \
 	} while (0)
+#endif
 
 #if SPH_SMALL_FOOTPRINT_SKEIN
 
@@ -718,6 +745,8 @@
 
 #endif
 
+#if 0
+/* obsolete */
 static void
 skein_small_init(sph_skein_small_context *sc, const sph_u64 *iv)
 {
@@ -728,6 +757,7 @@ skein_small_init(sph_skein_small_context *sc, const sph_u64 *iv)
 	sc->bcount = 0;
 	sc->ptr = 0;
 }
+#endif
 
 static void
 skein_big_init(sph_skein_big_context *sc, const sph_u64 *iv)
@@ -744,6 +774,8 @@ skein_big_init(sph_skein_big_context *sc, const sph_u64 *iv)
 	sc->ptr = 0;
 }
 
+#if 0
+/* obsolete */
 static void
 skein_small_core(sph_skein_small_context *sc, const void *data, size_t len)
 {
@@ -816,6 +848,7 @@ skein_small_core(sph_skein_small_context *sc, const void *data, size_t len)
 
 #endif
 }
+#endif
 
 static void
 skein_big_core(sph_skein_big_context *sc, const void *data, size_t len)
@@ -867,6 +900,8 @@ skein_big_core(sph_skein_big_context *sc, const void *data, size_t len)
 	sc->ptr = ptr;
 }
 
+#if 0
+/* obsolete */
 static void
 skein_small_close(sph_skein_small_context *sc, unsigned ub, unsigned n,
 	void *dst, size_t out_len)
@@ -907,6 +942,7 @@ skein_small_close(sph_skein_small_context *sc, unsigned ub, unsigned n,
 	sph_enc64le_aligned(buf + 24, h3);
 	memcpy(dst, buf, out_len);
 }
+#endif
 
 static void
 skein_big_close(sph_skein_big_context *sc, unsigned ub, unsigned n,
@@ -918,7 +954,6 @@ skein_big_close(sph_skein_big_context *sc, unsigned ub, unsigned n,
 	int i;
 #if SPH_SMALL_FOOTPRINT_SKEIN
 	size_t u;
-	unsigned char *out;
 #endif
 	DECL_STATE_BIG
 
@@ -964,9 +999,14 @@ skein_big_close(sph_skein_big_context *sc, unsigned ub, unsigned n,
 
 #if SPH_SMALL_FOOTPRINT_SKEIN
 
-	out = dst;
+	/*
+	 * We use a temporary buffer because we must support the case
+	 * where output size is not a multiple of 64 (namely, a 224-bit
+	 * output).
+	 */
 	for (u = 0; u < out_len; u += 8)
-		sph_enc64le(out + u, h[u >> 3]);
+		sph_enc64le_aligned(buf + u, h[u >> 3]);
+	memcpy(dst, buf, out_len);
 
 #else
 
@@ -983,30 +1023,49 @@ skein_big_close(sph_skein_big_context *sc, unsigned ub, unsigned n,
 #endif
 }
 
+#if 0
+/* obsolete */
 static const sph_u64 IV224[] = {
-	SPH_C64(0xFE6720F45ED90A57), SPH_C64(0x352D51F3B01B6FBC),
-	SPH_C64(0xD764B04F1785F14E), SPH_C64(0xE7F24611DDD59B27)
+	SPH_C64(0xC6098A8C9AE5EA0B), SPH_C64(0x876D568608C5191C),
+	SPH_C64(0x99CB88D7D7F53884), SPH_C64(0x384BDDB1AEDDB5DE)
 };
 
 static const sph_u64 IV256[] = {
-	SPH_C64(0x164290A9D4EEEF1D), SPH_C64(0x8E7EAF44B1B0CD15),
-	SPH_C64(0xA8BA0822F69D09AE), SPH_C64(0x0AF25C5E364A6468)
+	SPH_C64(0xFC9DA860D048B449), SPH_C64(0x2FCA66479FA7D833),
+	SPH_C64(0xB33BC3896656840F), SPH_C64(0x6A54E920FDE8DA69)
+};
+#endif
+
+static const sph_u64 IV224[] = {
+	SPH_C64(0xCCD0616248677224), SPH_C64(0xCBA65CF3A92339EF),
+	SPH_C64(0x8CCD69D652FF4B64), SPH_C64(0x398AED7B3AB890B4),
+	SPH_C64(0x0F59D1B1457D2BD0), SPH_C64(0x6776FE6575D4EB3D),
+	SPH_C64(0x99FBC70E997413E9), SPH_C64(0x9E2CFCCFE1C41EF7)
+};
+
+static const sph_u64 IV256[] = {
+	SPH_C64(0xCCD044A12FDB3E13), SPH_C64(0xE83590301A79A9EB),
+	SPH_C64(0x55AEA0614F816E6F), SPH_C64(0x2A2767A4AE9B94DB),
+	SPH_C64(0xEC06025E74DD7683), SPH_C64(0xE7A436CDC4746251),
+	SPH_C64(0xC36FBAF9393AD185), SPH_C64(0x3EEDBA1833EDFC13)
 };
 
 static const sph_u64 IV384[] = {
-	SPH_C64(0x755C495716D7512B), SPH_C64(0xB458712714DF4CEF),
-	SPH_C64(0x677D2E8C027C060A), SPH_C64(0x8DA4F59205232716),
-	SPH_C64(0xCE454B58C445AD7F), SPH_C64(0x23048344ACA8BC96),
-	SPH_C64(0xF719BCC338768323), SPH_C64(0xD77E368650579DEC)
+	SPH_C64(0xA3F6C6BF3A75EF5F), SPH_C64(0xB0FEF9CCFD84FAA4),
+	SPH_C64(0x9D77DD663D770CFE), SPH_C64(0xD798CBF3B468FDDA),
+	SPH_C64(0x1BC4A6668A0E4465), SPH_C64(0x7ED7D434E5807407),
+	SPH_C64(0x548FC1ACD4EC44D6), SPH_C64(0x266E17546AA18FF8)
 };
 
 static const sph_u64 IV512[] = {
-	SPH_C64(0x1A9A721C8A265CA5), SPH_C64(0xC9ABACF5AA853978),
-	SPH_C64(0x4AF6652AB80A2883), SPH_C64(0x66F5E8A809A773C7),
-	SPH_C64(0x7FA984B781BAAF5B), SPH_C64(0x0FE5D2D93233F397),
-	SPH_C64(0x6E29F932DCB412D7), SPH_C64(0xD40CD9472F225C23)
+	SPH_C64(0x4903ADFF749C51CE), SPH_C64(0x0D95DE399746DF03),
+	SPH_C64(0x8FD1934127C79BCE), SPH_C64(0x9A255629FF352CB1),
+	SPH_C64(0x5DB62599DF6CA7B0), SPH_C64(0xEABE394CA9D5C3F4),
+	SPH_C64(0x991112C71A75B523), SPH_C64(0xAE18A40B660FCC33)
 };
 
+#if 0
+/* obsolete */
 /* see sph_skein.h */
 void
 sph_skein224_init(void *cc)
@@ -1062,6 +1121,65 @@ void
 sph_skein256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 {
 	skein_small_close(cc, ub, n, dst, 32);
+	sph_skein256_init(cc);
+}
+#endif
+
+/* see sph_skein.h */
+void
+sph_skein224_init(void *cc)
+{
+	skein_big_init(cc, IV224);
+}
+
+/* see sph_skein.h */
+void
+sph_skein224(void *cc, const void *data, size_t len)
+{
+	skein_big_core(cc, data, len);
+}
+
+/* see sph_skein.h */
+void
+sph_skein224_close(void *cc, void *dst)
+{
+	sph_skein224_addbits_and_close(cc, 0, 0, dst);
+}
+
+/* see sph_skein.h */
+void
+sph_skein224_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
+{
+	skein_big_close(cc, ub, n, dst, 28);
+	sph_skein224_init(cc);
+}
+
+/* see sph_skein.h */
+void
+sph_skein256_init(void *cc)
+{
+	skein_big_init(cc, IV256);
+}
+
+/* see sph_skein.h */
+void
+sph_skein256(void *cc, const void *data, size_t len)
+{
+	skein_big_core(cc, data, len);
+}
+
+/* see sph_skein.h */
+void
+sph_skein256_close(void *cc, void *dst)
+{
+	sph_skein256_addbits_and_close(cc, 0, 0, dst);
+}
+
+/* see sph_skein.h */
+void
+sph_skein256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
+{
+	skein_big_close(cc, ub, n, dst, 32);
 	sph_skein256_init(cc);
 }
 

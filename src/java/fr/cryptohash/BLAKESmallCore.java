@@ -1,11 +1,10 @@
-// $Id: BLAKESmallCore.java 214 2010-06-03 17:25:08Z tp $
+// $Id: BLAKESmallCore.java 252 2011-06-07 17:55:14Z tp $
 
 package fr.cryptohash;
 
 /**
- * This class implements BLAKE-224 and BLAKE-256 (BLAKE-28 and BLAKE-32,
- * respectively, in the BLAKE specification), which differ only by the IV,
- * output length, and one bit in the padding.
+ * This class implements BLAKE-224 and BLAKE-256, which differ only by
+ * the IV, output length, and one bit in the padding.
  *
  * <pre>
  * ==========================(LICENSE BEGIN)============================
@@ -34,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 214 $
+ * @version   $Revision: 252 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -256,7 +255,7 @@ abstract class BLAKESmallCore extends DigestEngine {
 		int[] m = tmpM;
 		for (int i = 0; i < 16; i ++)
 			m[i] = decodeBEInt(data, 4 * i);
-		for (int r = 0; r < 10; r ++) {
+		for (int r = 0; r < 14; r ++) {
 			int o0 = SIGMA[(r << 4) + 0x0];
 			int o1 = SIGMA[(r << 4) + 0x1];
 			v0 += v4 + (m[o0] ^ CS[o1]);

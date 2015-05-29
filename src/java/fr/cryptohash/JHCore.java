@@ -1,4 +1,4 @@
-// $Id: JHCore.java 214 2010-06-03 17:25:08Z tp $
+// $Id: JHCore.java 255 2011-06-07 19:50:20Z tp $
 
 package fr.cryptohash;
 
@@ -33,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 214 $
+ * @version   $Revision: 255 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -118,7 +118,19 @@ abstract class JHCore extends DigestEngine {
 		0xd2c9f2e3009bd20cL, 0x5faace30b7d40c30L,
 		0x742a5116f2e03298L, 0x0deb30d8e3cef89aL,
 		0x4bc59e7bb5f17992L, 0xff51e66e048668d3L,
-		0x9b234d57e6966731L, 0xcce6a6f3170a7505L
+		0x9b234d57e6966731L, 0xcce6a6f3170a7505L,
+		0xb17681d913326cceL, 0x3c175284f805a262L,
+		0xf42bcbb378471547L, 0xff46548223936a48L,
+		0x38df58074e5e6565L, 0xf2fc7c89fc86508eL,
+		0x31702e44d00bca86L, 0xf04009a23078474eL,
+		0x65a0ee39d1f73883L, 0xf75ee937e42c3abdL,
+		0x2197b2260113f86fL, 0xa344edd1ef9fdee7L,
+		0x8ba0df15762592d9L, 0x3c85f7f612dc42beL,
+		0xd8a7ec7cab27b07eL, 0x538d7ddaaa3ea8deL,
+		0xaa25ce93bd0269d8L, 0x5af643fd1a7308f9L,
+		0xc05fefda174a19a5L, 0x974d66334cfd216aL,
+		0x35b49831db411570L, 0xea1e0fbbedcd549bL,
+		0x9ad063a151974072L, 0xf6759dbf91476fe2L
 	};
 
 	/**
@@ -351,7 +363,7 @@ abstract class JHCore extends DigestEngine {
 		h[5] ^= m2l;
 		h[6] ^= m3h;
 		h[7] ^= m3l;
-		for (int r = 0; r < 35; r += 7) {
+		for (int r = 0; r < 42; r += 7) {
 			doS(r + 0);
 			doL();
 			doWgen(0x5555555555555555L,  1);
@@ -374,7 +386,6 @@ abstract class JHCore extends DigestEngine {
 			doL();
 			doW6();
 		}
-		doS(35);
 		h[ 8] ^= m0h;
 		h[ 9] ^= m0l;
 		h[10] ^= m1h;

@@ -1,10 +1,12 @@
-// $Id: SkeinBigCore.java 214 2010-06-03 17:25:08Z tp $
+// $Id: SkeinBigCore.java 253 2011-06-07 18:33:10Z tp $
 
 package fr.cryptohash;
 
 /**
- * This class implements Skein-384 and Skein-512 (Skein-512-384 and
- * Skein-512-512, respectively, in the Skein specification).
+ * This class implements the Skein core with a 512-bit internal state
+ * ("Skein-512" in the Skein specification terminology). This is used
+ * for Skein-224, Skein-256, Skein-384 and Skein-512 (the SHA-3
+ * candidates).
  *
  * <pre>
  * ==========================(LICENSE BEGIN)============================
@@ -33,7 +35,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 214 $
+ * @version   $Revision: 253 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -222,7 +224,7 @@ abstract class SkeinBigCore implements Digest {
 		long p6 = m6;
 		long p7 = m7;
 		h[8] = ((h[0] ^ h[1]) ^ (h[2] ^ h[3]))
-			^ ((h[4] ^ h[5]) ^ (h[6] ^ h[7])) ^ 0x5555555555555555L;
+			^ ((h[4] ^ h[5]) ^ (h[6] ^ h[7])) ^ 0x1BD11BDAA9FC1A22L;
 		long t0 = (bcount << 6) + (long)extra;
 		long t1 = (bcount >>> 58) + ((long)etype << 55);
 		long t2 = t0 ^ t1;

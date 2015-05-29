@@ -1,4 +1,4 @@
-// $Id: GroestlSmallCore.java 228 2010-06-16 20:21:53Z tp $
+// $Id: GroestlSmallCore.java 256 2011-07-15 19:07:16Z tp $
 
 package fr.cryptohash;
 
@@ -32,7 +32,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 228 $
+ * @version   $Revision: 256 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -199,6 +199,7 @@ abstract class GroestlSmallCore extends DigestEngine {
 		}
 	}
 
+	/* obsolete
 	private static final long[] CP = {
 		0x0000000000000000L, 0x0100000000000000L,
 		0x0200000000000000L, 0x0300000000000000L,
@@ -218,6 +219,7 @@ abstract class GroestlSmallCore extends DigestEngine {
 		0x00000000000000F5L, 0x00000000000000F4L,
 		0x00000000000000F3L, 0x00000000000000F2L
 	};
+	*/
 
 	/** @see Digest */
 	public int getBlockLength()
@@ -262,7 +264,7 @@ abstract class GroestlSmallCore extends DigestEngine {
 		encodeBELong(count, buf, 56);
 		processBlock(buf);
 		System.arraycopy(H, 0, G, 0, H.length);
-		doPerm(G, CP);
+		doPermP(G);
 		for (int i = 0; i < 4; i ++)
 			encodeBELong(H[i + 4] ^ G[i + 4], buf, 8 * i);
 		int outLen = getDigestLength();
@@ -334,10 +336,17 @@ abstract class GroestlSmallCore extends DigestEngine {
 		return (x << n) | (x >>> (64 - n));
 	}
 
-	private void doPerm(long[] x, long[] cc)
+	private void doPermP(long[] x)
 	{
 		for (int r = 0; r < 10; r += 2) {
-			x[0] ^= cc[r];
+			x[0] ^= (long)(r) << 56;
+			x[1] ^= (long)(0x10 + r) << 56;
+			x[2] ^= (long)(0x20 + r) << 56;
+			x[3] ^= (long)(0x30 + r) << 56;
+			x[4] ^= (long)(0x40 + r) << 56;
+			x[5] ^= (long)(0x50 + r) << 56;
+			x[6] ^= (long)(0x60 + r) << 56;
+			x[7] ^= (long)(0x70 + r) << 56;
 			long t0 = T0[(int)(x[0] >>> 56)]
 				^ T1[(int)(x[1] >>> 48) & 0xFF]
 				^ T2[(int)(x[2] >>> 40) & 0xFF]
@@ -402,7 +411,14 @@ abstract class GroestlSmallCore extends DigestEngine {
 				^ T5[((int)x[4] >>> 16) & 0xFF]
 				^ T6[((int)x[5] >>> 8) & 0xFF]
 				^ T7[(int)x[6] & 0xFF];
-			t0 ^= cc[r + 1];
+			t0 ^= (long)(r + 1) << 56;
+			t1 ^= (long)(0x10 + (r + 1)) << 56;
+			t2 ^= (long)(0x20 + (r + 1)) << 56;
+			t3 ^= (long)(0x30 + (r + 1)) << 56;
+			t4 ^= (long)(0x40 + (r + 1)) << 56;
+			t5 ^= (long)(0x50 + (r + 1)) << 56;
+			t6 ^= (long)(0x60 + (r + 1)) << 56;
+			t7 ^= (long)(0x70 + (r + 1)) << 56;
 			x[0] = T0[(int)(t0 >>> 56)]
 				^ T1[(int)(t1 >>> 48) & 0xFF]
 				^ T2[(int)(t2 >>> 40) & 0xFF]
@@ -470,6 +486,156 @@ abstract class GroestlSmallCore extends DigestEngine {
 		}
 	}
 
+	private void doPermQ(long[] x)
+	{
+		for (int r = 0; r < 10; r += 2) {
+			x[0] ^= (long)r ^ -0x01L;
+			x[1] ^= (long)r ^ -0x11L;
+			x[2] ^= (long)r ^ -0x21L;
+			x[3] ^= (long)r ^ -0x31L;
+			x[4] ^= (long)r ^ -0x41L;
+			x[5] ^= (long)r ^ -0x51L;
+			x[6] ^= (long)r ^ -0x61L;
+			x[7] ^= (long)r ^ -0x71L;
+			long t0 = T0[(int)(x[1] >>> 56)]
+				^ T1[(int)(x[3] >>> 48) & 0xFF]
+				^ T2[(int)(x[5] >>> 40) & 0xFF]
+				^ T3[(int)(x[7] >>> 32) & 0xFF]
+				^ T4[((int)x[0] >>> 24)]
+				^ T5[((int)x[2] >>> 16) & 0xFF]
+				^ T6[((int)x[4] >>> 8) & 0xFF]
+				^ T7[(int)x[6] & 0xFF];
+			long t1 = T0[(int)(x[2] >>> 56)]
+				^ T1[(int)(x[4] >>> 48) & 0xFF]
+				^ T2[(int)(x[6] >>> 40) & 0xFF]
+				^ T3[(int)(x[0] >>> 32) & 0xFF]
+				^ T4[((int)x[1] >>> 24)]
+				^ T5[((int)x[3] >>> 16) & 0xFF]
+				^ T6[((int)x[5] >>> 8) & 0xFF]
+				^ T7[(int)x[7] & 0xFF];
+			long t2 = T0[(int)(x[3] >>> 56)]
+				^ T1[(int)(x[5] >>> 48) & 0xFF]
+				^ T2[(int)(x[7] >>> 40) & 0xFF]
+				^ T3[(int)(x[1] >>> 32) & 0xFF]
+				^ T4[((int)x[2] >>> 24)]
+				^ T5[((int)x[4] >>> 16) & 0xFF]
+				^ T6[((int)x[6] >>> 8) & 0xFF]
+				^ T7[(int)x[0] & 0xFF];
+			long t3 = T0[(int)(x[4] >>> 56)]
+				^ T1[(int)(x[6] >>> 48) & 0xFF]
+				^ T2[(int)(x[0] >>> 40) & 0xFF]
+				^ T3[(int)(x[2] >>> 32) & 0xFF]
+				^ T4[((int)x[3] >>> 24)]
+				^ T5[((int)x[5] >>> 16) & 0xFF]
+				^ T6[((int)x[7] >>> 8) & 0xFF]
+				^ T7[(int)x[1] & 0xFF];
+			long t4 = T0[(int)(x[5] >>> 56)]
+				^ T1[(int)(x[7] >>> 48) & 0xFF]
+				^ T2[(int)(x[1] >>> 40) & 0xFF]
+				^ T3[(int)(x[3] >>> 32) & 0xFF]
+				^ T4[((int)x[4] >>> 24)]
+				^ T5[((int)x[6] >>> 16) & 0xFF]
+				^ T6[((int)x[0] >>> 8) & 0xFF]
+				^ T7[(int)x[2] & 0xFF];
+			long t5 = T0[(int)(x[6] >>> 56)]
+				^ T1[(int)(x[0] >>> 48) & 0xFF]
+				^ T2[(int)(x[2] >>> 40) & 0xFF]
+				^ T3[(int)(x[4] >>> 32) & 0xFF]
+				^ T4[((int)x[5] >>> 24)]
+				^ T5[((int)x[7] >>> 16) & 0xFF]
+				^ T6[((int)x[1] >>> 8) & 0xFF]
+				^ T7[(int)x[3] & 0xFF];
+			long t6 = T0[(int)(x[7] >>> 56)]
+				^ T1[(int)(x[1] >>> 48) & 0xFF]
+				^ T2[(int)(x[3] >>> 40) & 0xFF]
+				^ T3[(int)(x[5] >>> 32) & 0xFF]
+				^ T4[((int)x[6] >>> 24)]
+				^ T5[((int)x[0] >>> 16) & 0xFF]
+				^ T6[((int)x[2] >>> 8) & 0xFF]
+				^ T7[(int)x[4] & 0xFF];
+			long t7 = T0[(int)(x[0] >>> 56)]
+				^ T1[(int)(x[2] >>> 48) & 0xFF]
+				^ T2[(int)(x[4] >>> 40) & 0xFF]
+				^ T3[(int)(x[6] >>> 32) & 0xFF]
+				^ T4[((int)x[7] >>> 24)]
+				^ T5[((int)x[1] >>> 16) & 0xFF]
+				^ T6[((int)x[3] >>> 8) & 0xFF]
+				^ T7[(int)x[5] & 0xFF];
+			t0 ^= (long)(r + 1) ^ -0x01L;
+			t1 ^= (long)(r + 1) ^ -0x11L;
+			t2 ^= (long)(r + 1) ^ -0x21L;
+			t3 ^= (long)(r + 1) ^ -0x31L;
+			t4 ^= (long)(r + 1) ^ -0x41L;
+			t5 ^= (long)(r + 1) ^ -0x51L;
+			t6 ^= (long)(r + 1) ^ -0x61L;
+			t7 ^= (long)(r + 1) ^ -0x71L;
+			x[0] = T0[(int)(t1 >>> 56)]
+				^ T1[(int)(t3 >>> 48) & 0xFF]
+				^ T2[(int)(t5 >>> 40) & 0xFF]
+				^ T3[(int)(t7 >>> 32) & 0xFF]
+				^ T4[((int)t0 >>> 24)]
+				^ T5[((int)t2 >>> 16) & 0xFF]
+				^ T6[((int)t4 >>> 8) & 0xFF]
+				^ T7[(int)t6 & 0xFF];
+			x[1] = T0[(int)(t2 >>> 56)]
+				^ T1[(int)(t4 >>> 48) & 0xFF]
+				^ T2[(int)(t6 >>> 40) & 0xFF]
+				^ T3[(int)(t0 >>> 32) & 0xFF]
+				^ T4[((int)t1 >>> 24)]
+				^ T5[((int)t3 >>> 16) & 0xFF]
+				^ T6[((int)t5 >>> 8) & 0xFF]
+				^ T7[(int)t7 & 0xFF];
+			x[2] = T0[(int)(t3 >>> 56)]
+				^ T1[(int)(t5 >>> 48) & 0xFF]
+				^ T2[(int)(t7 >>> 40) & 0xFF]
+				^ T3[(int)(t1 >>> 32) & 0xFF]
+				^ T4[((int)t2 >>> 24)]
+				^ T5[((int)t4 >>> 16) & 0xFF]
+				^ T6[((int)t6 >>> 8) & 0xFF]
+				^ T7[(int)t0 & 0xFF];
+			x[3] = T0[(int)(t4 >>> 56)]
+				^ T1[(int)(t6 >>> 48) & 0xFF]
+				^ T2[(int)(t0 >>> 40) & 0xFF]
+				^ T3[(int)(t2 >>> 32) & 0xFF]
+				^ T4[((int)t3 >>> 24)]
+				^ T5[((int)t5 >>> 16) & 0xFF]
+				^ T6[((int)t7 >>> 8) & 0xFF]
+				^ T7[(int)t1 & 0xFF];
+			x[4] = T0[(int)(t5 >>> 56)]
+				^ T1[(int)(t7 >>> 48) & 0xFF]
+				^ T2[(int)(t1 >>> 40) & 0xFF]
+				^ T3[(int)(t3 >>> 32) & 0xFF]
+				^ T4[((int)t4 >>> 24)]
+				^ T5[((int)t6 >>> 16) & 0xFF]
+				^ T6[((int)t0 >>> 8) & 0xFF]
+				^ T7[(int)t2 & 0xFF];
+			x[5] = T0[(int)(t6 >>> 56)]
+				^ T1[(int)(t0 >>> 48) & 0xFF]
+				^ T2[(int)(t2 >>> 40) & 0xFF]
+				^ T3[(int)(t4 >>> 32) & 0xFF]
+				^ T4[((int)t5 >>> 24)]
+				^ T5[((int)t7 >>> 16) & 0xFF]
+				^ T6[((int)t1 >>> 8) & 0xFF]
+				^ T7[(int)t3 & 0xFF];
+			x[6] = T0[(int)(t7 >>> 56)]
+				^ T1[(int)(t1 >>> 48) & 0xFF]
+				^ T2[(int)(t3 >>> 40) & 0xFF]
+				^ T3[(int)(t5 >>> 32) & 0xFF]
+				^ T4[((int)t6 >>> 24)]
+				^ T5[((int)t0 >>> 16) & 0xFF]
+				^ T6[((int)t2 >>> 8) & 0xFF]
+				^ T7[(int)t4 & 0xFF];
+			x[7] = T0[(int)(t0 >>> 56)]
+				^ T1[(int)(t2 >>> 48) & 0xFF]
+				^ T2[(int)(t4 >>> 40) & 0xFF]
+				^ T3[(int)(t6 >>> 32) & 0xFF]
+				^ T4[((int)t7 >>> 24)]
+				^ T5[((int)t1 >>> 16) & 0xFF]
+				^ T6[((int)t3 >>> 8) & 0xFF]
+				^ T7[(int)t5 & 0xFF];
+		}
+	}
+
 	/** @see DigestEngine */
 	protected void processBlock(byte[] data)
 	{
@@ -477,8 +643,8 @@ abstract class GroestlSmallCore extends DigestEngine {
 			M[i] = decodeBELong(data, i * 8);
 			G[i] = M[i] ^ H[i];
 		}
-		doPerm(G, CP);
-		doPerm(M, CQ);
+		doPermP(G);
+		doPermQ(M);
 		for (int i = 0; i < 8; i ++)
 			H[i] ^= G[i] ^ M[i];
 	}

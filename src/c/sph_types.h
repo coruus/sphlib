@@ -1,4 +1,4 @@
-/* $Id: sph_types.h 230 2010-06-16 21:39:32Z tp $ */
+/* $Id: sph_types.h 260 2011-07-21 01:02:38Z tp $ */
 /**
  * Basic type definitions.
  *
@@ -278,17 +278,16 @@
  *   - WHIRLPOOL-1: short name: <code>whirlpool1</code> (64)
  *   - WHIRLPOOL: short name: <code>whirlpool</code> (64)
  *
- * The fourteen second-round SHA-3 candidates are also implemented:
+ * The fourteen second-round SHA-3 candidates are also implemented;
+ * when applicable, the implementations follow the "final" specifications
+ * as published for the third round of the SHA-3 competition (BLAKE,
+ * Groestl, JH, Keccak and Skein have been tweaked for third round).
  *
  * - BLAKE family: file <code>sph_blake.h</code>
- *   - BLAKE-224 (nominally specified as BLAKE-28): short name:
- *     <code>blake224</code>
- *   - BLAKE-256 (nominally specified as BLAKE-32): short name:
- *     <code>blake256</code>
- *   - BLAKE-384 (nominally specified as BLAKE-48): short name:
- *     <code>blake384</code> (64)
- *   - BLAKE-512 (nominally specified as BLAKE-64): short name:
- *     <code>blake512</code> (64)
+ *   - BLAKE-224: short name: <code>blake224</code>
+ *   - BLAKE-256: short name: <code>blake256</code>
+ *   - BLAKE-384: short name: <code>blake384</code>
+ *   - BLAKE-512: short name: <code>blake512</code>
  * - BMW (Blue Midnight Wish) family: file <code>sph_bmw.h</code>
  *   - BMW-224: short name: <code>bmw224</code>
  *   - BMW-256: short name: <code>bmw256</code>
@@ -356,9 +355,9 @@
  *   - SIMD-384: short name: <code>simd384</code>
  *   - SIMD-512: short name: <code>simd512</code>
  * - Skein family: file <code>sph_skein.h</code>
- *   - Skein-224 (nominally specified as Skein-256-224): short name:
+ *   - Skein-224 (nominally specified as Skein-512-224): short name:
  *     <code>skein224</code> (64)
- *   - Skein-256 (nominally specified as Skein-256-256): short name:
+ *   - Skein-256 (nominally specified as Skein-512-256): short name:
  *     <code>skein256</code> (64)
  *   - Skein-384 (nominally specified as Skein-512-384): short name:
  *     <code>skein384</code> (64)
@@ -985,6 +984,8 @@ typedef long long sph_s64;
  * SPH_I386_MSVC        x86-compatible (32-bit) with Microsoft Visual C
  * SPH_AMD64_GCC        x86-compatible (64-bit) with gcc
  * SPH_AMD64_MSVC       x86-compatible (64-bit) with Microsoft Visual C
+ * SPH_PPC32_GCC        PowerPC, 32-bit, with gcc
+ * SPH_PPC64_GCC        PowerPC, 64-bit, with gcc
  *
  * TODO: enhance automatic detection, for more architectures and compilers.
  * Endianness is the most important. SPH_UNALIGNED and SPH_UPTR help with
@@ -1075,6 +1076,21 @@ typedef long long sph_s64;
  */
 #elif defined __powerpc__ || defined __POWERPC__ || defined __ppc__ \
 	|| defined _ARCH_PPC
+
+/*
+ * Note: we do not declare cross-endian access to be "fast": even if
+ * using inline assembly, implementation should still assume that
+ * keeping the decoded word in a temporary is faster than decoding
+ * it again.
+ */
+#if defined __GNUC__
+#if SPH_64_TRUE
+#define SPH_DETECT_PPC64_GCC         1
+#else
+#define SPH_DETECT_PPC32_GCC         1
+#endif
+#endif
+
 #if defined __BIG_ENDIAN__ || defined _BIG_ENDIAN
 #define SPH_DETECT_BIG_ENDIAN        1
 #elif defined __LITTLE_ENDIAN__ || defined _LITTLE_ENDIAN
@@ -1142,6 +1158,12 @@ typedef long long sph_s64;
 #endif
 #if defined SPH_DETECT_AMD64_MSVC && !defined SPH_AMD64_MSVC
 #define SPH_AMD64_MSVC        SPH_DETECT_AMD64_MSVC
+#endif
+#if defined SPH_DETECT_PPC32_GCC && !defined SPH_PPC32_GCC
+#define SPH_PPC32_GCC         SPH_DETECT_PPC32_GCC
+#endif
+#if defined SPH_DETECT_PPC64_GCC && !defined SPH_PPC64_GCC
+#define SPH_PPC64_GCC         SPH_DETECT_PPC64_GCC
 #endif
 
 #if SPH_LITTLE_ENDIAN && !defined SPH_LITTLE_FAST
@@ -1542,6 +1564,25 @@ sph_dec32le(const void *src)
 		__asm__ __volatile__ (
 			"lda [%1]0x88,%0" : "=r" (tmp) : "r" (src));
 		return tmp;
+/*
+ * On PowerPC, this turns out not to be worth the effort: the inline
+ * assembly makes GCC optimizer uncomfortable, which tends to nullify
+ * the decoding gains.
+ *
+ * For most hash functions, using this inline assembly trick changes
+ * hashing speed by less than 5% and often _reduces_ it. The biggest
+ * gains are for MD4 (+11%) and CubeHash (+30%). For all others, it is
+ * less then 10%. The speed gain on CubeHash is probably due to the
+ * chronic shortage of registers that CubeHash endures; for the other
+ * functions, the generic code appears to be efficient enough already.
+ *
+#elif (SPH_PPC32_GCC || SPH_PPC64_GCC) && !SPH_NO_ASM
+		sph_u32 tmp;
+
+		__asm__ __volatile__ (
+			"lwbrx %0,0,%1" : "=r" (tmp) : "r" (src));
+		return tmp;
+ */
 #else
 		return sph_bswap32(*(const sph_u32 *)src);
 #endif
@@ -1581,6 +1622,15 @@ sph_dec32le_aligned(const void *src)
 
 	__asm__ __volatile__ ("lda [%1]0x88,%0" : "=r" (tmp) : "r" (src));
 	return tmp;
+/*
+ * Not worth it generally.
+ *
+#elif (SPH_PPC32_GCC || SPH_PPC64_GCC) && !SPH_NO_ASM
+	sph_u32 tmp;
+
+	__asm__ __volatile__ ("lwbrx %0,0,%1" : "=r" (tmp) : "r" (src));
+	return tmp;
+ */
 #else
 	return sph_bswap32(*(const sph_u32 *)src);
 #endif
@@ -1831,6 +1881,20 @@ sph_dec64le(const void *src)
 		__asm__ __volatile__ (
 			"ldxa [%1]0x88,%0" : "=r" (tmp) : "r" (src));
 		return tmp;
+/*
+ * Not worth it generally.
+ *
+#elif SPH_PPC32_GCC && !SPH_NO_ASM
+		return (sph_u64)sph_dec32le_aligned(src)
+			| ((sph_u64)sph_dec32le_aligned(
+				(const char *)src + 4) << 32);
+#elif SPH_PPC64_GCC && !SPH_NO_ASM
+		sph_u64 tmp;
+
+		__asm__ __volatile__ (
+			"ldbrx %0,0,%1" : "=r" (tmp) : "r" (src));
+		return tmp;
+ */
 #else
 		return sph_bswap64(*(const sph_u64 *)src);
 #endif
@@ -1878,6 +1942,18 @@ sph_dec64le_aligned(const void *src)
 
 	__asm__ __volatile__ ("ldxa [%1]0x88,%0" : "=r" (tmp) : "r" (src));
 	return tmp;
+/*
+ * Not worth it generally.
+ *
+#elif SPH_PPC32_GCC && !SPH_NO_ASM
+	return (sph_u64)sph_dec32le_aligned(src)
+		| ((sph_u64)sph_dec32le_aligned((const char *)src + 4) << 32);
+#elif SPH_PPC64_GCC && !SPH_NO_ASM
+	sph_u64 tmp;
+
+	__asm__ __volatile__ ("ldbrx %0,0,%1" : "=r" (tmp) : "r" (src));
+	return tmp;
+ */
 #else
 	return sph_bswap64(*(const sph_u64 *)src);
 #endif

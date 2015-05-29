@@ -1,0 +1,301 @@
+# Makefile for Visual C++ 2005 Express Edition. Use with command-line
+# tool nmake:
+#   nmake /f makefile.win32
+#
+# (nmake.exe comes with Visual C++, in the same directory than the
+# command-line compiler cl.exe)
+#
+
+#
+# We use "/W2" because higher warning levels trigger dozens of spurious
+# warnings about possible loss of precision when casting integer types
+# into "unsigned char" values -- but we really want that "loss of
+# precision".
+#
+# The "/D_CRT_SECURE_NO_DEPRECATE" flag avoids a warning on fopen(). We
+# use fopen() only for reading, which has no security problem.
+#
+# Optimization flags are tricky. These ones provide good performance on
+# an AMD Athlon 64 architecture (used in 32-bit mode).
+#
+
+CC = cl
+CFLAGS = /nologo /O2 /Ob2tiy /W2 /D_CRT_SECURE_NO_DEPRECATE /DSPH_I386_MSVC
+
+#
+# You can use /arch:SSE or /arch:SSE2 to activate usage of opcodes and
+# optimizations valid only for the CPUs which feature, respectively, the
+# SSE and the SSE2 instruction sets.
+#
+#CFLAGS = /nologo /O2 /Ob2tiy /W2 /D_CRT_SECURE_NO_DEPRECATE /DSPH_I386_MSVC /arch:SSE2
+
+# ==========================================================================
+
+OBJ = md2.obj md4.obj md5.obj sha0.obj sha1.obj sha2.obj sha2big.obj ripemd.obj tiger.obj panama.obj haval.obj whirlpool.obj radiogatun.obj shabal.obj echo.obj simd.obj luffa.obj blake.obj skein.obj jh.obj fugue.obj bmw.obj
+TESTTYPES = test_types.exe
+TESTMD2 = test_md2.exe
+TESTMD4 = test_md4.exe
+TESTMD5 = test_md5.exe
+TESTSHA0 = test_sha0.exe
+TESTSHA1 = test_sha1.exe
+TESTSHA2 = test_sha2.exe
+TESTSHA3 = test_sha2big.exe
+TESTRIPEMD = test_ripemd.exe
+TESTTIGER = test_tiger.exe
+TESTPANAMA = test_panama.exe
+TESTRADIOGATUN = test_radiogatun.exe
+TESTSHABAL = test_shabal.exe
+TESTHAVAL = test_haval.exe
+TESTWHIRLPOOL = test_whirlpool.exe
+TESTECHO = test_echo.exe
+TESTSIMD = test_simd.exe
+TESTLUFFA = test_luffa.exe
+TESTBLAKE = test_blake.exe
+TESTSKEIN = test_skein.exe
+TESTJH = test_jh.exe
+TESTFUGUE = test_fugue.exe
+TESTBMW = test_bmw.exe
+TESTS = $(TESTTYPES) $(TESTMD2) $(TESTMD4) $(TESTMD5) $(TESTSHA0) $(TESTSHA1) $(TESTSHA2) $(TESTSHA3) $(TESTRIPEMD) $(TESTTIGER) $(TESTPANAMA) $(TESTRADIOGATUN) $(TESTSHABAL) $(TESTHAVAL) $(TESTWHIRLPOOL) $(TESTECHO) $(TESTSIMD) $(TESTLUFFA) $(TESTBLAKE) $(TESTSKEIN) $(TESTJH) $(TESTFUGUE) $(TESTBMW)
+TESTTYPESOBJ = test_types.obj utest.obj
+TESTMD2OBJ = test_md2.obj md2.obj utest.obj
+TESTMD4OBJ = test_md4.obj md4.obj utest.obj
+TESTMD5OBJ = test_md5.obj md5.obj utest.obj
+TESTSHA0OBJ = test_sha0.obj sha0.obj utest.obj
+TESTSHA1OBJ = test_sha1.obj sha1.obj utest.obj
+TESTSHA2OBJ = test_sha2.obj sha2.obj utest.obj
+TESTSHA3OBJ = test_sha2big.obj sha2big.obj utest.obj
+TESTRIPEMDOBJ = test_ripemd.obj ripemd.obj utest.obj
+TESTTIGEROBJ = test_tiger.obj tiger.obj utest.obj
+TESTPANAMAOBJ = test_panama.obj panama.obj utest.obj
+TESTRADIOGATUNOBJ = test_radiogatun.obj radiogatun.obj utest.obj
+TESTSHABALOBJ = test_shabal.obj shabal.obj utest.obj
+TESTHAVALOBJ = test_haval.obj haval.obj utest.obj
+TESTWHIRLPOOLOBJ = test_whirlpool.obj whirlpool.obj utest.obj
+TESTECHOOBJ = test_echo.obj echo.obj utest.obj
+TESTSIMDOBJ = test_simd.obj simd.obj utest.obj
+TESTLUFFAOBJ = test_luffa.obj luffa.obj utest.obj
+TESTBLAKEOBJ = test_blake.obj blake.obj utest.obj
+TESTSKEINOBJ = test_skein.obj skein.obj utest.obj
+TESTJHOBJ = test_jh.obj jh.obj utest.obj
+TESTFUGUEOBJ = test_fugue.obj fugue.obj utest.obj
+TESTBMWOBJ = test_bmw.obj bmw.obj utest.obj
+SPEED = sphspeed.exe
+SPEEDOBJ = speed.obj
+HSUM = sphsum.exe
+HSUMOBJ = hsum.obj
+
+all: compile tests $(SPEED) $(HSUM)
+
+compile: $(OBJ) $(SPEED) $(HSUM)
+
+build-tests: $(TESTS)
+
+run-tests: build-tests
+	$(TESTTYPES)
+	$(TESTMD2)
+	$(TESTMD4)
+	$(TESTMD5)
+	$(TESTSHA0)
+	$(TESTSHA1)
+	$(TESTSHA2)
+	$(TESTSHA3)
+	$(TESTRIPEMD)
+	$(TESTTIGER)
+	$(TESTPANAMA)
+	$(TESTRADIOGATUN)
+	$(TESTSHABAL)
+	$(TESTHAVAL)
+	$(TESTWHIRLPOOL)
+	$(TESTECHO)
+	$(TESTSIMD)
+	$(TESTLUFFA)
+	$(TESTBLAKE)
+	$(TESTSKEIN)
+	$(TESTJH)
+	$(TESTFUGUE)
+	$(TESTBMW)
+
+tests: build-tests run-tests
+
+clean:
+	-del /Q $(OBJ) $(TESTS) $(TESTTYPESOBJ) $(TESTMD2OBJ) $(TESTMD4OBJ) $(TESTMD5OBJ) $(TESTSHA0OBJ) $(TESTSHA1OBJ) $(TESTSHA2OBJ) $(TESTSHA3OBJ) $(TESTRIPEMDOBJ) $(TESTTIGEROBJ) $(TESTPANAMAOBJ) $(TESTRADIOGATUNOBJ) $(TESTSHABALOBJ) $(TESTHAVALOBJ) $(TESTWHIRLPOOLOBJ) $(TESTECHOOBJ) $(TESTSIMDOBJ) $(TESTLUFFAOBJ) $(TESTBLAKEOBJ) $(TESTSKEINOBJ) $(TESTJHOBJ) $(TESTFUGUEOBJ) $(TESTBMWOBJ) $(SPEED) $(SPEEDOBJ) $(HSUM) $(HSUMOBJ)
+
+$(TESTTYPES): $(TESTTYPESOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTTYPESOBJ)
+
+$(TESTMD2): $(TESTMD2OBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTMD2OBJ)
+
+$(TESTMD4): $(TESTMD4OBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTMD4OBJ)
+
+$(TESTMD5): $(TESTMD5OBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTMD5OBJ)
+
+$(TESTSHA0): $(TESTSHA0OBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTSHA0OBJ)
+
+$(TESTSHA1): $(TESTSHA1OBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTSHA1OBJ)
+
+$(TESTSHA2): $(TESTSHA2OBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTSHA2OBJ)
+
+$(TESTSHA3): $(TESTSHA3OBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTSHA3OBJ)
+
+$(TESTRIPEMD): $(TESTRIPEMDOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTRIPEMDOBJ)
+
+$(TESTTIGER): $(TESTTIGEROBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTTIGEROBJ)
+
+$(TESTPANAMA): $(TESTPANAMAOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTPANAMAOBJ)
+
+$(TESTRADIOGATUN): $(TESTRADIOGATUNOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTRADIOGATUNOBJ)
+
+$(TESTSHABAL): $(TESTSHABALOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTSHABALOBJ)
+
+$(TESTHAVAL): $(TESTHAVALOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTHAVALOBJ)
+
+$(TESTWHIRLPOOL): $(TESTWHIRLPOOLOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTWHIRLPOOLOBJ)
+
+$(TESTECHO): $(TESTECHOOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTECHOOBJ)
+
+$(TESTSIMD): $(TESTSIMDOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTSIMDOBJ)
+
+$(TESTLUFFA): $(TESTLUFFAOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTLUFFAOBJ)
+
+$(TESTBLAKE): $(TESTBLAKEOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTBLAKEOBJ)
+
+$(TESTSKEIN): $(TESTSKEINOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTSKEINOBJ)
+
+$(TESTJH): $(TESTJHOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTJHOBJ)
+
+$(TESTFUGUE): $(TESTFUGUEOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTFUGUEOBJ)
+
+$(TESTBMW): $(TESTBMWOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(TESTBMWOBJ)
+
+$(SPEED): $(SPEEDOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(SPEEDOBJ) $(OBJ)
+
+$(HSUM): $(HSUMOBJ)
+	$(CC) $(CFLAGS) /Fo$@ $(HSUMOBJ) $(OBJ)
+
+SUFFIXES: .c .obj
+
+.c.obj:
+	$(CC) $(CFLAGS) -c $<
+
+# =========================================================================
+# Dependencies.
+#
+
+blake.obj: sph_blake.h sph_types.h
+
+bmw.obj: sph_bmw.h sph_types.h
+
+echo.obj: sph_echo.h sph_types.h
+
+fugue.obj: sph_fugue.h sph_types.h
+
+haval.obj: sph_haval.h sph_types.h haval_helper.c
+
+hsum.obj: sph_md2.h sph_types.h sph_md4.h sph_md5.h sph_sha0.h sph_sha1.h sph_sha2.h sph_ripemd.h sph_tiger.h sph_panama.h sph_radiogatun.h sph_shabal.h sph_haval.h sph_whirlpool.h sph_echo.h sph_simd.h sph_luffa.h sph_blake.h sph_skein.h sph_jh.h sph_fugue.h sph_bmw.h
+
+jh.obj: sph_jh.h sph_types.h
+
+luffa.obj: sph_luffa.h sph_types.h
+
+md2.obj: sph_md2.h sph_types.h
+
+md4.obj: sph_md4.h sph_types.h md_helper.c
+
+md5.obj: sph_md5.h sph_types.h md_helper.c
+
+panama.obj: sph_panama.h sph_types.h
+
+radiogatun.obj: sph_radiogatun.h sph_types.h
+
+ripemd.obj: sph_ripemd.h sph_types.h md_helper.c
+
+sha0.obj: sph_sha0.h sph_types.h md_helper.c
+
+sha1.obj: sph_sha1.h sph_types.h md_helper.c
+
+sha2.obj: sph_sha2.h sph_types.h md_helper.c
+
+sha2big.obj: sph_sha2.h sph_types.h md_helper.c
+
+shabal.obj: sph_shabal.h sph_types.h
+
+simd.obj: sph_simd.h sph_types.h
+
+skein.obj: sph_skein.h sph_types.h
+
+speed.obj: sph_md2.h sph_types.h sph_md4.h sph_md5.h sph_sha0.h sph_sha1.h sph_sha2.h sph_ripemd.h sph_tiger.h sph_panama.h sph_radiogatun.h sph_shabal.h sph_haval.h sph_whirlpool.h sph_echo.h sph_simd.h sph_luffa.h sph_blake.h sph_skein.h sph_jh.h sph_fugue.h sph_bmw.h
+
+test_blake.obj: sph_blake.h sph_types.h test_digest_helper.c utest.h
+
+test_bmw.obj: sph_bmw.h sph_types.h test_digest_helper.c utest.h
+
+test_echo.obj: sph_echo.h sph_types.h test_digest_helper.c utest.h
+
+test_fugue.obj: sph_fugue.h sph_types.h test_digest_helper.c utest.h
+
+test_haval.obj: sph_haval.h sph_types.h test_digest_helper.c utest.h
+
+test_jh.obj: sph_jh.h sph_types.h test_digest_helper.c utest.h
+
+test_luffa.obj: sph_luffa.h sph_types.h test_digest_helper.c utest.h
+
+test_md2.obj: sph_md2.h sph_types.h test_digest_helper.c utest.h
+
+test_md4.obj: sph_md4.h sph_types.h test_digest_helper.c utest.h
+
+test_md5.obj: sph_md5.h sph_types.h test_digest_helper.c utest.h
+
+test_panama.obj: sph_panama.h sph_types.h test_digest_helper.c utest.h
+
+test_radiogatun.obj: sph_radiogatun.h sph_types.h test_digest_helper.c utest.h
+
+test_ripemd.obj: sph_ripemd.h sph_types.h test_digest_helper.c utest.h
+
+test_sha0.obj: sph_sha0.h sph_types.h test_digest_helper.c utest.h
+
+test_sha1.obj: sph_sha1.h sph_types.h test_digest_helper.c utest.h
+
+test_sha2.obj: sph_sha2.h sph_types.h test_digest_helper.c utest.h
+
+test_sha2big.obj: sph_sha2.h sph_types.h test_digest_helper.c utest.h
+
+test_shabal.obj: sph_shabal.h sph_types.h test_digest_helper.c utest.h
+
+test_simd.obj: sph_simd.h sph_types.h test_digest_helper.c utest.h
+
+test_skein.obj: sph_skein.h sph_types.h test_digest_helper.c utest.h
+
+test_tiger.obj: sph_tiger.h sph_types.h test_digest_helper.c utest.h
+
+test_types.obj: sph_types.h utest.h
+
+test_whirlpool.obj: sph_whirlpool.h sph_types.h test_digest_helper.c utest.h
+
+tiger.obj: sph_tiger.h sph_types.h md_helper.c
+
+utest.obj: utest.h
+
+whirlpool.obj: sph_whirlpool.h sph_types.h md_helper.c

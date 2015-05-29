@@ -1,4 +1,4 @@
-/* $Id: sph_echo.h 153 2010-04-26 16:57:17Z tp $ */
+/* $Id: sph_echo.h 216 2010-06-08 09:46:57Z tp $ */
 /**
  * ECHO interface. ECHO is a family of functions which differ by
  * their output size; this implementation defines ECHO for output
@@ -76,7 +76,7 @@ typedef struct {
 	size_t ptr;
 	union {
 		sph_u32 Vs[4][4];
-#ifdef SPH_64
+#if SPH_64
 		sph_u64 Vb[4][2];
 #endif
 	} u;
@@ -101,7 +101,7 @@ typedef struct {
 	size_t ptr;
 	union {
 		sph_u32 Vs[8][4];
-#ifdef SPH_64
+#if SPH_64
 		sph_u64 Vb[8][2];
 #endif
 	} u;

@@ -1,11 +1,11 @@
-// $Id: WHIRLPOOL1.java 156 2010-04-26 17:55:11Z tp $
+// $Id: Whirlpool1.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
 /**
- * <p>This class implements the WHIRLPOOL-1 digest algorithm under the
- * {@link Digest} API. This is the second variant of WHIRLPOOL, created
- * in 2001 and superseded in 2003 by the third variant (WHIRLPOOL).</p>
+ * <p>This class implements the Whirlpool-1 digest algorithm under the
+ * {@link Digest} API. This is the second variant of Whirlpool, created
+ * in 2001 and superseded in 2003 by the third variant (Whirlpool).</p>
  *
  * <pre>
  * ==========================(LICENSE BEGIN)============================
@@ -34,16 +34,16 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
-public class WHIRLPOOL1 extends WHIRLPOOLCore {
+public class Whirlpool1 extends WhirlpoolCore {
 
 	/**
 	 * Create the object.
 	 */
-	public WHIRLPOOL1()
+	public Whirlpool1()
 	{
 		super(T0, T1, T2, T3, T4, T5, T6, T7, RC);
 	}
@@ -51,7 +51,7 @@ public class WHIRLPOOL1 extends WHIRLPOOLCore {
 	/** @see Digest */
 	public Digest copy()
 	{
-		return copyState(new WHIRLPOOL1());
+		return copyState(new Whirlpool1());
 	}
 
 	private static final long[] T0 = {
@@ -1114,4 +1114,10 @@ public class WHIRLPOOL1 extends WHIRLPOOLCore {
 		0x9E4717DD667CEEFBL,
 		0x33835AAD07BF2DCAL
 	};
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "Whirlpool-1";
+	}
 }

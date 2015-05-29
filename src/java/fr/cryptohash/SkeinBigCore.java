@@ -1,4 +1,4 @@
-// $Id: SkeinBigCore.java 156 2010-04-26 17:55:11Z tp $
+// $Id: SkeinBigCore.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
@@ -33,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -334,5 +334,11 @@ abstract class SkeinBigCore implements Digest {
 		h[5] = m5 ^ p5;
 		h[6] = m6 ^ p6;
 		h[7] = m7 ^ p7;
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "Skein-" + (getDigestLength() << 3);
 	}
 }

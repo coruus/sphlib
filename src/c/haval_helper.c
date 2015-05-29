@@ -1,4 +1,4 @@
-/* $Id: haval_helper.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: haval_helper.c 218 2010-06-08 17:06:34Z tp $ */
 /*
  * Helper code, included (three times !) by HAVAL implementation.
  *
@@ -47,14 +47,14 @@ SPH_XCAT(haval, PASSES)
 {
 	unsigned current;
 
-#ifdef SPH_64
+#if SPH_64
 	current = (unsigned)sc->count & 127U;
 #else
 	current = (unsigned)sc->count_low & 127U;
 #endif
 	while (len > 0) {
 		unsigned clen;
-#ifndef SPH_64
+#if !SPH_64
 		sph_u32 clow, clow2;
 #endif
 
@@ -74,7 +74,7 @@ SPH_XCAT(haval, PASSES)
 			WSTATE;
 			current = 0;
 		}
-#ifdef SPH_64
+#if SPH_64
 		sc->count += clen;
 #else
 		clow = sc->count_low;
@@ -92,7 +92,7 @@ SPH_XCAT(haval, PASSES)(sph_haval_context *sc, const void *data, size_t len)
 {
 	unsigned current;
 	size_t orig_len;
-#ifndef SPH_64
+#if !SPH_64
 	sph_u32 clow, clow2;
 #endif
 	DSTATE;
@@ -101,7 +101,7 @@ SPH_XCAT(haval, PASSES)(sph_haval_context *sc, const void *data, size_t len)
 		SPH_XCAT(SPH_XCAT(haval, PASSES), _short)(sc, data, len);
 		return;
 	}
-#ifdef SPH_64
+#if SPH_64
 	current = (unsigned)sc->count & 127U;
 #else
 	current = (unsigned)sc->count_low & 127U;
@@ -114,7 +114,7 @@ SPH_XCAT(haval, PASSES)(sph_haval_context *sc, const void *data, size_t len)
 		data = (const unsigned char *)data + clen;
 		len -= clen;
 	}
-#ifndef SPH_UNALIGNED
+#if !SPH_UNALIGNED
 	if (((SPH_UPTR)data & 3U) != 0) {
 		SPH_XCAT(SPH_XCAT(haval, PASSES), _short)(sc, data, len);
 		return;
@@ -132,7 +132,7 @@ SPH_XCAT(haval, PASSES)(sph_haval_context *sc, const void *data, size_t len)
 	WSTATE;
 	if (len > 0)
 		memcpy(sc->buf, data, len);
-#ifdef SPH_64
+#if SPH_64
 	sc->count += (sph_u64)orig_len;
 #else
 	clow = sc->count_low;
@@ -149,18 +149,18 @@ SPH_XCAT(haval, PASSES)(sph_haval_context *sc, const void *data, size_t len)
 #endif
 
 static void
-SPH_XCAT(SPH_XCAT(haval, PASSES), _close)(sph_haval_context *sc, void *dst)
+SPH_XCAT(SPH_XCAT(haval, PASSES), _close)(sph_haval_context *sc,
+	unsigned ub, unsigned n, void *dst)
 {
 	unsigned current;
 	DSTATE;
 
-#ifdef SPH_64
+#if SPH_64
 	current = (unsigned)sc->count & 127U;
 #else
 	current = (unsigned)sc->count_low & 127U;
 #endif
-	/* FIXME: add API for partial byte */
-	sc->buf[current ++] = 0x01;
+	sc->buf[current ++] = (0x01 << n) | ((ub & 0xFF) >> (8 - n));
 	RSTATE;
 	if (current > 118U) {
 		memset(sc->buf + current, 0, 128U - current);
@@ -175,7 +175,7 @@ SPH_XCAT(SPH_XCAT(haval, PASSES), _close)(sph_haval_context *sc, void *dst)
 	memset(sc->buf + current, 0, 118U - current);
 	sc->buf[118] = 0x01 | (PASSES << 3);
 	sc->buf[119] = sc->olen << 3;
-#ifdef SPH_64
+#if SPH_64
 	sph_enc64le_aligned(sc->buf + 120, SPH_T64(sc->count << 3));
 #else
 	sph_enc32le_aligned(sc->buf + 120, SPH_T32(sc->count_low << 3));

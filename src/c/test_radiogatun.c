@@ -1,4 +1,4 @@
-/* $Id: test_radiogatun.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: test_radiogatun.c 216 2010-06-08 09:46:57Z tp $ */
 /*
  * Unit tests for the RadioGatun hash functions.
  *
@@ -34,7 +34,7 @@
 #include "test_digest_helper.c"
 
 TEST_DIGEST_INTERNAL(RadioGatun[32], radiogatun32, 32)
-#ifdef SPH_64
+#if SPH_64
 TEST_DIGEST_INTERNAL(RadioGatun[64], radiogatun64, 32)
 #endif
 
@@ -163,7 +163,7 @@ test_radiogatun(void)
 		"1234567890123456789012345678901234567890",
 	   "849E6159D45AC1E99BC0D613D71C9E2DA639580CCFDC8013EE81D4E32AAD9C25");
 
-#ifdef SPH_64
+#if SPH_64
 	test_radiogatun64_internal("",
 	   "64A9A7FA139905B57BDAB35D33AA216370D5EAE13E77BFCDD85513408311A584");
 	test_radiogatun64_internal("0",

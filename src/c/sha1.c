@@ -1,4 +1,4 @@
-/* $Id: sha1.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: sha1.c 216 2010-06-08 09:46:57Z tp $ */
 /*
  * SHA-1 implementation.
  *
@@ -340,7 +340,7 @@ sph_sha1_init(void *cc)
 
 	sc = cc;
 	memcpy(sc->val, IV, sizeof IV);
-#ifdef SPH_64
+#if SPH_64
 	sc->count = 0;
 #else
 	sc->count_high = sc->count_low = 0;

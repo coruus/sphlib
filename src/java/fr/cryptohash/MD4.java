@@ -1,4 +1,4 @@
-// $Id: MD4.java 156 2010-04-26 17:55:11Z tp $
+// $Id: MD4.java 241 2010-06-21 15:04:01Z tp $
 
 package fr.cryptohash;
 
@@ -34,7 +34,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 241 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -97,22 +97,6 @@ public class MD4 extends MDHelper {
 	}
 
 	/**
-	 * Perform a circular rotation by {@code n} to the left of the
-	 * 32-bit word {@code x}. The {@code n} parameter must lie
-	 * between 1 and 31 (inclusive).
-	 *
-	 * @param x   the value to rotate
-	 * @param n   the rotation count (between 1 and 31)
-	 * @return  the rotated value
-	 */
-	/* obsolete
-	static private int circularLeft(int x, int n)
-	{
-		return (x << n) | (x >>> (32 - n));
-	}
-	*/
-
-	/**
 	 * Encode the 32-bit word {@code val} into the array
 	 * {@code buf} at offset {@code off}, in little-endian
 	 * convention (least significant byte first).
@@ -128,45 +112,6 @@ public class MD4 extends MDHelper {
 		buf[off + 1] = (byte)((val >> 8) & 0xff);
 		buf[off + 0] = (byte)(val & 0xff);
 	}
-
-	/**
-	 * Decode a 32-bit little-endian word from the array {@code buf}
-	 * at offset {@code off}.
-	 *
-	 * @param buf   the source buffer
-	 * @param off   the source offset
-	 * @return  the decoded value
-	 */
-	/* obsolete
-	static private final int decodeLEInt(byte[] buf, int off)
-	{
-		return (buf[off] & 0xFF)
-			| ((buf[off + 1] & 0xFF) << 8)
-			| ((buf[off + 2] & 0xFF) << 16)
-			| ((buf[off + 3] & 0xFF) << 24);
-	}
-	*/
-
-	/* obsolete
-	private static final int F(int X, int Y, int Z)
-	{
-		return ((Y ^ Z) & X) ^ Z;
-	}
-	*/
-
-	/* obsolete
-	private static final int G(int X, int Y, int Z)
-	{
-		return (Z & Y) | ((Z | Y) & X);
-	}
-	*/
-
-	/* obsolete
-	private static final int H(int X, int Y, int Z)
-	{
-		return X ^ Y ^ Z;
-	}
-	*/
 
 	/** @see DigestEngine */
 	protected void processBlock(byte[] data)
@@ -352,5 +297,11 @@ public class MD4 extends MDHelper {
 		currentVal[1] += B;
 		currentVal[2] += C;
 		currentVal[3] += D;
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "MD4";
 	}
 }

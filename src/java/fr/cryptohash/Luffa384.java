@@ -1,4 +1,4 @@
-// $Id: Luffa384.java 156 2010-04-26 17:55:11Z tp $
+// $Id: Luffa384.java 235 2010-06-18 15:31:36Z tp $
 
 package fr.cryptohash;
 
@@ -33,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 235 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -104,10 +104,22 @@ public class Luffa384 extends DigestEngine {
 		super();
 	}
 
+	/** @see DigestEngine */
+	public int getInternalBlockLength()
+	{
+		return 32;
+	}
+
 	/** @see Digest */
 	public int getBlockLength()
 	{
-		return 32;
+		/*
+		 * Private communication for Luffa designer Watanabe Dai:
+		 *
+		 * << I think that there is no problem to use the same
+		 *    setting as CubeHash, namely B = 256*ceil(k / 256). >>
+		 */
+		return -32;
 	}
 
 	/** @see Digest */
@@ -713,5 +725,11 @@ public class Luffa384 extends DigestEngine {
 			V30 ^= RC30[r];
 			V34 ^= RC34[r];
 		}
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "Luffa-384";
 	}
 }

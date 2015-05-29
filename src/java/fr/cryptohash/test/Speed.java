@@ -1,64 +1,11 @@
-// $Id: Speed.java 166 2010-05-03 16:44:36Z tp $
+// $Id: Speed.java 229 2010-06-16 20:22:27Z tp $
 
 package fr.cryptohash.test;
 
 import fr.cryptohash.Digest;
-import fr.cryptohash.MD2;
-import fr.cryptohash.MD4;
-import fr.cryptohash.MD5;
-import fr.cryptohash.SHA0;
-import fr.cryptohash.SHA1;
-import fr.cryptohash.SHA224;
-import fr.cryptohash.SHA256;
-import fr.cryptohash.SHA384;
-import fr.cryptohash.SHA512;
-import fr.cryptohash.RIPEMD;
-import fr.cryptohash.RIPEMD128;
-import fr.cryptohash.RIPEMD160;
-import fr.cryptohash.Tiger;
-import fr.cryptohash.Tiger2;
-import fr.cryptohash.PANAMA;
-import fr.cryptohash.HAVAL256_3;
-import fr.cryptohash.HAVAL256_4;
-import fr.cryptohash.HAVAL256_5;
-import fr.cryptohash.SHABAL192;
-import fr.cryptohash.SHABAL224;
-import fr.cryptohash.SHABAL256;
-import fr.cryptohash.SHABAL384;
-import fr.cryptohash.SHABAL512;
-import fr.cryptohash.BLAKE224;
-import fr.cryptohash.BLAKE256;
-import fr.cryptohash.BLAKE384;
-import fr.cryptohash.BLAKE512;
-import fr.cryptohash.Luffa224;
-import fr.cryptohash.Luffa256;
-import fr.cryptohash.Luffa384;
-import fr.cryptohash.Luffa512;
-import fr.cryptohash.ECHO224;
-import fr.cryptohash.ECHO256;
-import fr.cryptohash.ECHO384;
-import fr.cryptohash.ECHO512;
-import fr.cryptohash.SIMD224;
-import fr.cryptohash.SIMD256;
-import fr.cryptohash.SIMD384;
-import fr.cryptohash.SIMD512;
-import fr.cryptohash.Skein224;
-import fr.cryptohash.Skein256;
-import fr.cryptohash.Skein384;
-import fr.cryptohash.Skein512;
-import fr.cryptohash.JH224;
-import fr.cryptohash.JH256;
-import fr.cryptohash.JH384;
-import fr.cryptohash.JH512;
-import fr.cryptohash.Fugue224;
-import fr.cryptohash.Fugue256;
-import fr.cryptohash.Fugue384;
-import fr.cryptohash.Fugue512;
-import fr.cryptohash.BMW224;
-import fr.cryptohash.BMW256;
-import fr.cryptohash.BMW384;
-import fr.cryptohash.BMW512;
-import fr.cryptohash.WHIRLPOOL;
+
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * <p>This class implements some speed tests for hash functions.</p>
@@ -90,11 +37,130 @@ import fr.cryptohash.WHIRLPOOL;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 166 $
+ * @version   $Revision: 229 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
 public class Speed {
+
+	/*
+	 * Each entry in the FUNS and FUNS_SHA3 arrays consists in two
+	 * consecutive names. The first name is the one which is matched
+	 * with the command-line arguments. The second name is the
+	 * corresponding class name. If the second name contains a comma,
+	 * then this is a SHA-3-like class with four acceptable output
+	 * sizes (224, 256, 384 and 512 bits); the comma separated list
+	 * of suffixes indicates those sizes which are relevant.
+	 *
+	 * Matched functions should be benchmarked in array order (FUNS
+	 * first, then FUNS_SHA3).
+	 */
+
+	private static final String[] FUNS = {
+		"haval3",        "HAVAL256_3",
+		"haval4",        "HAVAL256_4",
+		"haval5",        "HAVAL256_5",
+		"md2",           "MD2",
+		"md4",           "MD4",
+		"md5",           "MD5",
+		"panama",        "PANAMA",
+		"radiogatun32",  "RadioGatun32",
+		"radiogatun64",  "RadioGatun64",
+		"ripemd",        "RIPEMD",
+		"ripemd128",     "RIPEMD128",
+		"ripemd160",     "RIPEMD160",
+		"sha0",          "SHA0",
+		"sha1",          "SHA1",
+		"sha",           "SHA,256,512",
+		"tiger",         "Tiger",
+		"whirlpool",     "Whirlpool"
+	};
+
+	private static final String[] FUNS_SHA3 = {
+		"blake",      "BLAKE,256,512",
+		"bmw",        "BMW,256,512",
+		"cubehash",   "CubeHash,512",
+		"echo",       "ECHO,256,512",
+		"fugue",      "Fugue,256,384,512",
+		"groestl",    "Groestl,256,512",
+		"hamsi",      "Hamsi,256,512",
+		"jh",         "JH,512",
+		"keccak",     "Keccak,224,256,384,512",
+		"luffa",      "Luffa,256,384,512",
+		"shabal",     "Shabal,512",
+		"shavite",    "SHAvite,256,512",
+		"simd",       "SIMD,256,512",
+		"skein",      "Skein,256,512"
+	};
+
+	private static final Hashtable NAME_TO_CLASSNAMES = new Hashtable();
+	private static final Vector ORDERED_CLASSNAMES = new Vector();
+
+	private static void addFun(String name, String cspec,
+		Vector sha3classes)
+	{
+		int n = cspec.indexOf(',');
+		if (n < 0) {
+			NAME_TO_CLASSNAMES.put(name, cspec);
+			ORDERED_CLASSNAMES.addElement(cspec);
+		} else {
+			String base = cspec.substring(0, n);
+			NAME_TO_CLASSNAMES.put(name + "224", base + "224");
+			ORDERED_CLASSNAMES.addElement(base + "224");
+			NAME_TO_CLASSNAMES.put(name + "256", base + "256");
+			ORDERED_CLASSNAMES.addElement(base + "256");
+			NAME_TO_CLASSNAMES.put(name + "384", base + "384");
+			ORDERED_CLASSNAMES.addElement(base + "384");
+			NAME_TO_CLASSNAMES.put(name + "512", base + "512");
+			ORDERED_CLASSNAMES.addElement(base + "512");
+			int len = cspec.length();
+			StringBuffer sb = new StringBuffer();
+			n ++;
+			while (n < len) {
+				int p = cspec.indexOf(',', n);
+				if (p < 0)
+					p = len;
+				String suffix = cspec.substring(n, p);
+				if (sb.length() > 0)
+					sb.append(',');
+				String cname = base + suffix;
+				sb.append(cname);
+				if (sha3classes != null)
+					sha3classes.addElement(cname);
+				n = p + 1;
+			}
+			String ac = sb.toString();
+			NAME_TO_CLASSNAMES.put(name, ac);
+		}
+	}
+
+	private static final Vector SHA3_CLASSES = new Vector();
+
+	static {
+		for (int i = 0; i < FUNS.length; i += 2)
+			addFun(FUNS[i], FUNS[i + 1], null);
+		for (int i = 0; i < FUNS_SHA3.length; i += 2)
+			addFun(FUNS_SHA3[i], FUNS_SHA3[i + 1], SHA3_CLASSES);
+	}
+
+	/*
+	 * FUNS_ALIAS contains mappings from alternate command-line names
+	 * to one of the matched names defined in FUNS and FUNS_SHA3.
+	 */
+
+	private static final String[] FUNS_ALIAS = {
+		"rmd",        "ripemd",
+		"rmd128",     "ripemd128",
+		"rmd160",     "ripemd160",
+		"sha2",       "sha",
+		"shavite3",   "shavite"
+	};
+
+	private static final Hashtable ALIASES = new Hashtable();
+	static {
+		for (int i = 0; i < FUNS_ALIAS.length; i += 2)
+			ALIASES.put(FUNS_ALIAS[i], FUNS_ALIAS[i + 1]);
+	}
 
 	/**
 	 * Program entry point. The arguments should be function names,
@@ -102,319 +168,50 @@ public class Speed {
 	 * all implemented functions are benchmarked.
 	 *
 	 * @param args   the program arguments
+	 * @throws Exception  on (internal) error
 	 */
 	public static void main(String[] args)
+		throws Exception
 	{
-		long todo = 0;
+		Hashtable todo = new Hashtable();
 		for (int i = 0; i < args.length; i ++) {
 			String s = normalize(args[i]);
-			if (s.equals("md2"))
-				todo |= DO_MD2;
-			else if (s.equals("md4"))
-				todo |= DO_MD4;
-			else if (s.equals("md5"))
-				todo |= DO_MD5;
-			else if (s.equals("sha0"))
-				todo |= DO_SHA0;
-			else if (s.equals("sha1"))
-				todo |= DO_SHA1;
-			else if (s.equals("sha2"))
-				todo |= DO_SHA256 | DO_SHA512;
-			else if (s.equals("sha224"))
-				todo |= DO_SHA224;
-			else if (s.equals("sha256"))
-				todo |= DO_SHA256;
-			else if (s.equals("sha384"))
-				todo |= DO_SHA384;
-			else if (s.equals("sha512"))
-				todo |= DO_SHA512;
-			else if (s.equals("rmd") || s.equals("ripemd"))
-				todo |= DO_RIPEMD;
-			else if (s.equals("rmd128") || s.equals("ripemd128"))
-				todo |= DO_RIPEMD128;
-			else if (s.equals("rmd160") || s.equals("ripemd160"))
-				todo |= DO_RIPEMD160;
-			else if (s.equals("tiger"))
-				todo |= DO_TIGER;
-			else if (s.equals("tiger2"))
-				todo |= DO_TIGER2;
-			else if (s.equals("panama"))
-				todo |= DO_PANAMA;
-			else if (s.equals("haval3"))
-				todo |= DO_HAVAL3;
-			else if (s.equals("haval4"))
-				todo |= DO_HAVAL4;
-			else if (s.equals("haval5"))
-				todo |= DO_HAVAL5;
-			else if (s.equals("whirlpool"))
-				todo |= DO_WHIRLPOOL;
-			else if (s.equals("shabal"))
-				todo |= DO_SHABAL512;
-			else if (s.equals("shabal192"))
-				todo |= DO_SHABAL192;
-			else if (s.equals("shabal224"))
-				todo |= DO_SHABAL224;
-			else if (s.equals("shabal256"))
-				todo |= DO_SHABAL256;
-			else if (s.equals("shabal384"))
-				todo |= DO_SHABAL384;
-			else if (s.equals("shabal512"))
-				todo |= DO_SHABAL512;
-			else if (s.equals("blake"))
-				todo |= DO_BLAKE256 | DO_BLAKE512;
-			else if (s.equals("blake224"))
-				todo |= DO_BLAKE224;
-			else if (s.equals("blake256"))
-				todo |= DO_BLAKE256;
-			else if (s.equals("blake384"))
-				todo |= DO_BLAKE384;
-			else if (s.equals("blake512"))
-				todo |= DO_BLAKE512;
-			else if (s.equals("luffa"))
-				todo |= DO_LUFFA256 | DO_LUFFA384 | DO_LUFFA512;
-			else if (s.equals("luffa224"))
-				todo |= DO_LUFFA224;
-			else if (s.equals("luffa256"))
-				todo |= DO_LUFFA256;
-			else if (s.equals("luffa384"))
-				todo |= DO_LUFFA384;
-			else if (s.equals("luffa512"))
-				todo |= DO_LUFFA512;
-			else if (s.equals("echo"))
-				todo |= DO_ECHO256 | DO_ECHO512;
-			else if (s.equals("echo224"))
-				todo |= DO_ECHO224;
-			else if (s.equals("echo256"))
-				todo |= DO_ECHO256;
-			else if (s.equals("echo384"))
-				todo |= DO_ECHO384;
-			else if (s.equals("echo512"))
-				todo |= DO_ECHO512;
-			else if (s.equals("simd"))
-				todo |= DO_SIMD256 | DO_SIMD512;
-			else if (s.equals("simd224"))
-				todo |= DO_SIMD224;
-			else if (s.equals("simd256"))
-				todo |= DO_SIMD256;
-			else if (s.equals("simd384"))
-				todo |= DO_SIMD384;
-			else if (s.equals("simd512"))
-				todo |= DO_SIMD512;
-			else if (s.equals("skein"))
-				todo |= DO_SKEIN256 | DO_SKEIN512;
-			else if (s.equals("skein224"))
-				todo |= DO_SKEIN224;
-			else if (s.equals("skein256"))
-				todo |= DO_SKEIN256;
-			else if (s.equals("skein384"))
-				todo |= DO_SKEIN384;
-			else if (s.equals("skein512"))
-				todo |= DO_SKEIN512;
-			else if (s.equals("jh"))
-				todo |= DO_JH512;
-			else if (s.equals("jh224"))
-				todo |= DO_JH224;
-			else if (s.equals("jh256"))
-				todo |= DO_JH256;
-			else if (s.equals("jh384"))
-				todo |= DO_JH384;
-			else if (s.equals("jh512"))
-				todo |= DO_JH512;
-			else if (s.equals("fugue"))
-				todo |= DO_FUGUE256 | DO_FUGUE384 | DO_FUGUE512;
-			else if (s.equals("fugue224"))
-				todo |= DO_FUGUE224;
-			else if (s.equals("fugue256"))
-				todo |= DO_FUGUE256;
-			else if (s.equals("fugue384"))
-				todo |= DO_FUGUE384;
-			else if (s.equals("fugue512"))
-				todo |= DO_FUGUE512;
-			else if (s.equals("bmw"))
-				todo |= DO_BMW256 | DO_BMW512;
-			else if (s.equals("bmw224"))
-				todo |= DO_BMW224;
-			else if (s.equals("bmw256"))
-				todo |= DO_BMW256;
-			else if (s.equals("bmw384"))
-				todo |= DO_BMW384;
-			else if (s.equals("bmw512"))
-				todo |= DO_BMW512;
-			else
-				usage(args[i]);
+			String t = (String)ALIASES.get(s);
+			if (t != null)
+				s = t;
+			if (s.equals("sha3")) {
+				int n = SHA3_CLASSES.size();
+				for (int j = 0; j < n; j ++)
+					todo.put(SHA3_CLASSES.elementAt(j), "");
+			} else {
+				String cns = (String)NAME_TO_CLASSNAMES.get(s);
+				if (cns == null)
+					usage(args[i]);
+				int n = 0;
+				for (;;) {
+					int p = cns.indexOf(',', n);
+					String cn = cns.substring(n,
+						(p < 0) ? cns.length() : p);
+					todo.put(cn, "");
+					if (p < 0) 
+						break;
+					n = p + 1;
+				}
+			}
 		}
-		if (todo == 0L)
-			todo = -1L;
-		if ((todo & DO_MD2) != 0)
-			speed("MD2", new MD2());
-		if ((todo & DO_MD4) != 0)
-			speed("MD4", new MD4());
-		if ((todo & DO_MD5) != 0)
-			speed("MD5", new MD5());
-		if ((todo & DO_SHA0) != 0)
-			speed("SHA-0", new SHA0());
-		if ((todo & DO_SHA1) != 0)
-			speed("SHA-1", new SHA1());
-		if ((todo & DO_SHA224) != 0)
-			speed("SHA-224", new SHA224());
-		if ((todo & DO_SHA256) != 0)
-			speed("SHA-256", new SHA256());
-		if ((todo & DO_SHA384) != 0)
-			speed("SHA-384", new SHA384());
-		if ((todo & DO_SHA512) != 0)
-			speed("SHA-512", new SHA512());
-		if ((todo & DO_RIPEMD) != 0)
-			speed("RIPEMD", new RIPEMD());
-		if ((todo & DO_RIPEMD128) != 0)
-			speed("RIPEMD-128", new RIPEMD128());
-		if ((todo & DO_RIPEMD160) != 0)
-			speed("RIPEMD-160", new RIPEMD160());
-		if ((todo & DO_TIGER) != 0)
-			speed("Tiger", new Tiger());
-		if ((todo & DO_TIGER2) != 0)
-			speed("Tiger2", new Tiger2());
-		if ((todo & DO_PANAMA) != 0)
-			speed("PANAMA", new PANAMA());
-		if ((todo & DO_HAVAL3) != 0)
-			speed("HAVAL[3 passes]", new HAVAL256_3());
-		if ((todo & DO_HAVAL4) != 0)
-			speed("HAVAL[4 passes]", new HAVAL256_4());
-		if ((todo & DO_HAVAL5) != 0)
-			speed("HAVAL[5 passes]", new HAVAL256_5());
-		if ((todo & DO_WHIRLPOOL) != 0)
-			speed("WHIRLPOOL", new WHIRLPOOL());
-		if ((todo & DO_SHABAL192) != 0)
-			speed("SHABAL-192", new SHABAL192());
-		if ((todo & DO_SHABAL224) != 0)
-			speed("SHABAL-224", new SHABAL224());
-		if ((todo & DO_SHABAL256) != 0)
-			speed("SHABAL-256", new SHABAL256());
-		if ((todo & DO_SHABAL384) != 0)
-			speed("SHABAL-384", new SHABAL384());
-		if ((todo & DO_SHABAL512) != 0)
-			speed("SHABAL-512", new SHABAL512());
-		if ((todo & DO_BLAKE224) != 0)
-			speed("BLAKE-224", new BLAKE224());
-		if ((todo & DO_BLAKE256) != 0)
-			speed("BLAKE-256", new BLAKE256());
-		if ((todo & DO_BLAKE384) != 0)
-			speed("BLAKE-384", new BLAKE384());
-		if ((todo & DO_BLAKE512) != 0)
-			speed("BLAKE-512", new BLAKE512());
-		if ((todo & DO_LUFFA224) != 0)
-			speed("Luffa-224", new Luffa224());
-		if ((todo & DO_LUFFA256) != 0)
-			speed("Luffa-256", new Luffa256());
-		if ((todo & DO_LUFFA384) != 0)
-			speed("Luffa-384", new Luffa384());
-		if ((todo & DO_LUFFA512) != 0)
-			speed("Luffa-512", new Luffa512());
-		if ((todo & DO_ECHO224) != 0)
-			speed("ECHO-224", new ECHO224());
-		if ((todo & DO_ECHO256) != 0)
-			speed("ECHO-256", new ECHO256());
-		if ((todo & DO_ECHO384) != 0)
-			speed("ECHO-384", new ECHO384());
-		if ((todo & DO_ECHO512) != 0)
-			speed("ECHO-512", new ECHO512());
-		if ((todo & DO_SIMD224) != 0)
-			speed("SIMD-224", new SIMD224());
-		if ((todo & DO_SIMD256) != 0)
-			speed("SIMD-256", new SIMD256());
-		if ((todo & DO_SIMD384) != 0)
-			speed("SIMD-384", new SIMD384());
-		if ((todo & DO_SIMD512) != 0)
-			speed("SIMD-512", new SIMD512());
-		if ((todo & DO_SKEIN224) != 0)
-			speed("Skein-224", new Skein224());
-		if ((todo & DO_SKEIN256) != 0)
-			speed("Skein-256", new Skein256());
-		if ((todo & DO_SKEIN384) != 0)
-			speed("Skein-384", new Skein384());
-		if ((todo & DO_SKEIN512) != 0)
-			speed("Skein-512", new Skein512());
-		if ((todo & DO_JH224) != 0)
-			speed("JH-224", new JH224());
-		if ((todo & DO_JH256) != 0)
-			speed("JH-256", new JH256());
-		if ((todo & DO_JH384) != 0)
-			speed("JH-384", new JH384());
-		if ((todo & DO_JH512) != 0)
-			speed("JH-512", new JH512());
-		if ((todo & DO_FUGUE224) != 0)
-			speed("Fugue-224", new Fugue224());
-		if ((todo & DO_FUGUE256) != 0)
-			speed("Fugue-256", new Fugue256());
-		if ((todo & DO_FUGUE384) != 0)
-			speed("Fugue-384", new Fugue384());
-		if ((todo & DO_FUGUE512) != 0)
-			speed("Fugue-512", new Fugue512());
-		if ((todo & DO_BMW224) != 0)
-			speed("BMW-224", new BMW224());
-		if ((todo & DO_BMW256) != 0)
-			speed("BMW-256", new BMW256());
-		if ((todo & DO_BMW384) != 0)
-			speed("BMW-384", new BMW384());
-		if ((todo & DO_BMW512) != 0)
-			speed("BMW-512", new BMW512());
-	}
 
-	private static final long DO_MD2        = 0x0000000000000001L;
-	private static final long DO_MD4        = 0x0000000000000002L;
-	private static final long DO_MD5        = 0x0000000000000004L;
-	private static final long DO_SHA0       = 0x0000000000000008L;
-	private static final long DO_SHA1       = 0x0000000000000010L;
-	private static final long DO_SHA224     = 0x0000000000000020L;
-	private static final long DO_SHA256     = 0x0000000000000040L;
-	private static final long DO_SHA384     = 0x0000000000000080L;
-	private static final long DO_SHA512     = 0x0000000000000100L;
-	private static final long DO_RIPEMD     = 0x0000000000000200L;
-	private static final long DO_RIPEMD128  = 0x0000000000000400L;
-	private static final long DO_RIPEMD160  = 0x0000000000000800L;
-	private static final long DO_TIGER      = 0x0000000000001000L;
-	private static final long DO_TIGER2     = 0x0000000000002000L;
-	private static final long DO_PANAMA     = 0x0000000000004000L;
-	private static final long DO_HAVAL3     = 0x0000000000008000L;
-	private static final long DO_HAVAL4     = 0x0000000000010000L;
-	private static final long DO_HAVAL5     = 0x0000000000020000L;
-	private static final long DO_WHIRLPOOL  = 0x0000000000040000L;
-	private static final long DO_SHABAL192  = 0x0000000000080000L;
-	private static final long DO_SHABAL224  = 0x0000000000100000L;
-	private static final long DO_SHABAL256  = 0x0000000000200000L;
-	private static final long DO_SHABAL384  = 0x0000000000400000L;
-	private static final long DO_SHABAL512  = 0x0000000000800000L;
-	private static final long DO_BLAKE224   = 0x0000000001000000L;
-	private static final long DO_BLAKE256   = 0x0000000002000000L;
-	private static final long DO_BLAKE384   = 0x0000000004000000L;
-	private static final long DO_BLAKE512   = 0x0000000008000000L;
-	private static final long DO_LUFFA224   = 0x0000000010000000L;
-	private static final long DO_LUFFA256   = 0x0000000020000000L;
-	private static final long DO_LUFFA384   = 0x0000000040000000L;
-	private static final long DO_LUFFA512   = 0x0000000080000000L;
-	private static final long DO_ECHO224    = 0x0000000100000000L;
-	private static final long DO_ECHO256    = 0x0000000200000000L;
-	private static final long DO_ECHO384    = 0x0000000400000000L;
-	private static final long DO_ECHO512    = 0x0000000800000000L;
-	private static final long DO_SIMD224    = 0x0000001000000000L;
-	private static final long DO_SIMD256    = 0x0000002000000000L;
-	private static final long DO_SIMD384    = 0x0000004000000000L;
-	private static final long DO_SIMD512    = 0x0000008000000000L;
-	private static final long DO_SKEIN224   = 0x0000010000000000L;
-	private static final long DO_SKEIN256   = 0x0000020000000000L;
-	private static final long DO_SKEIN384   = 0x0000040000000000L;
-	private static final long DO_SKEIN512   = 0x0000080000000000L;
-	private static final long DO_JH224      = 0x0000100000000000L;
-	private static final long DO_JH256      = 0x0000200000000000L;
-	private static final long DO_JH384      = 0x0000400000000000L;
-	private static final long DO_JH512      = 0x0000800000000000L;
-	private static final long DO_FUGUE224   = 0x0001000000000000L;
-	private static final long DO_FUGUE256   = 0x0002000000000000L;
-	private static final long DO_FUGUE384   = 0x0004000000000000L;
-	private static final long DO_FUGUE512   = 0x0008000000000000L;
-	private static final long DO_BMW224     = 0x0010000000000000L;
-	private static final long DO_BMW256     = 0x0020000000000000L;
-	private static final long DO_BMW384     = 0x0040000000000000L;
-	private static final long DO_BMW512     = 0x0080000000000000L;
+		boolean all = (todo.size() == 0);
+
+		int n = ORDERED_CLASSNAMES.size();
+		for (int i = 0; i < n; i ++) {
+			String cn = (String)ORDERED_CLASSNAMES.elementAt(i);
+			if (!all && !todo.containsKey(cn))
+				continue;
+			Digest d = (Digest)Class.forName(
+				"fr.cryptohash." + cn).newInstance();
+			speed(d.toString(), d);
+		}
+	}
 
 	private static String normalize(String name)
 	{
@@ -441,6 +238,8 @@ public class Speed {
 		byte[] buf = new byte[8192];
 		for (int i = 0; i < buf.length; i ++)
 			buf[i] = 'a';
+		int dlen = dig.getDigestLength();
+		int j = 0;
 		long num = 2L;
 		for (int clen = 16;; clen <<= 2) {
 			if (clen == 4096) {
@@ -450,7 +249,10 @@ public class Speed {
 			}
 			long tt;
 			for (;;) {
-				tt = speedUnit(dig, buf, clen, num);
+				tt = speedUnit(dig, j, buf, clen, num);
+				j += dlen;
+				if (j > (buf.length - dlen))
+					j = 0;
 				if (tt > 6000L) {
 					if (num <= 1L)
 						break;
@@ -490,13 +292,16 @@ public class Speed {
 		}
 	}
 
-	private static long speedUnit(Digest dig, byte[] buf, int len, long num)
+	private static long speedUnit(Digest dig, int j,
+		byte[] buf, int len, long num)
 	{
-		byte[] out = new byte[dig.getDigestLength()];
+		int dlen = dig.getDigestLength();
 		long orig = System.currentTimeMillis();
 		while (num -- > 0) {
 			dig.update(buf, 0, len);
-			dig.digest(out, 0, out.length);
+			dig.digest(buf, j, dlen);
+			if ((j += dlen) > (buf.length - dlen))
+				j = 0;
 		}
 		long end = System.currentTimeMillis();
 		return end - orig;

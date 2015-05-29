@@ -1,4 +1,4 @@
-/* $Id: sph_jh.h 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: sph_jh.h 216 2010-06-08 09:46:57Z tp $ */
 /**
  * JH interface. JH is a family of functions which differ by
  * their output size; this implementation defines JH for output
@@ -74,12 +74,12 @@ typedef struct {
 	unsigned char buf[64];    /* first field, for alignment */
 	size_t ptr;
 	union {
-#ifdef SPH_64
+#if SPH_64
 		sph_u64 wide[16];
 #endif
 		sph_u32 narrow[32];
 	} H;
-#ifdef SPH_64
+#if SPH_64
 	sph_u64 block_count;
 #else
 	sph_u32 block_count_high, block_count_low;

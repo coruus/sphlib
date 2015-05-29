@@ -1,4 +1,4 @@
-/* $Id: fugue.c 173 2010-05-07 15:51:12Z tp $ */
+/* $Id: fugue.c 216 2010-06-08 09:46:57Z tp $ */
 /*
  * Fugue implementation.
  *
@@ -572,6 +572,54 @@ static const sph_u32 mixtab3[] = {
 			| ((c2 ^ r3) & SPH_C32(0x000000FF)); */ \
 	} while (0)
 
+#if SPH_FUGUE_NOCOPY
+
+#define DECL_STATE_SMALL
+#define READ_STATE_SMALL(state)
+#define WRITE_STATE_SMALL(state)
+#define DECL_STATE_BIG
+#define READ_STATE_BIG(state)
+#define WRITE_STATE_BIG(state)
+
+#define S00   ((sc)->S[ 0])
+#define S01   ((sc)->S[ 1])
+#define S02   ((sc)->S[ 2])
+#define S03   ((sc)->S[ 3])
+#define S04   ((sc)->S[ 4])
+#define S05   ((sc)->S[ 5])
+#define S06   ((sc)->S[ 6])
+#define S07   ((sc)->S[ 7])
+#define S08   ((sc)->S[ 8])
+#define S09   ((sc)->S[ 9])
+#define S10   ((sc)->S[10])
+#define S11   ((sc)->S[11])
+#define S12   ((sc)->S[12])
+#define S13   ((sc)->S[13])
+#define S14   ((sc)->S[14])
+#define S15   ((sc)->S[15])
+#define S16   ((sc)->S[16])
+#define S17   ((sc)->S[17])
+#define S18   ((sc)->S[18])
+#define S19   ((sc)->S[19])
+#define S20   ((sc)->S[20])
+#define S21   ((sc)->S[21])
+#define S22   ((sc)->S[22])
+#define S23   ((sc)->S[23])
+#define S24   ((sc)->S[24])
+#define S25   ((sc)->S[25])
+#define S26   ((sc)->S[26])
+#define S27   ((sc)->S[27])
+#define S28   ((sc)->S[28])
+#define S29   ((sc)->S[29])
+#define S30   ((sc)->S[30])
+#define S31   ((sc)->S[31])
+#define S32   ((sc)->S[32])
+#define S33   ((sc)->S[33])
+#define S34   ((sc)->S[34])
+#define S35   ((sc)->S[35])
+
+#else
+
 #define DECL_STATE_SMALL \
 	sph_u32 S00, S01, S02, S03, S04, S05, S06, S07, S08, S09; \
 	sph_u32 S10, S11, S12, S13, S14, S15, S16, S17, S18, S19; \
@@ -667,6 +715,8 @@ static const sph_u32 mixtab3[] = {
 		(state)->S[35] = S35; \
 	} while (0)
 
+#endif
+
 static void
 fugue_init(sph_fugue_context *sc, size_t z_len,
 	const sph_u32 *iv, size_t iv_len)
@@ -679,7 +729,7 @@ fugue_init(sph_fugue_context *sc, size_t z_len,
 	sc->partial = 0;
 	sc->partial_len = 0;
 	sc->round_shift = 0;
-#ifdef SPH_64
+#if SPH_64
 	sc->bit_count = 0;
 #else
 	sc->bit_count_high = 0;
@@ -687,7 +737,7 @@ fugue_init(sph_fugue_context *sc, size_t z_len,
 #endif
 }
 
-#ifdef SPH_64
+#if SPH_64
 
 #define INCR_COUNTER   do { \
 		sc->bit_count += (sph_u64)len << 3; \
@@ -927,7 +977,7 @@ fugue4_core(sph_fugue_context *sc, const void *data, size_t len)
 	WRITE_STATE_BIG(sc);
 }
 
-#ifdef SPH_64
+#if SPH_64
 
 #define WRITE_COUNTER   do { \
 		sph_enc64be(buf + 4, sc->bit_count + n); \

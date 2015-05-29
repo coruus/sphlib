@@ -1,4 +1,4 @@
-// $Id: package-info.java 157 2010-04-26 19:03:44Z tp $
+// $Id: package-info.java 231 2010-06-16 21:46:06Z tp $
 
 /**
  * <p>The {@code fr.cryptohash} package contains implementations of
@@ -33,7 +33,7 @@
  * package contains the following:</p>
  * <ul>
  * <li>{@link fr.cryptohash.Digest Digest}: the common interface.</li>
- * <li>{@link fr.cryptohash.DigestEngine DigestEngin}: an abstract class
+ * <li>{@link fr.cryptohash.DigestEngine DigestEngine}: an abstract class
  * which helps with the implementation of {@link fr.cryptohash.Digest
  * Digest}; most hash function implementations in this package use that
  * base class.</li>
@@ -72,7 +72,7 @@
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 157 $
+ * @version   $Revision: 231 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 

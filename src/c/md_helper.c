@@ -1,4 +1,4 @@
-/* $Id: md_helper.c 173 2010-05-07 15:51:12Z tp $ */
+/* $Id: md_helper.c 216 2010-06-08 09:46:57Z tp $ */
 /*
  * This file contains some functions which implement the external data
  * handling and padding for Merkle-Damgard hash functions which follow
@@ -132,14 +132,14 @@ SPH_XCAT(sph_, HASH)(void *cc, const void *data, size_t len)
 	unsigned current;
 
 	sc = cc;
-#ifdef SPH_64
+#if SPH_64
 	current = (unsigned)sc->count & (SPH_BLEN - 1U);
 #else
 	current = (unsigned)sc->count_low & (SPH_BLEN - 1U);
 #endif
 	while (len > 0) {
 		unsigned clen;
-#ifndef SPH_64
+#if !SPH_64
 		sph_u32 clow, clow2;
 #endif
 
@@ -154,7 +154,7 @@ SPH_XCAT(sph_, HASH)(void *cc, const void *data, size_t len)
 			RFUN(sc->buf, SPH_VAL);
 			current = 0;
 		}
-#ifdef SPH_64
+#if SPH_64
 		sc->count += clen;
 #else
 		clow = sc->count_low;
@@ -173,7 +173,7 @@ SPH_XCAT(sph_, HASH)(void *cc, const void *data, size_t len)
 	SPH_XCAT(sph_, SPH_XCAT(HASH, _context)) *sc;
 	unsigned current;
 	size_t orig_len;
-#ifndef SPH_64
+#if !SPH_64
 	sph_u32 clow, clow2;
 #endif
 
@@ -182,7 +182,7 @@ SPH_XCAT(sph_, HASH)(void *cc, const void *data, size_t len)
 		return;
 	}
 	sc = cc;
-#ifdef SPH_64
+#if SPH_64
 	current = (unsigned)sc->count & (SPH_BLEN - 1U);
 #else
 	current = (unsigned)sc->count_low & (SPH_BLEN - 1U);
@@ -195,7 +195,7 @@ SPH_XCAT(sph_, HASH)(void *cc, const void *data, size_t len)
 		data = (const unsigned char *)data + t;
 		len -= t;
 	}
-#ifndef SPH_UNALIGNED
+#if !SPH_UNALIGNED
 	if (((SPH_UPTR)data & (SPH_WLEN - 1U)) != 0) {
 		SPH_XCAT(HASH, _short)(cc, data, len);
 		return;
@@ -209,7 +209,7 @@ SPH_XCAT(sph_, HASH)(void *cc, const void *data, size_t len)
 	}
 	if (len > 0)
 		memcpy(sc->buf, data, len);
-#ifdef SPH_64
+#if SPH_64
 	sc->count += (sph_u64)orig_len;
 #else
 	clow = sc->count_low;
@@ -241,12 +241,12 @@ SPH_XCAT(HASH, _addbits_and_close)(void *cc,
 {
 	SPH_XCAT(sph_, SPH_XCAT(HASH, _context)) *sc;
 	unsigned current, u;
-#ifndef SPH_64
+#if !SPH_64
 	sph_u32 low, high;
 #endif
 
 	sc = cc;
-#ifdef SPH_64
+#if SPH_64
 	current = (unsigned)sc->count & (SPH_BLEN - 1U);
 #else
 	current = (unsigned)sc->count_low & (SPH_BLEN - 1U);
@@ -298,7 +298,7 @@ SPH_XCAT(HASH, _addbits_and_close)(void *cc,
 	sph_enc64le_aligned(sc->buf + SPH_MAXPAD + SPH_WLEN, sc->count >> 61);
 #endif
 #else
-#ifdef SPH_64
+#if SPH_64
 #ifdef BE32
 	sph_enc64be_aligned(sc->buf + SPH_MAXPAD,
 		SPH_T64(sc->count << 3) + (sph_u64)n);

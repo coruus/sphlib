@@ -1,4 +1,4 @@
-/* $Id: sph_radiogatun.h 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: sph_radiogatun.h 226 2010-06-16 17:28:08Z tp $ */
 /**
  * RadioGatun interface.
  *
@@ -92,14 +92,7 @@ typedef struct {
 #ifndef DOXYGEN_IGNORE
 	unsigned char data[156];   /* first field, for alignment */
 	unsigned data_ptr;
-
-	sph_u32 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10;
-	sph_u32 a11, a12, a13, a14, a15, a16, a17, a18;
-	sph_u32 b0_0, b0_1, b0_2, b1_0, b1_1, b1_2, b2_0, b2_1, b2_2;
-	sph_u32 b3_0, b3_1, b3_2, b4_0, b4_1, b4_2, b5_0, b5_1, b5_2;
-	sph_u32 b6_0, b6_1, b6_2, b7_0, b7_1, b7_2, b8_0, b8_1, b8_2;
-	sph_u32 b9_0, b9_1, b9_2, b10_0, b10_1, b10_2;
-	sph_u32 b11_0, b11_1, b11_2, b12_0, b12_1, b12_2;
+	sph_u32 a[19], b[39];
 #endif
 } sph_radiogatun32_context;
 
@@ -133,7 +126,7 @@ void sph_radiogatun32(void *cc, const void *data, size_t len);
  */
 void sph_radiogatun32_close(void *cc, void *dst);
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * Output size (in bits) for RadioGatun[64].
@@ -154,14 +147,7 @@ typedef struct {
 #ifndef DOXYGEN_IGNORE
 	unsigned char data[312];   /* first field, for alignment */
 	unsigned data_ptr;
-
-	sph_u64 a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10;
-	sph_u64 a11, a12, a13, a14, a15, a16, a17, a18;
-	sph_u64 b0_0, b0_1, b0_2, b1_0, b1_1, b1_2, b2_0, b2_1, b2_2;
-	sph_u64 b3_0, b3_1, b3_2, b4_0, b4_1, b4_2, b5_0, b5_1, b5_2;
-	sph_u64 b6_0, b6_1, b6_2, b7_0, b7_1, b7_2, b8_0, b8_1, b8_2;
-	sph_u64 b9_0, b9_1, b9_2, b10_0, b10_1, b10_2;
-	sph_u64 b11_0, b11_1, b11_2, b12_0, b12_1, b12_2;
+	sph_u64 a[19], b[39];
 #endif
 } sph_radiogatun64_context;
 

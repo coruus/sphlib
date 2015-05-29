@@ -1,4 +1,4 @@
-// $Id: Tiger2.java 156 2010-04-26 17:55:11Z tp $
+// $Id: Tiger2.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
@@ -34,7 +34,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -52,5 +52,11 @@ public class Tiger2 extends TigerCore {
 	public Digest copy()
 	{
 		return copyState(new Tiger2());
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "Tiger2";
 	}
 }

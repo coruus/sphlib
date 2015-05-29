@@ -1,9 +1,9 @@
-// $Id: WHIRLPOOLCore.java 156 2010-04-26 17:55:11Z tp $
+// $Id: WhirlpoolCore.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
 /**
- * <p>This class implements the core operations for the WHIRLPOOL digest
+ * <p>This class implements the core operations for the Whirlpool digest
  * algorithm family. The three variants differ only in the tables of
  * constants which are provided to this implementation in the constructor.</p>
  *
@@ -34,16 +34,16 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
-abstract class WHIRLPOOLCore extends MDHelper {
+abstract class WhirlpoolCore extends MDHelper {
 
 	/**
 	 * Create the object.
 	 */
-	WHIRLPOOLCore(long[] T0, long[] T1, long[] T2, long[] T3,
+	WhirlpoolCore(long[] T0, long[] T1, long[] T2, long[] T3,
 		long[] T4, long[] T5, long[] T6, long[] T7, long[] RC)
 	{
 		super(false, 32);
@@ -64,7 +64,7 @@ abstract class WHIRLPOOLCore extends MDHelper {
 	private long state4, state5, state6, state7;
 
 	/** @see DigestEngine */
-	protected Digest copyState(WHIRLPOOLCore d)
+	protected Digest copyState(WhirlpoolCore d)
 	{
 		d.state0 = state0;
 		d.state1 = state1;

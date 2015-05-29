@@ -1,4 +1,4 @@
-/* $Id: sph_skein.h 145 2010-04-05 22:29:59Z tp $ */
+/* $Id: sph_skein.h 216 2010-06-08 09:46:57Z tp $ */
 /**
  * Skein interface. There are three main Skein functions, which the
  * Skein specification calls, respectively, Skein-256, Skein-512 and
@@ -44,7 +44,7 @@
 #include <stddef.h>
 #include "sph_types.h"
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * Output size (in bits) for Skein-224.

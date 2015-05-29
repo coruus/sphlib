@@ -1,4 +1,4 @@
-/* $Id: luffa.c 173 2010-05-07 15:51:12Z tp $ */
+/* $Id: luffa.c 219 2010-06-08 17:24:41Z tp $ */
 /*
  * Luffa implementation.
  *
@@ -36,7 +36,7 @@
 
 #include "sph_luffa.h"
 
-#if defined SPH_64_TRUE && !defined SPH_LUFFA_PARALLEL
+#if SPH_64_TRUE && !defined SPH_LUFFA_PARALLEL
 #define SPH_LUFFA_PARALLEL   1
 #endif
 
@@ -179,101 +179,6 @@ static const sph_u32 RC44[8] = {
 	SPH_C32(0x29131ab6), SPH_C32(0x0fc053c3),
 	SPH_C32(0x3f014f0c), SPH_C32(0xfc053c31)
 };
-
-#if 0
-/* obsolete */
-
-#define RC000   SPH_C32(0x303994a6)
-#define RC001   SPH_C32(0xc0e65299)
-#define RC002   SPH_C32(0x6cc33a12)
-#define RC003   SPH_C32(0xdc56983e)
-#define RC004   SPH_C32(0x1e00108f)
-#define RC005   SPH_C32(0x7800423d)
-#define RC006   SPH_C32(0x8f5b7882)
-#define RC007   SPH_C32(0x96e1db12)
-
-#define RC040   SPH_C32(0xe0337818)
-#define RC041   SPH_C32(0x441ba90d)
-#define RC042   SPH_C32(0x7f34d442)
-#define RC043   SPH_C32(0x9389217f)
-#define RC044   SPH_C32(0xe5a8bce6)
-#define RC045   SPH_C32(0x5274baf4)
-#define RC046   SPH_C32(0x26889ba7)
-#define RC047   SPH_C32(0x9a226e9d)
-
-#define RC100   SPH_C32(0xb6de10ed)
-#define RC101   SPH_C32(0x70f47aae)
-#define RC102   SPH_C32(0x0707a3d4)
-#define RC103   SPH_C32(0x1c1e8f51)
-#define RC104   SPH_C32(0x707a3d45)
-#define RC105   SPH_C32(0xaeb28562)
-#define RC106   SPH_C32(0xbaca1589)
-#define RC107   SPH_C32(0x40a46f3e)
-
-#define RC140   SPH_C32(0x01685f3d)
-#define RC141   SPH_C32(0x05a17cf4)
-#define RC142   SPH_C32(0xbd09caca)
-#define RC143   SPH_C32(0xf4272b28)
-#define RC144   SPH_C32(0x144ae5cc)
-#define RC145   SPH_C32(0xfaa7ae2b)
-#define RC146   SPH_C32(0x2e48f1c1)
-#define RC147   SPH_C32(0xb923c704)
-
-#define RC200   SPH_C32(0xfc20d9d2)
-#define RC201   SPH_C32(0x34552e25)
-#define RC202   SPH_C32(0x7ad8818f)
-#define RC203   SPH_C32(0x8438764a)
-#define RC204   SPH_C32(0xbb6de032)
-#define RC205   SPH_C32(0xedb780c8)
-#define RC206   SPH_C32(0xd9847356)
-#define RC207   SPH_C32(0xa2c78434)
-
-#define RC240   SPH_C32(0xe25e72c1)
-#define RC241   SPH_C32(0xe623bb72)
-#define RC242   SPH_C32(0x5c58a4a4)
-#define RC243   SPH_C32(0x1e38e2e7)
-#define RC244   SPH_C32(0x78e38b9d)
-#define RC245   SPH_C32(0x27586719)
-#define RC246   SPH_C32(0x36eda57f)
-#define RC247   SPH_C32(0x703aace7)
-
-#define RC300   SPH_C32(0xb213afa5)
-#define RC301   SPH_C32(0xc84ebe95)
-#define RC302   SPH_C32(0x4e608a22)
-#define RC303   SPH_C32(0x56d858fe)
-#define RC304   SPH_C32(0x343b138f)
-#define RC305   SPH_C32(0xd0ec4e3d)
-#define RC306   SPH_C32(0x2ceb4882)
-#define RC307   SPH_C32(0xb3ad2208)
-
-#define RC340   SPH_C32(0xe028c9bf)
-#define RC341   SPH_C32(0x44756f91)
-#define RC342   SPH_C32(0x7e8fce32)
-#define RC343   SPH_C32(0x956548be)
-#define RC344   SPH_C32(0xfe191be2)
-#define RC345   SPH_C32(0x3cb226e5)
-#define RC346   SPH_C32(0x5944a28e)
-#define RC347   SPH_C32(0xa1c4c355)
-
-#define RC400   SPH_C32(0xf0d2e9e3)
-#define RC401   SPH_C32(0xac11d7fa)
-#define RC402   SPH_C32(0x1bcb66f2)
-#define RC403   SPH_C32(0x6f2d9bc9)
-#define RC404   SPH_C32(0x78602649)
-#define RC405   SPH_C32(0x8edae952)
-#define RC406   SPH_C32(0x3b6ba548)
-#define RC407   SPH_C32(0xedae9520)
-
-#define RC440   SPH_C32(0x5090d577)
-#define RC441   SPH_C32(0x2d1925ab)
-#define RC442   SPH_C32(0xb46496ac)
-#define RC443   SPH_C32(0xd1925ab0)
-#define RC444   SPH_C32(0x29131ab6)
-#define RC445   SPH_C32(0x0fc053c3)
-#define RC446   SPH_C32(0x3f014f0c)
-#define RC447   SPH_C32(0xfc053c31)
-
-#endif
 
 #define DECL_TMP8(w) \
 	sph_u32 w ## 0, w ## 1, w ## 2, w ## 3, w ## 4, w ## 5, w ## 6, w ## 7;
@@ -583,50 +488,6 @@ static const sph_u32 RC44[8] = {
 
 #endif
 
-#if 0
-/* obsolete */
-
-#define P3STEP(r)   do { \
-		SUB_CRUMB(V00, V01, V02, V03); \
-		SUB_CRUMB(V05, V06, V07, V04); \
-		MIX_WORD(V00, V04); \
-		MIX_WORD(V01, V05); \
-		MIX_WORD(V02, V06); \
-		MIX_WORD(V03, V07); \
-		V00 ^= RC00 ## r; \
-		V04 ^= RC04 ## r; \
-		SUB_CRUMB(V10, V11, V12, V13); \
-		SUB_CRUMB(V15, V16, V17, V14); \
-		MIX_WORD(V10, V14); \
-		MIX_WORD(V11, V15); \
-		MIX_WORD(V12, V16); \
-		MIX_WORD(V13, V17); \
-		V10 ^= RC10 ## r; \
-		V14 ^= RC14 ## r; \
-		SUB_CRUMB(V20, V21, V22, V23); \
-		SUB_CRUMB(V25, V26, V27, V24); \
-		MIX_WORD(V20, V24); \
-		MIX_WORD(V21, V25); \
-		MIX_WORD(V22, V26); \
-		MIX_WORD(V23, V27); \
-		V20 ^= RC20 ## r; \
-		V24 ^= RC24 ## r; \
-	} while (0)
-
-#define P3   do { \
-		TWEAK3; \
-		P3STEP(0); \
-		P3STEP(1); \
-		P3STEP(2); \
-		P3STEP(3); \
-		P3STEP(4); \
-		P3STEP(5); \
-		P3STEP(6); \
-		P3STEP(7); \
-	} while (0)
-
-#endif
-
 #define DECL_STATE4 \
 	sph_u32 V00, V01, V02, V03, V04, V05, V06, V07; \
 	sph_u32 V10, V11, V12, V13, V14, V15, V16, V17; \
@@ -876,58 +737,6 @@ static const sph_u32 RC44[8] = {
 			V30 ^= RC30[r]; \
 			V34 ^= RC34[r]; \
 		} \
-	} while (0)
-
-#endif
-
-#if 0
-/* obsolete */
-
-#define P4STEP(r)   do { \
-		SUB_CRUMB(V00, V01, V02, V03); \
-		SUB_CRUMB(V05, V06, V07, V04); \
-		MIX_WORD(V00, V04); \
-		MIX_WORD(V01, V05); \
-		MIX_WORD(V02, V06); \
-		MIX_WORD(V03, V07); \
-		V00 ^= RC00 ## r; \
-		V04 ^= RC04 ## r; \
-		SUB_CRUMB(V10, V11, V12, V13); \
-		SUB_CRUMB(V15, V16, V17, V14); \
-		MIX_WORD(V10, V14); \
-		MIX_WORD(V11, V15); \
-		MIX_WORD(V12, V16); \
-		MIX_WORD(V13, V17); \
-		V10 ^= RC10 ## r; \
-		V14 ^= RC14 ## r; \
-		SUB_CRUMB(V20, V21, V22, V23); \
-		SUB_CRUMB(V25, V26, V27, V24); \
-		MIX_WORD(V20, V24); \
-		MIX_WORD(V21, V25); \
-		MIX_WORD(V22, V26); \
-		MIX_WORD(V23, V27); \
-		V20 ^= RC20 ## r; \
-		V24 ^= RC24 ## r; \
-		SUB_CRUMB(V30, V31, V32, V33); \
-		SUB_CRUMB(V35, V36, V37, V34); \
-		MIX_WORD(V30, V34); \
-		MIX_WORD(V31, V35); \
-		MIX_WORD(V32, V36); \
-		MIX_WORD(V33, V37); \
-		V30 ^= RC30 ## r; \
-		V34 ^= RC34 ## r; \
-	} while (0)
-
-#define P4   do { \
-		TWEAK4; \
-		P4STEP(0); \
-		P4STEP(1); \
-		P4STEP(2); \
-		P4STEP(3); \
-		P4STEP(4); \
-		P4STEP(5); \
-		P4STEP(6); \
-		P4STEP(7); \
 	} while (0)
 
 #endif
@@ -1238,66 +1047,6 @@ static const sph_u32 RC44[8] = {
 			V40 ^= RC40[r]; \
 			V44 ^= RC44[r]; \
 		} \
-	} while (0)
-
-#endif
-
-#if 0
-/* obsolete */
-
-#define P5STEP(r)   do { \
-		SUB_CRUMB(V00, V01, V02, V03); \
-		SUB_CRUMB(V05, V06, V07, V04); \
-		MIX_WORD(V00, V04); \
-		MIX_WORD(V01, V05); \
-		MIX_WORD(V02, V06); \
-		MIX_WORD(V03, V07); \
-		V00 ^= RC00 ## r; \
-		V04 ^= RC04 ## r; \
-		SUB_CRUMB(V10, V11, V12, V13); \
-		SUB_CRUMB(V15, V16, V17, V14); \
-		MIX_WORD(V10, V14); \
-		MIX_WORD(V11, V15); \
-		MIX_WORD(V12, V16); \
-		MIX_WORD(V13, V17); \
-		V10 ^= RC10 ## r; \
-		V14 ^= RC14 ## r; \
-		SUB_CRUMB(V20, V21, V22, V23); \
-		SUB_CRUMB(V25, V26, V27, V24); \
-		MIX_WORD(V20, V24); \
-		MIX_WORD(V21, V25); \
-		MIX_WORD(V22, V26); \
-		MIX_WORD(V23, V27); \
-		V20 ^= RC20 ## r; \
-		V24 ^= RC24 ## r; \
-		SUB_CRUMB(V30, V31, V32, V33); \
-		SUB_CRUMB(V35, V36, V37, V34); \
-		MIX_WORD(V30, V34); \
-		MIX_WORD(V31, V35); \
-		MIX_WORD(V32, V36); \
-		MIX_WORD(V33, V37); \
-		V30 ^= RC30 ## r; \
-		V34 ^= RC34 ## r; \
-		SUB_CRUMB(V40, V41, V42, V43); \
-		SUB_CRUMB(V45, V46, V47, V44); \
-		MIX_WORD(V40, V44); \
-		MIX_WORD(V41, V45); \
-		MIX_WORD(V42, V46); \
-		MIX_WORD(V43, V47); \
-		V40 ^= RC40 ## r; \
-		V44 ^= RC44 ## r; \
-	} while (0)
-
-#define P5   do { \
-		TWEAK5; \
-		P5STEP(0); \
-		P5STEP(1); \
-		P5STEP(2); \
-		P5STEP(3); \
-		P5STEP(4); \
-		P5STEP(5); \
-		P5STEP(6); \
-		P5STEP(7); \
 	} while (0)
 
 #endif

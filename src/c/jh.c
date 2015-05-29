@@ -1,4 +1,4 @@
-/* $Id: jh.c 173 2010-05-07 15:51:12Z tp $ */
+/* $Id: jh.c 227 2010-06-16 17:28:38Z tp $ */
 /*
  * JH implementation.
  *
@@ -35,15 +35,15 @@
 
 #include "sph_jh.h"
 
-#if defined SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_JH
+#if SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_JH
 #define SPH_SMALL_FOOTPRINT_JH   1
 #endif
 
-#if !defined SPH_JH_64 && defined SPH_64_TRUE
+#if !defined SPH_JH_64 && SPH_64_TRUE
 #define SPH_JH_64   1
 #endif
 
-#if !defined SPH_64
+#if !SPH_64
 #undef SPH_JH_64
 #endif
 
@@ -60,7 +60,7 @@
  * byte-swapping macros for that.
  */
 
-#ifdef SPH_LITTLE_ENDIAN
+#if SPH_LITTLE_ENDIAN
 
 #define C32e(x)     ((SPH_C32(x) >> 24) \
                     | ((SPH_C32(x) >>  8) & SPH_C32(0x0000FF00)) \
@@ -69,7 +69,7 @@
 #define dec32e_aligned   sph_dec32le_aligned
 #define enc32e           sph_enc32le
 
-#ifdef SPH_64
+#if SPH_64
 #define C64e(x)     ((SPH_C64(x) >> 56) \
                     | ((SPH_C64(x) >> 40) & SPH_C64(0x000000000000FF00)) \
                     | ((SPH_C64(x) >> 24) & SPH_C64(0x0000000000FF0000)) \
@@ -87,7 +87,7 @@
 #define C32e(x)     SPH_C32(x)
 #define dec32e_aligned   sph_dec32be_aligned
 #define enc32e           sph_enc32be
-#ifdef SPH_64
+#if SPH_64
 #define C64e(x)     SPH_C64(x)
 #define dec64e_aligned   sph_dec64be_aligned
 #define enc64e           sph_enc64be
@@ -877,7 +877,7 @@ jh_init(sph_jh_context *sc, const void *iv)
 #else
 	memcpy(sc->H.narrow, iv, sizeof sc->H.narrow);
 #endif
-#ifdef SPH_64
+#if SPH_64
 	sc->block_count = 0;
 #else
 	sc->block_count_high = 0;
@@ -916,7 +916,7 @@ jh_core(sph_jh_context *sc, const void *data, size_t len)
 			INPUT_BUF1;
 			E8;
 			INPUT_BUF2;
-#ifdef SPH_64
+#if SPH_64
 			sc->block_count ++;
 #else
 			if ((sc->block_count_low = SPH_T32(
@@ -937,7 +937,7 @@ jh_close(sph_jh_context *sc, unsigned ub, unsigned n,
 	unsigned z;
 	unsigned char buf[128];
 	size_t numz, u;
-#ifdef SPH_64
+#if SPH_64
 	sph_u64 l0, l1;
 #else
 	sph_u32 l0, l1, l2, l3;
@@ -951,7 +951,7 @@ jh_close(sph_jh_context *sc, unsigned ub, unsigned n,
 		numz = 111 - sc->ptr;
 	}
 	memset(buf + 1, 0, numz);
-#ifdef SPH_64
+#if SPH_64
 	l0 = SPH_T64(sc->block_count << 9) + (sc->ptr << 3) + n;
 	l1 = SPH_T64(sc->block_count >> 55);
 	sph_enc64be(buf + numz + 1, l1);

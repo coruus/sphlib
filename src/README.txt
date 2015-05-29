@@ -1,4 +1,4 @@
-sphlib 2.0
+sphlib 2.1
 ==========
 
 Overview
@@ -9,7 +9,7 @@ and in Java. The C code is meant to be easily imported into other
 projects, in particular embedded systems. The Java code implements
 an API somewhat similar to that of java.security.MessageDigest.
 
-The C source code provides also two standalone tools:
+The C source code also provides two standalone tools:
 - sphspeed   performs speed tests on various hash functions
 - sphsum     computes and verifies checksums over files
 
@@ -40,7 +40,8 @@ new additional members:
 - Sagem Securite
 - INRIA
 - UVSQ
-We use the "Projet RNRT SAPHIR" to designate both SAPHIR and SAPHIR2.
+We use the "Projet RNRT SAPHIR" expression to designate both SAPHIR and
+SAPHIR2.
 
 All the actual code has been written by:
 
@@ -59,6 +60,32 @@ was generated from the comments in the source code with, respectively,
 doxygen and javadoc.
 
 
+Conformance
+===========
+
+The hash functions have been implemented with regards to their
+published specification. Whenever possible, the correction of the
+implementation has been verified with regards to published test
+vectors. Some functions have several variants; for instance, there
+are three distinct "Whirlpool" which sphlib implements, under the
+names "Whirlpool-0", "Whirlpool-1" and "Whirlpool".
+
+For the SHA-3 candidates, sphlib follows the "round 2" specifications,
+thus including the "tweaks" that some of the candidates added right
+after round 1. For some of those functions, the officially submitted
+code and test vectors turned out to be flawed (non conforming to the
+specification), and corrections were published by their authors; sphlib
+follows the specification and agrees with those corrected versions.
+
+For two of the SHA-3 candidates (Hamsi and SHAvite-3), the most
+recently published specifications (as of June 18th, 2010) have some
+flaws which do not alter the function robustness or performance, but
+still mean that some or all of the published implementations and test
+vectors are wrong. The respective designers of those functions are
+aware of those flaws and intend to publish corrections for round 3.
+sphlib anticipates on those corrections and already implements them.
+
+
 Installation (C code)
 =====================
 
@@ -66,7 +93,7 @@ The c/ subdirectory contain the C code. In that directory, there are two
 Makefiles and a build shell script. The shell script, named "build.sh",
 is for Unix-like systems.
 
-sphlib does not feature a "proper" compilation and configuration systems
+sphlib does not feature a "proper" compilation and configuration system
 such as those customarily found in open-source libraries for Unix
 systems. This may be corrected in a future version. Right now, I am not
 utterly convinced that the autoconf-generated scripts are the "way to
@@ -80,18 +107,18 @@ All systems
 
 By default, sphlib compiles for "big" architectures, using heavy loop
 unrolling. This is what provides the best performance on modern PC,
-workstations, servers, and about any architecture where is the level-1
+workstations, servers, and about any architecture where the level-1
 cache for instruction (in the CPU) has size 32 kB or more.
 
 However, sphlib also includes variants optimized for architectures with
 small level-1 cache. To use them, arrange for the SPH_SMALL_FOOTPRINT
-macro to be defined during compilation, e.g. through the arguments
-passed to the C compiler by the build script. These variants have been
-tested on a MIPS-compatible processor with 8 kB of level-1 cache, and
-they offer much better performance than the normal code on those
-architectures. In some specific situations, you might want to use these
-"small footprint" variants on big computers as well; test and measure
-speed if unsure.
+macro to be defined (to a non-zero integer value) during compilation,
+e.g. through the arguments passed to the C compiler by the build script.
+These variants have been tested on a MIPS-compatible processor with 8 kB
+of level-1 cache, and they offer much better performance than the normal
+code on those architectures. In some specific situations, you might want
+to use these "small footprint" variants on big computers as well; test
+and measure speed if unsure.
 
 
 Unix systems
@@ -136,7 +163,7 @@ change the compilation options. For instance:
 This selects options for position-independant code, i.e. suitable for a
 shared object, and tuned for maximum performance on Ahtlon64-type
 processors. It has been noticed that "-O1" provides better performance
-than "-O2" with recent versions (4.4.1) of GCC, although "-O2" yields
+than "-O2" with recent versions (4.4.3) of GCC, although "-O2" yields
 better code for some of the hash functions.
 
 A realistic example of cross-compilation for a MIPS-compatible
@@ -206,11 +233,16 @@ implemented SHA-3 candidates:
 
   blake         BLAKE
   bmw           Blue Midnight Wish
+  cubehash      CubeHash
   echo          ECHO
   fugue         Fugue
+  groestl       Groestl
+  hamsi         Hamsi
   jh            JH
+  keccak        Keccak
   luffa         Luffa
   shabal        Shabal
+  shavite       SHAvite-3
   simd          SIMD
   skein         Skein
 
@@ -227,8 +259,8 @@ Windows
 -------
 
 On Windows systems, you may use the Makefile.win32 file. This is meant
-for Visual C 2005 (command-line compiler). Open a "Visual C console"
-from the start menu (this is a standard text console with the
+for Visual C 2005 or later (command-line compiler). Open a "Visual C
+console" from the start menu (this is a standard text console with the
 environment set up for using cl.exe). Type:
 
 	nmake /f makefile.win32
@@ -264,8 +296,10 @@ note the following:
     md_helper.c file MUST NOT be compiled by itself: it is a helper
     file which is _included_ by, for instance, md5.c. Just drop it in
     the same directory.
-  * Similarly, the HAVAL implementation (haval.c) includes the
-    haval_helper.c file.
+  * Similarly:
+    - HAVAL (haval.c) includes haval_helper.c
+    - ECHO (echo.c) and SHAvite-3 (shavite.c) include aes_helper.c
+    - Hamsi (hamsi.c) includes hamsi_helper.c
   * sha2.c is for SHA-224 and SHA-256. sha2big.c is for SHA-384 and SHA-512.
   * speed.c and hsum.c are the main files for, respectively, the sphspeed
     and sphsum command-line utilities.
@@ -280,6 +314,120 @@ note the following:
 
 Most of the "magic" happens in sph_types.h. This is where one may find
 such things as inline assembly for faster little/big-endian word access.
+
+
+Tuning
+------
+
+The C code tries to detect (through predefined macros) the kind of
+architecture on which it is supposed to run. This information can be
+used to speed up some operations, in particular decoding and encoding of
+32-bit and 64-bit words. When the current architecture cannot be
+detected, sphlib uses some generic code which always works but is
+somewhat slower. The speed gain obtained through architecture specific
+code can reach +30% on the fastest functions (less on the slower
+functions).
+
+Most of the C macros which govern that behaviour are boolean flags. To
+explicitly enable the feature, define the macro to a non-zero integer
+value, e.g. with '-DSPH_LITTLE_ENDIAN=1' (for most C compilers, defining
+the macro without an explicit content, with '-DSPH_LITTLE_ENDIAN', has
+the same effect). To explicitly disable the feature, define the macro to
+a zero integer value: '-DSPH_LITTLE_ENDIAN=0'. If a feature is not
+explicitly enabled or disabled, then sph_types.h will try to autodetect
+its status.
+
+The following flags are defined:
+
+SPH_LITTLE_ENDIAN
+   When non-zero, sphlib assumes that its 32-bit-or-more integer type
+   (respectively 64-bit-or-more integer type) has size _exactly_ 32 bits
+   (respectively 64 bits), and is encoded in RAM with the little-endian
+   convention.
+
+SPH_BIG_ENDIAN
+   Similar to SPH_LITTLE_ENDIAN, but with the big-endian convention.
+
+SPH_LITTLE_FAST
+   When non-zero, little-endian decoding is assumed to be fast: some
+   functions will thus omit caching decoded words in local variables.
+   This is normally implied by SPH_LITTLE_ENDIAN.
+
+SPH_BIG_FAST
+   Similar to SPH_LITTLE_FAST, but with big-endian convention.
+
+SPH_UNALIGNED
+   The processor tolerates unaligned 32-bit or 64-bit accesses with
+   only a slight timing penalty.
+
+SPH_SPARCV9_GCC_32
+   The target architecture is an UltraSPARC-compatible processor, used
+   in 32-bit mode, and the compiler is GCC.
+
+SPH_SPARCV9_GCC_64
+   The target architecture is an UltraSPARC-compatible processor, used
+   in 64-bit mode, and the compiler is GCC.
+
+SPH_SPARCV9_GCC
+   The target architecture is an UltraSPARC-compatible processor, used
+   in 32-bit or 64-bit mode, and the compiler is GCC.
+
+SPH_I386_GCC
+   The target architecture is an x86-compatible processor, used in
+   32-bit mode, and the compiler is GCC.
+
+SPH_I386_MSVC
+   The target architecture is an x86-compatible processor, used in
+   32-bit mode, and the compiler is Microsoft Visual C.
+
+SPH_AMD64_GCC
+   The target architecture is an x86-compatible processor, used in
+   64-bit mode, and the compiler is GCC.
+
+SPH_AMD64_MSVC
+   The target architecture is an x86-compatible processor, used in
+   64-bit mode, and the compiler is Microsoft Visual C.
+
+SPH_SMALL_FOOTPRINT
+   When non-zero, "small footprint" variants are compiled. The code
+   is less unrolled, resulting in more compact binary code, at the
+   expense of extra indirections. This macro is never auto-detected.
+   You should use it when the target architecture level-1 cache for
+   instructions is strictly smaller than 32 kB.
+
+   There are also function-specific "small footprint" flags, which can
+   be used to enable or disable "small footprint" variants for each
+   function independently (the function-specific flag takes precedence
+   over SPH_SMALL_FOOTPRINT when both are defined). These flags are:
+
+     SPH_SMALL_FOOTPRINT_BLAKE      (for BLAKE)
+     SPH_SMALL_FOOTPRINT_BMW        (for Blue Midnight Wish)
+     SPH_SMALL_FOOTPRINT_CUBEHASH   (for CubeHash)
+     SPH_SMALL_FOOTPRINT_ECHO       (for ECHO)
+     SPH_SMALL_FOOTPRINT_GROESTL    (for Groestl)
+     SPH_SMALL_FOOTPRINT_HAMSI      (for Hamsi)
+     SPH_SMALL_FOOTPRINT_HAVAL      (for HAVAL)
+     SPH_SMALL_FOOTPRINT_JH         (for JH)
+     SPH_SMALL_FOOTPRINT_KECCAK     (for Keccak)
+     SPH_SMALL_FOOTPRINT_SHA2       (for SHA-224, SHA-256, SHA-384 and SHA-512)
+     SPH_SMALL_FOOTPRINT_SHAVITE    (for SHAvite-3)
+     SPH_SMALL_FOOTPRINT_SIMD       (for SIMD)
+     SPH_SMALL_FOOTPRINT_SKEIN      (for Skein)
+     SPH_SMALL_FOOTPRINT_WHIRLPOOL  (for Whirlpool)
+
+Another additional macro is SPH_UPTR. This is not a boolean flag; when
+defined, it must evaluate to an unsigned integer type which has the same
+size as a pointer. When casting a C pointer to SPH_UPTR and back, the
+original pointer must be recovered, and it must be possible to determine
+the pointer alignment by looking at the least significant bits of its
+value when cast to a SPH_UPTR. SPH_UPTR cannot be defined unless either
+SPH_LITTLE_ENDIAN or SPH_BIG_ENDIAN is also defined (explicitly or
+auto-detected). If unsure, leave undefined; it has no influence over
+performance of most of the implemented functions.
+
+The "test_types" binary (built as part of the unit tests) prints out,
+when executed, a synthetic report on what architecture characteristics
+were actually used.
 
 
 Installation (Java code)
@@ -298,7 +446,7 @@ that these tests cannot access the CPU usage by the test process;
 instead, they use the "wall clock" time. Hence, speed tests should be
 performed on an otherwise idle machine.
 
-The Java code should be compatible both with older virtual machine
+The Java code should be compatible both with older virtual machines
 (e.g. Java 1.1) and with J2ME platforms.
 
 #######################################################################
@@ -328,27 +476,27 @@ historical. Here, we talk about the SHA-3 contest which was launched in
 become an american standard, as substitutes for the existing SHA-224,
 SHA-256, SHA-384 and SHA-512 functions. Many candidate functions have
 been submitted so far. The competition has reached its second round, in
-which 14 candidates have been kept. sphlib currently implements 9 out of
-those 14 functions.
+which 14 candidates have been kept. sphlib currently implements those
+14 candidates.
 
 For the purposes of this competition, the NIST published a C API. All
 candidates were asked to provide reference and optimized implementations
 fitting in that API.
 
-The basic sphlib API is different from the NIST API. However, a
+The basic sphlib API is distinct from the NIST API. However, a
 compatibility layer has been added to sphlib-1.1. It consists in the
 sha3nist.c and sha3nist.h source files. With these files, you may use
 some of the sphlib implementations through an API conforming to the NIST
-specification. Namely, you may select either the SHA-2 family, or any
-of the implemented SHA-3 candidates.
+specification. Namely, you may select either the SHA-2 family, or any of
+the implemented SHA-3 candidates.
 
 To use that layer, modify sha3nist.h to designate the hash functions
 you wish to use. By default, the SHA-224/... functions are used. To
-use SHABAL instead, replace the following line:
+use Shabal instead, replace the following line:
 
    #define SPH_NIST   sha
 
-by this:
+with this:
 
    #define SPH_NIST   shabal
 
@@ -361,9 +509,6 @@ Future work
 ===========
 
 Future versions of sphlib may feature:
-- other hash functions; in particular, the five remaining second-round
-SHA-3 candidates _will_ be implemented before the second SHA-3 candidate
-conference (scheduled on August 23-24, 2010)
 - options for better conditional inclusion (e.g. not compiling RIPEMD if
 you only want RIPEMD-160)
 - optimized versions for footprint-constrained environments (which should
@@ -376,6 +521,18 @@ standalone tools
 
 Change log
 ==========
+
+** new in sphlib-2.1
+   - Added implementations of CubeHash, Groestl, Hamsi, Keccak and
+     SHAvite-3 (C and Java)
+   - Added Java implementations for RadioGatun
+   - Optimized RadioGatun on small architectures and 32-bit x86
+   - Made "size-generic" Java implementation of Shabal (supports all
+     output sizes multiple of 32, from 32 to 512 bits)
+   - Added macros for explicit architecture feature activation or
+     deactivation
+   - Renamed SHABAL -> Shabal, and WHIRLPOOL -> Whirlpool
+   - Fixed some bugs on exotic architectures
 
 ** new in sphlib-2.0
    - Added implementations of BLAKE, Blue Midnight Wish, ECHO, Fugue,

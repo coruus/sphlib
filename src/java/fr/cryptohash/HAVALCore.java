@@ -1,4 +1,4 @@
-// $Id: HAVALCore.java 156 2010-04-26 17:55:11Z tp $
+// $Id: HAVALCore.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
@@ -33,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -861,5 +861,11 @@ abstract class HAVALCore extends DigestEngine {
 			write256(out, off);
 			break;
 		}
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "HAVAL-" + passes + "-" + (olen << 5);
 	}
 }

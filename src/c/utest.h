@@ -1,4 +1,4 @@
-/* $Id: utest.h 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: utest.h 192 2010-05-25 22:33:34Z tp $ */
 /**
  * Functions for unit tests.
  *
@@ -125,5 +125,15 @@ int main(void) \
 	utest_success(); \
 	return 0; \
 }
+
+/**
+ * Get a pointer to one of the NIST short messages, defined for the SHA-3
+ * test vectors. Those messages are indexed by bit length, from 0 to
+ * 2047, inclusive.
+ *
+ * @param blen   the message length (in bits)
+ * @return  the test message
+ */
+const void *utest_nist_data(unsigned blen);
 
 #endif

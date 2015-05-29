@@ -1,4 +1,4 @@
-/* $Id: sph_fugue.h 158 2010-04-29 20:31:49Z tp $ */
+/* $Id: sph_fugue.h 216 2010-06-08 09:46:57Z tp $ */
 /**
  * Fugue interface. Fugue is a family of functions which differ by
  * their output size; this implementation defines Fugue for output
@@ -75,7 +75,7 @@ typedef struct {
 	unsigned partial_len;
 	unsigned round_shift;
 	sph_u32 S[36];
-#ifdef SPH_64
+#if SPH_64
 	sph_u64 bit_count;
 #else
 	sph_u32 bit_count_high, bit_count_low;

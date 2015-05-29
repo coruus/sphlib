@@ -1,4 +1,4 @@
-/* $Id: sph_blake.h 160 2010-05-02 04:34:15Z tp $ */
+/* $Id: sph_blake.h 216 2010-06-08 09:46:57Z tp $ */
 /**
  * BLAKE interface. BLAKE is a family of functions which differ by their
  * output size; this implementation defines BLAKE for output sizes 224,
@@ -53,7 +53,7 @@
  */
 #define SPH_SIZE_blake256   256
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * Output size (in bits) for BLAKE-384.
@@ -99,7 +99,7 @@ typedef sph_blake_small_context sph_blake224_context;
  */
 typedef sph_blake_small_context sph_blake256_context;
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * This structure is a context for BLAKE-384 and BLAKE-512 computations:
@@ -225,7 +225,7 @@ void sph_blake256_close(void *cc, void *dst);
 void sph_blake256_addbits_and_close(
 	void *cc, unsigned ub, unsigned n, void *dst);
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * Initialize a BLAKE-384 context. This process performs no memory allocation.

@@ -1,4 +1,4 @@
-// $Id: RIPEMD128.java 156 2010-04-26 17:55:11Z tp $
+// $Id: RIPEMD128.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
@@ -33,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -329,5 +329,11 @@ public class RIPEMD128 extends MDHelper {
 		currentVal[2] = H3 + A1 + B2;
 		currentVal[3] = H0 + B1 + C2;
 		currentVal[0] = T;
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "RIPEMD-128";
 	}
 }

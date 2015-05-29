@@ -1,4 +1,4 @@
-// $Id: PANAMA.java 156 2010-04-26 17:55:11Z tp $
+// $Id: PANAMA.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
@@ -33,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -342,5 +342,11 @@ public class PANAMA extends DigestEngine {
 		state14 = t14 ^ buffer[ptr16 + 5];
 		state15 = t15 ^ buffer[ptr16 + 6];
 		state16 = t16 ^ buffer[ptr16 + 7];
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "PANAMA";
 	}
 }

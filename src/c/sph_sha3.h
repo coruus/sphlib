@@ -1,4 +1,4 @@
-/* $Id: sph_sha3.h 160 2010-05-02 04:34:15Z tp $ */
+/* $Id: sph_sha3.h 208 2010-06-02 20:33:00Z tp $ */
 /**
  * SHA-3 is the colloquial codename for the future standard hash function
  * from NIST. SHA-3 will be "API compatible" (same range of output sizes)
@@ -44,11 +44,16 @@
 
 #include "sph_blake.h"
 #include "sph_bmw.h"
+#include "sph_cubehash.h"
 #include "sph_echo.h"
 #include "sph_fugue.h"
+#include "sph_groestl.h"
+#include "sph_hamsi.h"
 #include "sph_jh.h"
+#include "sph_keccak.h"
 #include "sph_luffa.h"
 #include "sph_shabal.h"
+#include "sph_shavite.h"
 #include "sph_simd.h"
 #include "sph_skein.h"
 

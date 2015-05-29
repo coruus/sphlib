@@ -1,4 +1,4 @@
-/* $Id: whirlpool.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: whirlpool.c 227 2010-06-16 17:28:38Z tp $ */
 /*
  * WHIRLPOOL implementation.
  *
@@ -51,9 +51,9 @@
 
 #include "sph_whirlpool.h"
 
-#ifdef SPH_64
+#if SPH_64
 
-#if defined SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_WHIRLPOOL
+#if SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_WHIRLPOOL
 #define SPH_SMALL_FOOTPRINT_WHIRLPOOL   1
 #endif
 
@@ -193,7 +193,7 @@ static const sph_u64 plain_T0[256] = {
 	SPH_C64(0x6BED3F93F8C7F8F8), SPH_C64(0xC211A44486228686)
 };
 
-#ifndef SPH_SMALL_FOOTPRINT_WHIRLPOOL
+#if !SPH_SMALL_FOOTPRINT_WHIRLPOOL
 
 static const sph_u64 plain_T1[256] = {
 	SPH_C64(0x3078C018601818D8), SPH_C64(0x46AF05238C232326),
@@ -1266,7 +1266,7 @@ static const sph_u64 old0_T0[256] = {
 	SPH_C64(0xB3E197B3769A7676), SPH_C64(0xB0E664B0829B8282)
 };
 
-#ifndef SPH_SMALL_FOOTPRINT_WHIRLPOOL
+#if !SPH_SMALL_FOOTPRINT_WHIRLPOOL
 
 static const sph_u64 old0_T1[256] = {
 	SPH_C64(0x0F67D568B86868D5), SPH_C64(0x1ECEB7D06DD0D0B7),
@@ -2336,7 +2336,7 @@ static const sph_u64 old1_T0[256] = {
 	SPH_C64(0x3F6B933FF815F8F8), SPH_C64(0xA4C244A486978686)
 };
 
-#ifndef SPH_SMALL_FOOTPRINT_WHIRLPOOL
+#if !SPH_SMALL_FOOTPRINT_WHIRLPOOL
 
 static const sph_u64 old1_T1[256] = {
 	SPH_C64(0xD8C0781828181878), SPH_C64(0x2605AF23652323AF),
@@ -3275,7 +3275,7 @@ static const sph_u64 old1_RC[10] = {
 #define DECL8(z)   sph_u64 z ## 0, z ## 1, z ## 2, z ## 3, \
                    z ## 4, z ## 5, z ## 6, z ## 7
 
-#ifdef SPH_LITTLE_FAST
+#if SPH_LITTLE_FAST
 #define READ_DATA_W(x)   do { \
 		n ## x = sph_dec64le_aligned( \
 			(const unsigned char *)src + 8 * (x)); \
@@ -3323,7 +3323,7 @@ static const sph_u64 old1_RC[10] = {
 
 #define BYTE(x, n)     ((unsigned)((x) >> (8 * (n))) & 0xFF)
 
-#ifdef SPH_SMALL_FOOTPRINT_WHIRLPOOL
+#if SPH_SMALL_FOOTPRINT_WHIRLPOOL
 
 static SPH_INLINE sph_u64
 table_skew(sph_u64 val, int num)
@@ -3394,7 +3394,7 @@ sph_whirlpool_init(void *cc)
 	 * will work everywhere.
 	 */
 	memset(sc->state, 0, sizeof sc->state);
-#ifdef SPH_64
+#if SPH_64
 	sc->count = 0;
 #else
 	sc->count_high = sc->count_low = 0;

@@ -1,4 +1,4 @@
-// $Id: FugueCore.java 165 2010-05-03 14:42:40Z tp $
+// $Id: FugueCore.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
@@ -33,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 165 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -579,5 +579,11 @@ abstract class FugueCore implements Digest {
 		 *    bytes in ipad, opad) as B = 4*ceil(#-bits-in-key /32). >>
 		 */
 		return -4;
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "Fugue-" + (getDigestLength() << 3);
 	}
 }

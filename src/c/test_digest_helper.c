@@ -1,4 +1,4 @@
-/* $Id: test_digest_helper.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: test_digest_helper.c 192 2010-05-25 22:33:34Z tp $ */
 /*
  * Helper code for hash function unit tests. This code is meant to be
  * included by another file which then uses the macros defined herein.
@@ -128,6 +128,52 @@ test_ ## cname ## _internal_bits(char *data, unsigned ignored, char *refres) \
 	} \
 	ASSERT(utest_byteequal(res, ref, blen)); \
 	free(dbuf); \
+}
+
+/*
+ * This macro defines a function which is similar to the one defined
+ * by TEST_DIGEST_INTERNAL_BITS, except that it uses the NIST messages
+ * for SHA-3 test vectors, indexed by message size (in bits, from 0 to
+ * 2047, inclusive).
+ */
+#define TEST_DIGEST_NIST(Name, cname, blen) \
+static void \
+test_ ## cname ## _nist(unsigned u, char *refres) \
+{ \
+	sph_ ## cname ## _context mc; \
+	unsigned char res[blen], ref[blen]; \
+	size_t dbuf_len; \
+	unsigned char dbuf[260]; \
+	unsigned extra; \
+ \
+	if (((blen) * 8) != SPH_SIZE_ ## cname) \
+		fail("wrong output size (%u, exp: %u)", \
+			(unsigned)(blen) * 8, (unsigned)SPH_SIZE_ ## cname); \
+	dbuf_len = (u + 7) / 8; \
+	extra = u & 7; \
+	memcpy(dbuf, utest_nist_data(u), dbuf_len); \
+	sph_ ## cname ## _init(&mc); \
+	if (extra == 0) { \
+		sph_ ## cname(&mc, dbuf, dbuf_len); \
+		sph_ ## cname ## _close(&mc, res); \
+	} else { \
+		sph_ ## cname(&mc, dbuf, dbuf_len - 1); \
+		sph_ ## cname ## _addbits_and_close(&mc, \
+			dbuf[dbuf_len - 1], extra, res); \
+	} \
+	utest_strtobin(ref, refres); \
+	ASSERT(utest_byteequal(res, ref, blen)); \
+	memset(res, 0, sizeof res); \
+	memmove(1 + dbuf, dbuf, dbuf_len); \
+	if (extra == 0) { \
+		sph_ ## cname(&mc, dbuf + 1, dbuf_len); \
+		sph_ ## cname ## _close(&mc, res); \
+	} else { \
+		sph_ ## cname(&mc, dbuf + 1, dbuf_len - 1); \
+		sph_ ## cname ## _addbits_and_close(&mc, \
+			dbuf[dbuf_len], extra, res); \
+	} \
+	ASSERT(utest_byteequal(res, ref, blen)); \
 }
 
 /*

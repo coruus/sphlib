@@ -1,4 +1,4 @@
-/* $Id: panama.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: panama.c 216 2010-06-08 09:46:57Z tp $ */
 /*
  * PANAMA implementation.
  *
@@ -168,7 +168,7 @@ panama_push(sph_panama_context *sc, const unsigned char *pbuf, size_t num)
 {
 	LVARS
 	unsigned ptr0;
-#ifdef SPH_LITTLE_FAST
+#if SPH_LITTLE_FAST
 #define INW1(i)   sph_dec32le_aligned(pbuf + 4 * (i))
 #else
 	sph_u32 X_var[8];
@@ -179,7 +179,7 @@ panama_push(sph_panama_context *sc, const unsigned char *pbuf, size_t num)
 	M17(RSTATE);
 	ptr0 = sc->buffer_ptr;
 	while (num -- > 0) {
-#ifndef SPH_LITTLE_FAST
+#if !SPH_LITTLE_FAST
 		int i;
 
 		for (i = 0; i < 8; i ++)
@@ -299,7 +299,7 @@ sph_panama(void *cc, const void *data, size_t len)
 		data = (const unsigned char *)data + t;
 		len -= t;
 	}
-#ifndef SPH_UNALIGNED
+#if !SPH_UNALIGNED
 	if (((SPH_UPTR)data & 3) != 0) {
 		panama_short(sc, data, len);
 		return;

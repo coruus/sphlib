@@ -1,4 +1,4 @@
-/* $Id: hsum.c 160 2010-05-02 04:34:15Z tp $ */
+/* $Id: hsum.c 243 2010-06-21 17:13:32Z tp $ */
 /*
  * Command-line utility to compute hash functions over files. This is
  * intended to work similarly to the usual "md5sum" utility, but for
@@ -55,27 +55,32 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "sph_blake.h"
+#include "sph_bmw.h"
+#include "sph_cubehash.h"
+#include "sph_echo.h"
+#include "sph_fugue.h"
+#include "sph_groestl.h"
+#include "sph_hamsi.h"
+#include "sph_haval.h"
+#include "sph_jh.h"
+#include "sph_keccak.h"
+#include "sph_luffa.h"
 #include "sph_md2.h"
 #include "sph_md4.h"
 #include "sph_md5.h"
+#include "sph_panama.h"
+#include "sph_radiogatun.h"
+#include "sph_ripemd.h"
 #include "sph_sha0.h"
 #include "sph_sha1.h"
 #include "sph_sha2.h"
-#include "sph_ripemd.h"
-#include "sph_tiger.h"
-#include "sph_panama.h"
-#include "sph_radiogatun.h"
-#include "sph_haval.h"
-#include "sph_whirlpool.h"
 #include "sph_shabal.h"
-#include "sph_echo.h"
+#include "sph_shavite.h"
 #include "sph_simd.h"
-#include "sph_luffa.h"
-#include "sph_blake.h"
 #include "sph_skein.h"
-#include "sph_jh.h"
-#include "sph_fugue.h"
-#include "sph_bmw.h"
+#include "sph_tiger.h"
+#include "sph_whirlpool.h"
 
 /**
  * The program name, as extracted from the invocation name.
@@ -139,7 +144,7 @@ static void
 version(void)
 {
 	fprintf(stderr,
-"sphlib: version 2.0\n"
+"sphlib: version 2.1\n"
 "Copyright (c) 2007-2010  Projet RNRT SAPHIR\n"
 "This software is provided WITHOUT ANY WARRANTY, to the extent\n"
 "permitted by law.\n");
@@ -154,6 +159,38 @@ version(void)
  * simultaneously, of course).
  */
 static union {
+	MAKECC(blake224);
+	MAKECC(blake256);
+#if SPH_64
+	MAKECC(blake384);
+	MAKECC(blake512);
+#endif
+	MAKECC(bmw224);
+	MAKECC(bmw256);
+#if SPH_64
+	MAKECC(bmw384);
+	MAKECC(bmw512);
+#endif
+	MAKECC(cubehash224);
+	MAKECC(cubehash256);
+	MAKECC(cubehash384);
+	MAKECC(cubehash512);
+	MAKECC(echo224);
+	MAKECC(echo256);
+	MAKECC(echo384);
+	MAKECC(echo512);
+	MAKECC(fugue224);
+	MAKECC(fugue256);
+	MAKECC(fugue384);
+	MAKECC(fugue512);
+	MAKECC(groestl224);
+	MAKECC(groestl256);
+	MAKECC(groestl384);
+	MAKECC(groestl512);
+	MAKECC(hamsi224);
+	MAKECC(hamsi256);
+	MAKECC(hamsi384);
+	MAKECC(hamsi512);
 	MAKECC(haval128_3);
 	MAKECC(haval128_4);
 	MAKECC(haval128_5);
@@ -169,12 +206,24 @@ static union {
 	MAKECC(haval256_3);
 	MAKECC(haval256_4);
 	MAKECC(haval256_5);
+	MAKECC(jh224);
+	MAKECC(jh256);
+	MAKECC(jh384);
+	MAKECC(jh512);
+	MAKECC(keccak224);
+	MAKECC(keccak256);
+	MAKECC(keccak384);
+	MAKECC(keccak512);
+	MAKECC(luffa224);
+	MAKECC(luffa256);
+	MAKECC(luffa384);
+	MAKECC(luffa512);
 	MAKECC(md2);
 	MAKECC(md4);
 	MAKECC(md5);
 	MAKECC(panama);
 	MAKECC(radiogatun32);
-#ifdef SPH_64
+#if SPH_64
 	MAKECC(radiogatun64);
 #endif
 	MAKECC(ripemd128);
@@ -184,55 +233,33 @@ static union {
 	MAKECC(sha1);
 	MAKECC(sha224);
 	MAKECC(sha256);
-#ifdef SPH_64
+#if SPH_64
 	MAKECC(sha384);
 	MAKECC(sha512);
-	MAKECC(tiger2);
-	MAKECC(tiger);
-	MAKECC(whirlpool0);
-	MAKECC(whirlpool1);
-	MAKECC(whirlpool);
 #endif
 	MAKECC(shabal224);
 	MAKECC(shabal256);
 	MAKECC(shabal384);
 	MAKECC(shabal512);
-	MAKECC(echo224);
-	MAKECC(echo256);
-	MAKECC(echo384);
-	MAKECC(echo512);
+	MAKECC(shavite224);
+	MAKECC(shavite256);
+	MAKECC(shavite384);
+	MAKECC(shavite512);
 	MAKECC(simd224);
 	MAKECC(simd256);
 	MAKECC(simd384);
 	MAKECC(simd512);
-	MAKECC(luffa224);
-	MAKECC(luffa256);
-	MAKECC(luffa384);
-	MAKECC(luffa512);
-	MAKECC(blake224);
-	MAKECC(blake256);
-#ifdef SPH_64
-	MAKECC(blake384);
-	MAKECC(blake512);
+#if SPH_64
 	MAKECC(skein224);
 	MAKECC(skein256);
 	MAKECC(skein384);
 	MAKECC(skein512);
 #endif
-	MAKECC(jh224);
-	MAKECC(jh256);
-	MAKECC(jh384);
-	MAKECC(jh512);
-	MAKECC(fugue224);
-	MAKECC(fugue256);
-	MAKECC(fugue384);
-	MAKECC(fugue512);
-	MAKECC(bmw224);
-	MAKECC(bmw256);
-#ifdef SPH_64
-	MAKECC(bmw384);
-	MAKECC(bmw512);
-#endif
+	MAKECC(tiger2);
+	MAKECC(tiger);
+	MAKECC(whirlpool0);
+	MAKECC(whirlpool1);
+	MAKECC(whirlpool);
 } hcontext;
 
 /**
@@ -245,7 +272,7 @@ static union {
 	long l;
 	void *p;
 	sph_u32 w32;
-#ifdef SPH_64
+#if SPH_64
 	sph_u64 w64;
 #endif
 } ubuf;
@@ -267,6 +294,38 @@ static struct known_function {
 	char *name;
 	size_t out_len;
 } known_functions[] = {
+	MAKEFF(blake224),
+	MAKEFF(blake256),
+#if SPH_64
+	MAKEFF(blake384),
+	MAKEFF(blake512),
+#endif
+	MAKEFF(bmw224),
+	MAKEFF(bmw256),
+#if SPH_64
+	MAKEFF(bmw384),
+	MAKEFF(bmw512),
+#endif
+	MAKEFF(cubehash224),
+	MAKEFF(cubehash256),
+	MAKEFF(cubehash384),
+	MAKEFF(cubehash512),
+	MAKEFF(echo224),
+	MAKEFF(echo256),
+	MAKEFF(echo384),
+	MAKEFF(echo512),
+	MAKEFF(fugue224),
+	MAKEFF(fugue256),
+	MAKEFF(fugue384),
+	MAKEFF(fugue512),
+	MAKEFF(groestl224),
+	MAKEFF(groestl256),
+	MAKEFF(groestl384),
+	MAKEFF(groestl512),
+	MAKEFF(hamsi224),
+	MAKEFF(hamsi256),
+	MAKEFF(hamsi384),
+	MAKEFF(hamsi512),
 	MAKEFF(haval128_3),
 	MAKEFF(haval128_4),
 	MAKEFF(haval128_5),
@@ -282,12 +341,24 @@ static struct known_function {
 	MAKEFF(haval256_3),
 	MAKEFF(haval256_4),
 	MAKEFF(haval256_5),
+	MAKEFF(jh224),
+	MAKEFF(jh256),
+	MAKEFF(jh384),
+	MAKEFF(jh512),
+	MAKEFF(keccak224),
+	MAKEFF(keccak256),
+	MAKEFF(keccak384),
+	MAKEFF(keccak512),
+	MAKEFF(luffa224),
+	MAKEFF(luffa256),
+	MAKEFF(luffa384),
+	MAKEFF(luffa512),
 	MAKEFF(md2),
 	MAKEFF(md4),
 	MAKEFF(md5),
 	MAKEFF(panama),
 	MAKEFF(radiogatun32),
-#ifdef SPH_64
+#if SPH_64
 	MAKEFF(radiogatun64),
 #endif
 	MAKEFF(ripemd128),
@@ -300,55 +371,33 @@ static struct known_function {
 	MAKEFF(sha1),
 	MAKEFF(sha224),
 	MAKEFF(sha256),
-#ifdef SPH_64
+#if SPH_64
 	MAKEFF(sha384),
 	MAKEFF(sha512),
-	MAKEFF(tiger2),
-	MAKEFF(tiger),
-	MAKEFF(whirlpool0),
-	MAKEFF(whirlpool1),
-	MAKEFF(whirlpool),
 #endif
 	MAKEFF(shabal224),
 	MAKEFF(shabal256),
 	MAKEFF(shabal384),
 	MAKEFF(shabal512),
-	MAKEFF(echo224),
-	MAKEFF(echo256),
-	MAKEFF(echo384),
-	MAKEFF(echo512),
+	MAKEFF(shavite224),
+	MAKEFF(shavite256),
+	MAKEFF(shavite384),
+	MAKEFF(shavite512),
 	MAKEFF(simd224),
 	MAKEFF(simd256),
 	MAKEFF(simd384),
 	MAKEFF(simd512),
-	MAKEFF(luffa224),
-	MAKEFF(luffa256),
-	MAKEFF(luffa384),
-	MAKEFF(luffa512),
-	MAKEFF(blake224),
-	MAKEFF(blake256),
-#ifdef SPH_64
-	MAKEFF(blake384),
-	MAKEFF(blake512),
+#if SPH_64
 	MAKEFF(skein224),
 	MAKEFF(skein256),
 	MAKEFF(skein384),
 	MAKEFF(skein512),
 #endif
-	MAKEFF(jh224),
-	MAKEFF(jh256),
-	MAKEFF(jh384),
-	MAKEFF(jh512),
-	MAKEFF(fugue224),
-	MAKEFF(fugue256),
-	MAKEFF(fugue384),
-	MAKEFF(fugue512),
-	MAKEFF(bmw224),
-	MAKEFF(bmw256),
-#ifdef SPH_64
-	MAKEFF(bmw384),
-	MAKEFF(bmw512),
-#endif
+	MAKEFF(tiger2),
+	MAKEFF(tiger),
+	MAKEFF(whirlpool0),
+	MAKEFF(whirlpool1),
+	MAKEFF(whirlpool),
 
 	{ 0, 0, 0, 0, 0 }
 };

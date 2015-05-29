@@ -1,4 +1,4 @@
-/* $Id: skein.c 173 2010-05-07 15:51:12Z tp $ */
+/* $Id: skein.c 227 2010-06-16 17:28:38Z tp $ */
 /*
  * Skein implementation.
  *
@@ -35,7 +35,7 @@
 
 #include "sph_skein.h"
 
-#if defined SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_SKEIN
+#if SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_SKEIN
 #define SPH_SMALL_FOOTPRINT_SKEIN   1
 #endif
 
@@ -43,7 +43,7 @@
 #pragma warning (disable: 4146)
 #endif
 
-#ifdef SPH_64
+#if SPH_64
 
 /*
  * M5_ ## s ## _ ## i  evaluates to s+i mod 5 (0 <= s <= 18, 0 <= i <= 3).
@@ -815,44 +815,6 @@ skein_small_core(sph_skein_small_context *sc, const void *data, size_t len)
 	memcpy(sc->buf, data, len);
 
 #endif
-
-	/* obsolete
-	unsigned char *buf;
-	size_t ptr;
-	unsigned first;
-	DECL_STATE_SMALL
-
-	buf = sc->buf;
-	ptr = sc->ptr;
-	if (len <= (sizeof sc->buf) - ptr) {
-		memcpy(buf + ptr, data, len);
-		ptr += len;
-		sc->ptr = ptr;
-		return;
-	}
-
-	READ_STATE_SMALL(sc);
-	first = (bcount == 0) << 7;
-	do {
-		size_t clen;
-
-		if (ptr == sizeof sc->buf) {
-			bcount ++;
-			UBI_SMALL(96 + first, 0);
-			first = 0;
-			ptr = 0;
-		}
-		clen = (sizeof sc->buf) - ptr;
-		if (clen > len)
-			clen = len;
-		memcpy(buf + ptr, data, clen);
-		ptr += clen;
-		data = (const unsigned char *)data + clen;
-		len -= clen;
-	} while (len > 0);
-	WRITE_STATE_SMALL(sc);
-	sc->ptr = ptr;
-	*/
 }
 
 static void

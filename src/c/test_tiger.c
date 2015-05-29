@@ -1,4 +1,4 @@
-/* $Id: test_tiger.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: test_tiger.c 216 2010-06-08 09:46:57Z tp $ */
 /*
  * Unit tests for the Tiger and Tiger2 hash functions.
  *
@@ -33,7 +33,7 @@
 #include "sph_tiger.h"
 #include "test_digest_helper.c"
 
-#ifdef SPH_64
+#if SPH_64
 
 TEST_DIGEST_INTERNAL(Tiger, tiger, 24)
 TEST_DIGEST_INTERNAL(Tiger2, tiger2, 24)

@@ -1,4 +1,4 @@
-// $Id: SHA0.java 156 2010-04-26 17:55:11Z tp $
+// $Id: SHA0.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
@@ -34,7 +34,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -462,5 +462,11 @@ public class SHA0 extends MDHelper {
 		currentVal[2] += C;
 		currentVal[3] += D;
 		currentVal[4] += E;
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "SHA-0";
 	}
 }

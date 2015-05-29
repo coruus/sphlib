@@ -1,4 +1,4 @@
-/* $Id: tiger.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: tiger.c 216 2010-06-08 09:46:57Z tp $ */
 /*
  * Tiger / Tiger2 implementation.
  *
@@ -35,7 +35,7 @@
 
 #include "sph_tiger.h"
 
-#ifdef SPH_64
+#if SPH_64
 
 static const sph_u64 T1[256] = {
 	SPH_C64(0x02AAB17CF7E90C5E), SPH_C64(0xAC424B03E243A8EC),

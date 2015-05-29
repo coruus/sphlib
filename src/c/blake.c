@@ -1,4 +1,4 @@
-/* $Id: blake.c 173 2010-05-07 15:51:12Z tp $ */
+/* $Id: blake.c 227 2010-06-16 17:28:38Z tp $ */
 /*
  * BLAKE implementation.
  *
@@ -36,7 +36,7 @@
 
 #include "sph_blake.h"
 
-#if defined SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_BLAKE
+#if SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_BLAKE
 #define SPH_SMALL_FOOTPRINT_BLAKE   1
 #endif
 
@@ -44,7 +44,7 @@
 #define SPH_COMPACT_BLAKE_32   1
 #endif
 
-#if defined SPH_64 && (SPH_SMALL_FOOTPRINT_BLAKE || !SPH_64_TRUE)
+#if SPH_64 && (SPH_SMALL_FOOTPRINT_BLAKE || !SPH_64_TRUE)
 #define SPH_COMPACT_BLAKE_64   1
 #endif
 
@@ -66,7 +66,7 @@ static const sph_u32 IV256[8] = {
 	SPH_C32(0x1F83D9AB), SPH_C32(0x5BE0CD19)
 };
 
-#ifdef SPH_64
+#if SPH_64
 
 static const sph_u64 IV384[8] = {
 	SPH_C64(0xCBBB9D5DC1059ED8), SPH_C64(0x629A292A367CD507),
@@ -327,7 +327,7 @@ static const sph_u32 CS[16] = {
 
 #endif
 
-#ifdef SPH_64
+#if SPH_64
 
 #define CBx(r, i)   CBx_(Z ## r ## i)
 #define CBx_(n)     CBx__(n)
@@ -414,7 +414,7 @@ static const sph_u64 CB[16] = {
 
 #endif
 
-#ifdef SPH_64
+#if SPH_64
 
 #define GB(m0, m1, c0, c1, a, b, c, d)   do { \
 		a = SPH_T64(a + b + (m0 ^ c1)); \
@@ -615,7 +615,7 @@ static const sph_u64 CB[16] = {
 
 #endif
 
-#ifdef SPH_64
+#if SPH_64
 
 #define DECL_STATE64 \
 	sph_u64 H0, H1, H2, H3, H4, H5, H6, H7; \
@@ -876,7 +876,7 @@ blake32_close(sph_blake_small_context *sc,
 		sph_enc32be(out + (k << 2), sc->H[k]);
 }
 
-#ifdef SPH_64
+#if SPH_64
 
 static const sph_u64 salt_zero_big[4] = { 0, 0, 0, 0 };
 
@@ -1041,7 +1041,7 @@ sph_blake256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 	sph_blake256_init(cc);
 }
 
-#ifdef SPH_64
+#if SPH_64
 
 /* see sph_blake.h */
 void

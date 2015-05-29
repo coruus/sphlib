@@ -1,4 +1,4 @@
-// $Id: DigestEngine.java 156 2010-04-26 17:55:11Z tp $
+// $Id: DigestEngine.java 229 2010-06-16 20:22:27Z tp $
 
 package fr.cryptohash;
 
@@ -9,10 +9,12 @@ package fr.cryptohash;
  * internal block length.</p>
  *
  * <p>Classes which use this template MUST provide a working {@link
- * #getBlockLength} method even before initialization. The {@link
- * #getDigestLength} should also be operational from the beginning, but
- * it is acceptable that it returns 0 while the {@link #doInit} method
- * has not been called yet.</p>
+ * #getBlockLength} method even before initialization (alternatively,
+ * they may define a custom {@link #getInternalBlockLength} which does
+ * not call {@link #getBlockLength}. The {@link #getDigestLength} should
+ * also be operational from the beginning, but it is acceptable that it
+ * returns 0 while the {@link #doInit} method has not been called
+ * yet.</p>
  *
  * <pre>
  * ==========================(LICENSE BEGIN)============================
@@ -41,7 +43,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 229 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -90,7 +92,7 @@ public abstract class DigestEngine implements Digest {
 	{
 		doInit();
 		digestLen = getDigestLength();
-		blockLen = getBlockLength();
+		blockLen = getInternalBlockLength();
 		inputBuf = new byte[blockLen];
 		outputBuf = new byte[digestLen];
 		inputLen = 0;
@@ -183,6 +185,22 @@ public abstract class DigestEngine implements Digest {
 	}
 
 	/**
+	 * Get the internal block length. This is the length (in
+	 * bytes) of the array which will be passed as parameter to
+	 * {@link #processBlock}. The default implementation of this
+	 * method calls {@link #getBlockLength} and returns the same
+	 * value. Overriding this method is useful when the advertised
+	 * block length (which is used, for instance, by HMAC) is
+	 * suboptimal with regards to internal buffering needs.
+	 *
+	 * @return  the internal block length (in bytes)
+	 */
+	protected int getInternalBlockLength()
+	{
+		return getBlockLength();
+	}
+
+	/**
 	 * Flush internal buffers, so that less than a block of data
 	 * may at most be upheld.
 	 *
@@ -213,7 +231,8 @@ public abstract class DigestEngine implements Digest {
 	/**
 	 * Get the "block count": this is the number of times the
 	 * {@link #processBlock} method has been invoked for the
-	 * current hash operation.
+	 * current hash operation. That counter is incremented
+	 * <em>after</em> the call to {@link #processBlock}.
 	 *
 	 * @return  the block count
 	 */

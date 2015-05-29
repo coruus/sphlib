@@ -1,4 +1,4 @@
-// $Id: Digest.java 165 2010-05-03 14:42:40Z tp $
+// $Id: Digest.java 232 2010-06-17 14:19:24Z tp $
 
 package fr.cryptohash;
 
@@ -51,7 +51,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 165 $
+ * @version   $Revision: 232 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -137,19 +137,29 @@ public interface Digest {
 
 	/**
 	 * <p>Return the "block length" for the hash function. This
-	 * value is defined for iterated hash functions
-	 * (Merkle-Damgard). It is used in HMAC.</p>
+	 * value is naturally defined for iterated hash functions
+	 * (Merkle-Damgard). It is used in HMAC (that's what the
+	 * <a href="http://tools.ietf.org/html/rfc2104">HMAC specification</a>
+	 * names the "{@code B}" parameter).</p>
 	 *
 	 * <p>If the function is "block-less" then this function may
 	 * return {@code -n} where {@code n} is an integer such that the
-	 * block length for HMAC (called "B" in the HMAC specification)
-	 * will be inferred from the key length, by selecting the
-	 * smallest multiple of {@code n} which is no smaller than the
-	 * key length. For instance, for the Fugue-xxx hash functions,
-	 * this function returns -4: the virtual block length B is the
-	 * HMAC key length, rounded up to the next multiple of 4.</p>
+	 * block length for HMAC ("{@code B}") will be inferred from the
+	 * key length, by selecting the smallest multiple of {@code n}
+	 * which is no smaller than the key length. For instance, for
+	 * the Fugue-xxx hash functions, this function returns -4: the
+	 * virtual block length B is the HMAC key length, rounded up to
+	 * the next multiple of 4.</p>
 	 *
 	 * @return  the internal block length (in bytes), or {@code -n}
 	 */
 	public int getBlockLength();
+
+	/**
+	 * <p>Get the display name for this function (e.g. {@code "SHA-1"}
+	 * for SHA-1).</p>
+	 *
+	 * @see Object
+	 */
+	public String toString();
 }

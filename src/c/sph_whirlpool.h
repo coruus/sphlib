@@ -1,4 +1,4 @@
-/* $Id: sph_whirlpool.h 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: sph_whirlpool.h 216 2010-06-08 09:46:57Z tp $ */
 /**
  * WHIRLPOOL interface.
  *
@@ -51,7 +51,7 @@
 #include <stddef.h>
 #include "sph_types.h"
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * Output size (in bits) for WHIRLPOOL.
@@ -82,7 +82,7 @@ typedef struct {
 #ifndef DOXYGEN_IGNORE
 	unsigned char buf[64];    /* first field, for alignment */
 	sph_u64 state[8];
-#ifdef SPH_64
+#if SPH_64
 	sph_u64 count;
 #else
 	sph_u32 count_high, count_low;

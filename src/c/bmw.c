@@ -1,4 +1,4 @@
-/* $Id: bmw.c 173 2010-05-07 15:51:12Z tp $ */
+/* $Id: bmw.c 227 2010-06-16 17:28:38Z tp $ */
 /*
  * BMW implementation.
  *
@@ -36,7 +36,7 @@
 
 #include "sph_bmw.h"
 
-#if defined SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_BMW
+#if SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_BMW
 #define SPH_SMALL_FOOTPRINT_BMW   1
 #endif
 
@@ -66,7 +66,7 @@ static const sph_u32 IV256[] = {
 	SPH_C32(0x78797A7B), SPH_C32(0x7C7D7E7F)
 };
 
-#ifdef SPH_64
+#if SPH_64
 
 static const sph_u64 IV384[] = {
 	SPH_C64(0x0001020304050607), SPH_C64(0x08090A0B0C0D0E0F),
@@ -185,7 +185,7 @@ static const sph_u64 IV512[] = {
 #define expand2s_(qf, mf, hf, i16, ix, iy) \
 	expand2s_inner LPAR qf, mf, hf, i16, ix, iy)
 
-#ifdef SPH_64
+#if SPH_64
 
 #define sb0(x)    (((x) >> 1) ^ SPH_T64((x) << 3) \
                   ^ SPH_ROTL64(x,  4) ^ SPH_ROTL64(x, 37))
@@ -403,7 +403,7 @@ static const sph_u64 Kb_tab[] = {
 
 #define Qs(j)   (qt[j])
 
-#ifdef SPH_64
+#if SPH_64
 
 #define Wb0    MAKE_W(SPH_T64,  5, -,  7, +, 10, +, 13, +, 14)
 #define Wb1    MAKE_W(SPH_T64,  6, -,  8, +, 11, +, 14, -, 15)
@@ -555,7 +555,7 @@ static const sph_u64 Kb_tab[] = {
 
 #define FOLDs   FOLD(sph_u32, MAKE_Qs, SPH_T32, SPH_ROTL32, M, Qs, dH)
 
-#ifdef SPH_64
+#if SPH_64
 
 #define FOLDb   FOLD(sph_u64, MAKE_Qb, SPH_T64, SPH_ROTL64, M, Qb, dH)
 
@@ -564,7 +564,7 @@ static const sph_u64 Kb_tab[] = {
 static void
 compress_small(const unsigned char *data, const sph_u32 h[16], sph_u32 dh[16])
 {
-#ifdef SPH_LITTLE_FAST
+#if SPH_LITTLE_FAST
 #define M(x)    sph_dec32le_aligned(data + 4 * (x))
 #else
 	sph_u32 mv[16];
@@ -611,7 +611,7 @@ bmw32_init(sph_bmw_small_context *sc, const sph_u32 *iv)
 {
 	memcpy(sc->H, iv, sizeof sc->H);
 	sc->ptr = 0;
-#ifdef SPH_64
+#if SPH_64
 	sc->bit_count = 0;
 #else
 	sc->bit_count_high = 0;
@@ -626,11 +626,11 @@ bmw32(sph_bmw_small_context *sc, const void *data, size_t len)
 	size_t ptr;
 	sph_u32 htmp[16];
 	sph_u32 *h1, *h2;
-#ifndef SPH_64
+#if !SPH_64
 	sph_u32 tmp;
 #endif
 
-#ifdef SPH_64
+#if SPH_64
 	sc->bit_count += (sph_u64)len << 3;
 #else
 	tmp = sc->bit_count_low;
@@ -689,7 +689,7 @@ bmw32_close(sph_bmw_small_context *sc, unsigned ub, unsigned n,
 		h = h1;
 	}
 	memset(buf + ptr, 0, (sizeof sc->buf) - 8 - ptr);
-#ifdef SPH_64
+#if SPH_64
 	sph_enc64le_aligned(buf + (sizeof sc->buf) - 8,
 		SPH_T64(sc->bit_count + n));
 #else
@@ -707,12 +707,12 @@ bmw32_close(sph_bmw_small_context *sc, unsigned ub, unsigned n,
 		sph_enc32le(out + 4 * u, h1[v]);
 }
 
-#ifdef SPH_64
+#if SPH_64
 
 static void
 compress_big(const unsigned char *data, const sph_u64 h[16], sph_u64 dh[16])
 {
-#ifdef SPH_LITTLE_FAST
+#if SPH_LITTLE_FAST
 #define M(x)    sph_dec64le_aligned(data + 8 * (x))
 #else
 	sph_u64 mv[16];
@@ -894,7 +894,7 @@ sph_bmw256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 	sph_bmw256_init(cc);
 }
 
-#ifdef SPH_64
+#if SPH_64
 
 /* see sph_bmw.h */
 void

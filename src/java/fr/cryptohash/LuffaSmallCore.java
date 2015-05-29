@@ -1,4 +1,4 @@
-// $Id: LuffaSmallCore.java 156 2010-04-26 17:55:11Z tp $
+// $Id: LuffaSmallCore.java 240 2010-06-21 14:58:28Z tp $
 
 package fr.cryptohash;
 
@@ -32,7 +32,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 240 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -89,10 +89,22 @@ abstract class LuffaSmallCore extends DigestEngine {
 	{
 	}
 
+	/** @see DigestEngine */
+	public int getInternalBlockLength()
+	{
+		return 32;
+	}
+
 	/** @see Digest */
 	public int getBlockLength()
 	{
-		return 32;
+		/*
+		 * Private communication from Luffa designer Watanabe Dai:
+		 *
+		 * << I think that there is no problem to use the same
+		 *    setting as CubeHash, namely B = 256*ceil(k / 256). >>
+		 */
+		return -32;
 	}
 
 	/** @see DigestEngine */
@@ -502,5 +514,11 @@ abstract class LuffaSmallCore extends DigestEngine {
 			V20 ^= RC20[r];
 			V24 ^= RC24[r];
 		}
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "Luffa-" + (getDigestLength() << 3);
 	}
 }

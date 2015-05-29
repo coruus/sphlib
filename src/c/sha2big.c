@@ -1,4 +1,4 @@
-/* $Id: sha2big.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: sha2big.c 216 2010-06-08 09:46:57Z tp $ */
 /*
  * SHA-384 / SHA-512 implementation.
  *
@@ -35,7 +35,7 @@
 
 #include "sph_sha2.h"
 
-#ifdef SPH_64
+#if SPH_64
 
 #define CH(X, Y, Z)    ((((Y) ^ (Z)) & (X)) ^ (Z))
 #define MAJ(X, Y, Z)   (((X) & (Y)) | (((X) | (Y)) & (Z)))

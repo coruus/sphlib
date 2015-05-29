@@ -1,4 +1,4 @@
-/* $Id: sph_tiger.h 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: sph_tiger.h 216 2010-06-08 09:46:57Z tp $ */
 /**
  * Tiger / Tiger-2 interface.
  *
@@ -47,7 +47,7 @@
 #include <stddef.h>
 #include "sph_types.h"
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * Output size (in bits) for Tiger.

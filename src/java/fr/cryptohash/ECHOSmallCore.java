@@ -1,4 +1,4 @@
-// $Id: ECHOSmallCore.java 156 2010-04-26 17:55:11Z tp $
+// $Id: ECHOSmallCore.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
@@ -32,7 +32,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -599,5 +599,11 @@ abstract class ECHOSmallCore extends DigestEngine {
 				^ decodeLEInt(data, (u * 4) + 128)
 				^ W[u] ^ W[u + 16] ^ W[u + 32] ^ W[u + 48];
 		}
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "ECHO-" + (getDigestLength() << 3);
 	}
 }

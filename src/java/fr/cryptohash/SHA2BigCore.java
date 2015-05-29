@@ -1,4 +1,4 @@
-// $Id: SHA2BigCore.java 156 2010-04-26 17:55:11Z tp $
+// $Id: SHA2BigCore.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
@@ -33,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -236,5 +236,11 @@ abstract class SHA2BigCore extends MDHelper {
 		currentVal[5] += F;
 		currentVal[6] += G;
 		currentVal[7] += H;
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "SHA-" + (getDigestLength() << 3);
 	}
 }

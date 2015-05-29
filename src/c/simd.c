@@ -1,4 +1,4 @@
-/* $Id: simd.c 173 2010-05-07 15:51:12Z tp $ */
+/* $Id: simd.c 227 2010-06-16 17:28:38Z tp $ */
 /*
  * SIMD implementation.
  *
@@ -36,7 +36,7 @@
 
 #include "sph_simd.h"
 
-#if defined SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_SIMD
+#if SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_SIMD
 #define SPH_SMALL_FOOTPRINT_SIMD   1
 #endif
 
@@ -530,6 +530,17 @@ static const unsigned short yoff_b_f[] = {
 #define PP8_6_6   2
 #define PP8_6_7   3
 
+#if SPH_SIMD_NOCOPY
+
+#define DECL_STATE_SMALL
+#define READ_STATE_SMALL(sc)
+#define WRITE_STATE_SMALL(sc)
+#define DECL_STATE_BIG
+#define READ_STATE_BIG(sc)
+#define WRITE_STATE_BIG(sc)
+
+#else
+
 #define DECL_STATE_SMALL   \
 	u32 A0, A1, A2, A3, B0, B1, B2, B3, C0, C1, C2, C3, D0, D1, D2, D3;
 
@@ -646,6 +657,8 @@ static const unsigned short yoff_b_f[] = {
 		(sc)->state[30] = D6; \
 		(sc)->state[31] = D7; \
 	} while (0)
+
+#endif
 
 #define STEP_ELT(n, w, fun, s, ppb)   do { \
 		u32 tt = T32(D ## n + (w) + fun(A ## n, B ## n, C ## n)); \
@@ -956,6 +969,25 @@ compress_small(sph_simd_small_context *sc, int last)
 
 #else
 
+#if SPH_SIMD_NOCOPY
+#define A0   (sc->state[ 0])
+#define A1   (sc->state[ 1])
+#define A2   (sc->state[ 2])
+#define A3   (sc->state[ 3])
+#define B0   (sc->state[ 4])
+#define B1   (sc->state[ 5])
+#define B2   (sc->state[ 6])
+#define B3   (sc->state[ 7])
+#define C0   (sc->state[ 8])
+#define C1   (sc->state[ 9])
+#define C2   (sc->state[10])
+#define C3   (sc->state[11])
+#define D0   (sc->state[12])
+#define D1   (sc->state[13])
+#define D2   (sc->state[14])
+#define D3   (sc->state[15])
+#endif
+
 static void
 compress_small(sph_simd_small_context *sc, int last)
 {
@@ -963,7 +995,13 @@ compress_small(sph_simd_small_context *sc, int last)
 	s32 q[128];
 	int i;
 	DECL_STATE_SMALL
+#if SPH_SIMD_NOCOPY
+	sph_u32 saved[16];
+#endif
 
+#if SPH_SIMD_NOCOPY
+	memcpy(saved, sc->state, sizeof saved);
+#endif
 	x = sc->buf;
 	FFT128(0, 1, 0, ll);
 	if (last) {
@@ -1008,6 +1046,16 @@ compress_small(sph_simd_small_context *sc, int last)
 	ONE_ROUND_SMALL(1_, 2, 28, 19, 22,  7);
 	ONE_ROUND_SMALL(2_, 1, 29,  9, 15,  5);
 	ONE_ROUND_SMALL(3_, 0,  4, 13, 10, 25);
+#if SPH_SIMD_NOCOPY
+	STEP_SMALL(saved[ 0], saved[ 1], saved[ 2], saved[ 3],
+		IF,  4, 13, PP4_2_);
+	STEP_SMALL(saved[ 4], saved[ 5], saved[ 6], saved[ 7],
+		IF, 13, 10, PP4_0_);
+	STEP_SMALL(saved[ 8], saved[ 9], saved[10], saved[11],
+		IF, 10, 25, PP4_1_);
+	STEP_SMALL(saved[12], saved[13], saved[14], saved[15],
+		IF, 25,  4, PP4_2_);
+#else
 	STEP_SMALL(sc->state[ 0], sc->state[ 1], sc->state[ 2], sc->state[ 3],
 		IF,  4, 13, PP4_2_);
 	STEP_SMALL(sc->state[ 4], sc->state[ 5], sc->state[ 6], sc->state[ 7],
@@ -1017,7 +1065,27 @@ compress_small(sph_simd_small_context *sc, int last)
 	STEP_SMALL(sc->state[12], sc->state[13], sc->state[14], sc->state[15],
 		IF, 25,  4, PP4_2_);
 	WRITE_STATE_SMALL(sc);
+#endif
 }
+
+#if SPH_SIMD_NOCOPY
+#undef A0
+#undef A1
+#undef A2
+#undef A3
+#undef B0
+#undef B1
+#undef B2
+#undef B3
+#undef C0
+#undef C1
+#undef C2
+#undef C3
+#undef D0
+#undef D1
+#undef D2
+#undef D3
+#endif
 
 #endif
 
@@ -1263,6 +1331,41 @@ compress_big(sph_simd_big_context *sc, int last)
 
 #else
 
+#if SPH_SIMD_NOCOPY
+#define A0   (sc->state[ 0])
+#define A1   (sc->state[ 1])
+#define A2   (sc->state[ 2])
+#define A3   (sc->state[ 3])
+#define A4   (sc->state[ 4])
+#define A5   (sc->state[ 5])
+#define A6   (sc->state[ 6])
+#define A7   (sc->state[ 7])
+#define B0   (sc->state[ 8])
+#define B1   (sc->state[ 9])
+#define B2   (sc->state[10])
+#define B3   (sc->state[11])
+#define B4   (sc->state[12])
+#define B5   (sc->state[13])
+#define B6   (sc->state[14])
+#define B7   (sc->state[15])
+#define C0   (sc->state[16])
+#define C1   (sc->state[17])
+#define C2   (sc->state[18])
+#define C3   (sc->state[19])
+#define C4   (sc->state[20])
+#define C5   (sc->state[21])
+#define C6   (sc->state[22])
+#define C7   (sc->state[23])
+#define D0   (sc->state[24])
+#define D1   (sc->state[25])
+#define D2   (sc->state[26])
+#define D3   (sc->state[27])
+#define D4   (sc->state[28])
+#define D5   (sc->state[29])
+#define D6   (sc->state[30])
+#define D7   (sc->state[31])
+#endif
+
 static void
 compress_big(sph_simd_big_context *sc, int last)
 {
@@ -1270,6 +1373,13 @@ compress_big(sph_simd_big_context *sc, int last)
 	s32 q[256];
 	int i;
 	DECL_STATE_BIG
+#if SPH_SIMD_NOCOPY
+	sph_u32 saved[32];
+#endif
+
+#if SPH_SIMD_NOCOPY
+	memcpy(saved, sc->state, sizeof saved);
+#endif
 
 	x = sc->buf;
 	FFT256(0, 1, 0, ll);
@@ -1332,6 +1442,24 @@ compress_big(sph_simd_big_context *sc, int last)
 	ONE_ROUND_BIG(1_, 1, 28, 19, 22,  7);
 	ONE_ROUND_BIG(2_, 2, 29,  9, 15,  5);
 	ONE_ROUND_BIG(3_, 3,  4, 13, 10, 25);
+#if SPH_SIMD_NOCOPY
+	STEP_BIG(
+		saved[ 0], saved[ 1], saved[ 2], saved[ 3],
+		saved[ 4], saved[ 5], saved[ 6], saved[ 7],
+		IF,  4, 13, PP8_4_);
+	STEP_BIG(
+		saved[ 8], saved[ 9], saved[10], saved[11],
+		saved[12], saved[13], saved[14], saved[15],
+		IF, 13, 10, PP8_5_);
+	STEP_BIG(
+		saved[16], saved[17], saved[18], saved[19],
+		saved[20], saved[21], saved[22], saved[23],
+		IF, 10, 25, PP8_6_);
+	STEP_BIG(
+		saved[24], saved[25], saved[26], saved[27],
+		saved[28], saved[29], saved[30], saved[31],
+		IF, 25,  4, PP8_0_);
+#else
 	STEP_BIG(
 		sc->state[ 0], sc->state[ 1], sc->state[ 2], sc->state[ 3],
 		sc->state[ 4], sc->state[ 5], sc->state[ 6], sc->state[ 7],
@@ -1349,7 +1477,43 @@ compress_big(sph_simd_big_context *sc, int last)
 		sc->state[28], sc->state[29], sc->state[30], sc->state[31],
 		IF, 25,  4, PP8_0_);
 	WRITE_STATE_BIG(sc);
+#endif
 }
+
+#if SPH_SIMD_NOCOPY
+#undef A0
+#undef A1
+#undef A2
+#undef A3
+#undef A4
+#undef A5
+#undef A6
+#undef A7
+#undef B0
+#undef B1
+#undef B2
+#undef B3
+#undef B4
+#undef B5
+#undef B6
+#undef B7
+#undef C0
+#undef C1
+#undef C2
+#undef C3
+#undef C4
+#undef C5
+#undef C6
+#undef C7
+#undef D0
+#undef D1
+#undef D2
+#undef D3
+#undef D4
+#undef D5
+#undef D6
+#undef D7
+#endif
 
 #endif
 

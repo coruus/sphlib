@@ -1,4 +1,4 @@
-/* $Id: sha2.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: sha2.c 227 2010-06-16 17:28:38Z tp $ */
 /*
  * SHA-224 / SHA-256 implementation.
  *
@@ -35,7 +35,7 @@
 
 #include "sph_sha2.h"
 
-#if defined SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_SHA2
+#if SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_SHA2
 #define SPH_SMALL_FOOTPRINT_SHA2   1
 #endif
 
@@ -611,46 +611,6 @@ sha2_round(const unsigned char *data, sph_u32 r[8])
 #define SHA2_IN(x)   sph_dec32be_aligned(data + (4 * (x)))
 	SHA2_ROUND_BODY(SHA2_IN, r);
 #undef SHA2_IN
-
-#if 0
-/* obsolete */
-
-	int i;
-	sph_u32 a, b, c, d, e, f, g, h;
-	sph_u32 w[64];
-
-	for (i = 0; i < 16; i ++)
-		w[i] = sph_dec32be_aligned(data + (4 * i));
-	for (i = 16; i < 64; i ++) {
-		w[i] = SPH_T32(SSG2_1(w[i - 2]) + w[i - 7]
-			+ SSG2_0(w[i - 15]) + w[i - 16]);
-	}
-	a = r[0];
-	b = r[1];
-	c = r[2];
-	d = r[3];
-	e = r[4];
-	f = r[5];
-	g = r[6];
-	h = r[7];
-	for (i = 0; i < 64; i ++) {
-		sph_u32 t1, t2;
-
-		t1 = SPH_T32(h + BSG2_1(e) + CH(e, f, g) + K[i] + w[i]);
-		t2 = SPH_T32(BSG2_0(a) + MAJ(a, b, c));
-		h = g; g = f; f = e; e = SPH_T32(d + t1);
-		d = c; c = b; b = a; a = SPH_T32(t1 + t2);
-	}
-	r[0] = SPH_T32(r[0] + a);
-	r[1] = SPH_T32(r[1] + b);
-	r[2] = SPH_T32(r[2] + c);
-	r[3] = SPH_T32(r[3] + d);
-	r[4] = SPH_T32(r[4] + e);
-	r[5] = SPH_T32(r[5] + f);
-	r[6] = SPH_T32(r[6] + g);
-	r[7] = SPH_T32(r[7] + h);
-
-#endif
 }
 
 /* see sph_sha2.h */
@@ -661,7 +621,7 @@ sph_sha224_init(void *cc)
 
 	sc = cc;
 	memcpy(sc->val, H224, sizeof H224);
-#ifdef SPH_64
+#if SPH_64
 	sc->count = 0;
 #else
 	sc->count_high = sc->count_low = 0;
@@ -676,7 +636,7 @@ sph_sha256_init(void *cc)
 
 	sc = cc;
 	memcpy(sc->val, H256, sizeof H256);
-#ifdef SPH_64
+#if SPH_64
 	sc->count = 0;
 #else
 	sc->count_high = sc->count_low = 0;

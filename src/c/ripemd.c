@@ -1,4 +1,4 @@
-/* $Id: ripemd.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: ripemd.c 216 2010-06-08 09:46:57Z tp $ */
 /*
  * RIPEMD-160 implementation.
  *
@@ -227,7 +227,7 @@ static const sph_u32 IV[5] = {
 static void
 ripemd_round(const unsigned char *data, sph_u32 r[5])
 {
-#ifdef SPH_LITTLE_FAST
+#if SPH_LITTLE_FAST
 
 #define RIPEMD_IN(x)   sph_dec32le_aligned(data + (4 * (x)))
 
@@ -253,7 +253,7 @@ sph_ripemd_init(void *cc)
 
 	sc = cc;
 	memcpy(sc->val, oIV, sizeof sc->val);
-#ifdef SPH_64
+#if SPH_64
 	sc->count = 0;
 #else
 	sc->count_high = sc->count_low = 0;
@@ -481,7 +481,7 @@ sph_ripemd_comp(const sph_u32 msg[16], sph_u32 val[4])
 static void
 ripemd128_round(const unsigned char *data, sph_u32 r[5])
 {
-#ifdef SPH_LITTLE_FAST
+#if SPH_LITTLE_FAST
 
 #define RIPEMD128_IN(x)   sph_dec32le_aligned(data + (4 * (x)))
 
@@ -507,7 +507,7 @@ sph_ripemd128_init(void *cc)
 
 	sc = cc;
 	memcpy(sc->val, IV, sizeof sc->val);
-#ifdef SPH_64
+#if SPH_64
 	sc->count = 0;
 #else
 	sc->count_high = sc->count_low = 0;
@@ -774,7 +774,7 @@ sph_ripemd128_comp(const sph_u32 msg[16], sph_u32 val[4])
 static void
 ripemd160_round(const unsigned char *data, sph_u32 r[5])
 {
-#ifdef SPH_LITTLE_FAST
+#if SPH_LITTLE_FAST
 
 #define RIPEMD160_IN(x)   sph_dec32le_aligned(data + (4 * (x)))
 
@@ -800,7 +800,7 @@ sph_ripemd160_init(void *cc)
 
 	sc = cc;
 	memcpy(sc->val, IV, sizeof sc->val);
-#ifdef SPH_64
+#if SPH_64
 	sc->count = 0;
 #else
 	sc->count_high = sc->count_low = 0;

@@ -1,4 +1,4 @@
-// $Id: JHCore.java 156 2010-04-26 17:55:11Z tp $
+// $Id: JHCore.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
@@ -33,7 +33,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -434,5 +434,11 @@ abstract class JHCore extends DigestEngine {
 	{
 		System.arraycopy(h, 0, dst.h, 0, 16);
 		return super.copyState(dst);
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "JH-" + (getDigestLength() << 3);
 	}
 }

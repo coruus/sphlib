@@ -1,4 +1,4 @@
-/* $Id: test_sha2big.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: test_sha2big.c 216 2010-06-08 09:46:57Z tp $ */
 /*
  * Unit tests for the SHA-384 and SHA-512 hash functions.
  *
@@ -33,7 +33,7 @@
 #include "sph_sha2.h"
 #include "test_digest_helper.c"
 
-#ifdef SPH_64
+#if SPH_64
 
 TEST_DIGEST_INTERNAL(SHA-384, sha384, 48)
 TEST_DIGEST_INTERNAL_BITS(SHA-384, sha384, 48)

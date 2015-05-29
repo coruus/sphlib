@@ -1,4 +1,4 @@
-/* $Id: haval.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: haval.c 227 2010-06-16 17:28:38Z tp $ */
 /*
  * HAVAL implementation.
  *
@@ -41,7 +41,7 @@
 
 #include "sph_haval.h"
 
-#if defined SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_HAVAL
+#if SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_HAVAL
 #define SPH_SMALL_FOOTPRINT_HAVAL   1
 #endif
 
@@ -159,7 +159,7 @@
  * to be held in variables "s0" to "s7".
  */
 
-#ifdef SPH_SMALL_FOOTPRINT_HAVAL
+#if SPH_SMALL_FOOTPRINT_HAVAL
 
 #define PASS1(n, in)   do { \
 		unsigned pass_count; \
@@ -624,7 +624,7 @@ haval_init(sph_haval_context *sc, unsigned olen, unsigned passes)
 	sc->s7 = SPH_C32(0xEC4E6C89);
 	sc->olen = olen;
 	sc->passes = passes;
-#ifdef SPH_64
+#if SPH_64
 	sc->count = 0;
 #else
 	sc->count_high = 0;
@@ -637,7 +637,7 @@ haval_init(sph_haval_context *sc, unsigned olen, unsigned passes)
  * reading input words pointed to by "data".
  * INW(i) reads the word number "i" (from 0 to 31).
  */
-#ifdef SPH_LITTLE_FAST
+#if SPH_LITTLE_FAST
 #define IN_PREPARE(indata)   const unsigned char *const load_ptr = \
                              (const unsigned char *)(indata)
 #define INW(i)   sph_dec32le_aligned(load_ptr + 4 * (i))
@@ -890,7 +890,14 @@ sph_haval ## xxx ## _ ## y (void *cc, const void *data, size_t len) \
 void \
 sph_haval ## xxx ## _ ## y ## _close(void *cc, void *dst) \
 { \
-	haval ## y ## _close(cc, dst); \
+	haval ## y ## _close(cc, 0, 0, dst); \
+} \
+ \
+void \
+sph_haval ## xxx ## _ ## y ## addbits_and_close( \
+	void *cc, unsigned ub, unsigned n, void *dst) \
+{ \
+	haval ## y ## _close(cc, ub, n, dst); \
 }
 
 API(128, 3)

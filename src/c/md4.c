@@ -1,4 +1,4 @@
-/* $Id: md4.c 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: md4.c 216 2010-06-08 09:46:57Z tp $ */
 /*
  * MD4 implementation.
  *
@@ -122,7 +122,7 @@ md4_round(const unsigned char *data, sph_u32 r[4])
 	 * not use local variables for the message blocks: we simply
 	 * reread from the input buffer. Speedup is about 3% on Athlon XP.
 	 */
-#ifdef SPH_LITTLE_FAST
+#if SPH_LITTLE_FAST
 #define X(idx)    sph_dec32le_aligned(data + 4 * (idx))
 #else
 	sph_u32 X_var[16];
@@ -146,7 +146,7 @@ sph_md4_init(void *cc)
 
 	sc = cc;
 	memcpy(sc->val, IV, sizeof IV);
-#ifdef SPH_64
+#if SPH_64
 	sc->count = 0;
 #else
 	sc->count_high = sc->count_low = 0;

@@ -1,4 +1,4 @@
-/* $Id: sph_ripemd.h 154 2010-04-26 17:00:24Z tp $ */
+/* $Id: sph_ripemd.h 216 2010-06-08 09:46:57Z tp $ */
 /**
  * RIPEMD, RIPEMD-128 and RIPEMD-160 interface.
  *
@@ -88,7 +88,7 @@ typedef struct {
 #ifndef DOXYGEN_IGNORE
 	unsigned char buf[64];    /* first field, for alignment */
 	sph_u32 val[4];
-#ifdef SPH_64
+#if SPH_64
 	sph_u64 count;
 #else
 	sph_u32 count_high, count_low;
@@ -154,7 +154,7 @@ typedef struct {
 #ifndef DOXYGEN_IGNORE
 	unsigned char buf[64];    /* first field, for alignment */
 	sph_u32 val[4];
-#ifdef SPH_64
+#if SPH_64
 	sph_u64 count;
 #else
 	sph_u32 count_high, count_low;
@@ -220,7 +220,7 @@ typedef struct {
 #ifndef DOXYGEN_IGNORE
 	unsigned char buf[64];    /* first field, for alignment */
 	sph_u32 val[5];
-#ifdef SPH_64
+#if SPH_64
 	sph_u64 count;
 #else
 	sph_u32 count_high, count_low;

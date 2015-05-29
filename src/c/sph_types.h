@@ -1,4 +1,4 @@
-/* $Id: sph_types.h 180 2010-05-08 02:29:25Z tp $ */
+/* $Id: sph_types.h 230 2010-06-16 21:39:32Z tp $ */
 /**
  * Basic type definitions.
  *
@@ -182,7 +182,7 @@
  * When all data has been input, the context can be closed with
  * <code>sph_XXX_close()</code>. The hash output is computed and written
  * into the provided buffer. The caller must take care to provide a
- * buffer of appropriate length; e.g., when using SHA-1, the output os
+ * buffer of appropriate length; e.g., when using SHA-1, the output is
  * a 20-byte word, therefore the output buffer must be at least 20-byte
  * long.
  *
@@ -236,24 +236,6 @@
  * (ISO 9899:1999, aka "C99") and is present in several older compilers
  * as well, so chances are that such a type is available.
  *
- * - MD2: file <code>sph_md2.h</code>, short name: <code>md2</code>
- * - MD4: file <code>sph_md4.h</code>, short name: <code>md4</code>
- * - MD5: file <code>sph_md5.h</code>, short name: <code>md5</code>
- * - SHA-0: file <code>sph_sha0.h</code>, short name: <code>sha0</code>
- * - SHA-1: file <code>sph_sha1.h</code>, short name: <code>sha1</code>
- * - SHA-2 family, 32-bit hashes: file <code>sph_sha2.h</code>
- *   - SHA-224: short name: <code>sha224</code>
- *   - SHA-256: short name: <code>sha256</code>
- *   - SHA-384: short name: <code>sha384</code> (64)
- *   - SHA-512: short name: <code>sha512</code> (64)
- * - RIPEMD family: file <code>sph_ripemd.h</code>
- *   - RIPEMD: short name: <code>ripemd</code>
- *   - RIPEMD-128: short name: <code>ripemd128</code>
- *   - RIPEMD-160: short name: <code>ripemd160</code>
- * - PANAMA: file <code>sph_panama.h</code>, short name: <code>panama</code>
- * - Tiger family: file <code>sph_tiger.h</code>
- *   - Tiger: short name: <code>tiger</code> (64)
- *   - Tiger2: short name: <code>tiger2</code> (64)
  * - HAVAL family: file <code>sph_haval.h</code>
  *   - HAVAL-128/3 (128-bit, 3 passes): short name: <code>haval128_3</code>
  *   - HAVAL-128/4 (128-bit, 4 passes): short name: <code>haval128_4</code>
@@ -270,34 +252,34 @@
  *   - HAVAL-256/3 (256-bit, 3 passes): short name: <code>haval256_3</code>
  *   - HAVAL-256/4 (256-bit, 4 passes): short name: <code>haval256_4</code>
  *   - HAVAL-256/5 (256-bit, 5 passes): short name: <code>haval256_5</code>
+ * - MD2: file <code>sph_md2.h</code>, short name: <code>md2</code>
+ * - MD4: file <code>sph_md4.h</code>, short name: <code>md4</code>
+ * - MD5: file <code>sph_md5.h</code>, short name: <code>md5</code>
+ * - PANAMA: file <code>sph_panama.h</code>, short name: <code>panama</code>
+ * - RadioGatun family: file <code>sph_radiogatun.h</code>
+ *   - RadioGatun[32]: short name: <code>radiogatun32</code>
+ *   - RadioGatun[64]: short name: <code>radiogatun64</code> (64)
+ * - RIPEMD family: file <code>sph_ripemd.h</code>
+ *   - RIPEMD: short name: <code>ripemd</code>
+ *   - RIPEMD-128: short name: <code>ripemd128</code>
+ *   - RIPEMD-160: short name: <code>ripemd160</code>
+ * - SHA-0: file <code>sph_sha0.h</code>, short name: <code>sha0</code>
+ * - SHA-1: file <code>sph_sha1.h</code>, short name: <code>sha1</code>
+ * - SHA-2 family, 32-bit hashes: file <code>sph_sha2.h</code>
+ *   - SHA-224: short name: <code>sha224</code>
+ *   - SHA-256: short name: <code>sha256</code>
+ *   - SHA-384: short name: <code>sha384</code> (64)
+ *   - SHA-512: short name: <code>sha512</code> (64)
+ * - Tiger family: file <code>sph_tiger.h</code>
+ *   - Tiger: short name: <code>tiger</code> (64)
+ *   - Tiger2: short name: <code>tiger2</code> (64)
  * - WHIRLPOOL family: file <code>sph_whirlpool.h</code>
  *   - WHIRLPOOL-0: short name: <code>whirlpool0</code> (64)
  *   - WHIRLPOOL-1: short name: <code>whirlpool1</code> (64)
  *   - WHIRLPOOL: short name: <code>whirlpool</code> (64)
- * - RadioGatun family: file <code>sph_radiogatun.h</code>
- *   - RadioGatun[32]: short name: <code>radiogatun32</code>
- *   - RadioGatun[64]: short name: <code>radiogatun64</code> (64)
- * - Shabal family: file <code>sph_shabal.h</code>
- *   - Shabal-192: short name: <code>shabal192</code>
- *   - Shabal-224: short name: <code>shabal224</code>
- *   - Shabal-256: short name: <code>shabal256</code>
- *   - Shabal-384: short name: <code>shabal384</code>
- *   - Shabal-512: short name: <code>shabal512</code>
- * - ECHO family: file <code>sph_echo.h</code>
- *   - ECHO-224: short name: <code>echo224</code>
- *   - ECHO-256: short name: <code>echo256</code>
- *   - ECHO-384: short name: <code>echo384</code>
- *   - ECHO-512: short name: <code>echo512</code>
- * - SIMD family: file <code>sph_simd.h</code>
- *   - SIMD-224: short name: <code>simd224</code>
- *   - SIMD-256: short name: <code>simd256</code>
- *   - SIMD-384: short name: <code>simd384</code>
- *   - SIMD-512: short name: <code>simd512</code>
- * - Luffa family: file <code>sph_luffa.h</code>
- *   - Luffa-224: short name: <code>luffa224</code>
- *   - Luffa-256: short name: <code>luffa256</code>
- *   - Luffa-384: short name: <code>luffa384</code>
- *   - Luffa-512: short name: <code>luffa512</code>
+ *
+ * The fourteen second-round SHA-3 candidates are also implemented:
+ *
  * - BLAKE family: file <code>sph_blake.h</code>
  *   - BLAKE-224 (nominally specified as BLAKE-28): short name:
  *     <code>blake224</code>
@@ -307,25 +289,6 @@
  *     <code>blake384</code> (64)
  *   - BLAKE-512 (nominally specified as BLAKE-64): short name:
  *     <code>blake512</code> (64)
- * - Skein family: file <code>sph_skein.h</code>
- *   - Skein-224 (nominally specified as Skein-256-224): short name:
- *     <code>skein224</code> (64)
- *   - Skein-256 (nominally specified as Skein-256-256): short name:
- *     <code>skein256</code> (64)
- *   - Skein-384 (nominally specified as Skein-512-384): short name:
- *     <code>skein384</code> (64)
- *   - Skein-512 (nominally specified as Skein-512-512): short name:
- *     <code>skein512</code> (64)
- * - JH family: file <code>sph_jh.h</code>
- *   - JH-224: short name: <code>jh224</code>
- *   - JH-256: short name: <code>jh256</code>
- *   - JH-384: short name: <code>jh384</code>
- *   - JH-512: short name: <code>jh512</code>
- * - Fugue family: file <code>sph_fugue.h</code>
- *   - Fugue-224: short name: <code>fugue224</code>
- *   - Fugue-256: short name: <code>fugue256</code>
- *   - Fugue-384: short name: <code>fugue384</code>
- *   - Fugue-512: short name: <code>fugue512</code>
  * - BMW (Blue Midnight Wish) family: file <code>sph_bmw.h</code>
  *   - BMW-224: short name: <code>bmw224</code>
  *   - BMW-256: short name: <code>bmw256</code>
@@ -337,6 +300,76 @@
  *   - CubeHash-256: short name: <code>cubehash256</code>
  *   - CubeHash-384: short name: <code>cubehash384</code>
  *   - CubeHash-512: short name: <code>cubehash512</code>
+ * - ECHO family: file <code>sph_echo.h</code>
+ *   - ECHO-224: short name: <code>echo224</code>
+ *   - ECHO-256: short name: <code>echo256</code>
+ *   - ECHO-384: short name: <code>echo384</code>
+ *   - ECHO-512: short name: <code>echo512</code>
+ * - Fugue family: file <code>sph_fugue.h</code>
+ *   - Fugue-224: short name: <code>fugue224</code>
+ *   - Fugue-256: short name: <code>fugue256</code>
+ *   - Fugue-384: short name: <code>fugue384</code>
+ *   - Fugue-512: short name: <code>fugue512</code>
+ * - Groestl family: file <code>sph_groestl.h</code>
+ *   - Groestl-224: short name: <code>groestl224</code>
+ *   - Groestl-256: short name: <code>groestl256</code>
+ *   - Groestl-384: short name: <code>groestl384</code>
+ *   - Groestl-512: short name: <code>groestl512</code>
+ * - Hamsi family: file <code>sph_hamsi.h</code>
+ *   - Hamsi-224: short name: <code>hamsi224</code>
+ *   - Hamsi-256: short name: <code>hamsi256</code>
+ *   - Hamsi-384: short name: <code>hamsi384</code>
+ *   - Hamsi-512: short name: <code>hamsi512</code>
+ * - JH family: file <code>sph_jh.h</code>
+ *   - JH-224: short name: <code>jh224</code>
+ *   - JH-256: short name: <code>jh256</code>
+ *   - JH-384: short name: <code>jh384</code>
+ *   - JH-512: short name: <code>jh512</code>
+ * - Keccak family: file <code>sph_keccak.h</code>
+ *   - Keccak-224: short name: <code>keccak224</code>
+ *   - Keccak-256: short name: <code>keccak256</code>
+ *   - Keccak-384: short name: <code>keccak384</code>
+ *   - Keccak-512: short name: <code>keccak512</code>
+ * - Luffa family: file <code>sph_luffa.h</code>
+ *   - Luffa-224: short name: <code>luffa224</code>
+ *   - Luffa-256: short name: <code>luffa256</code>
+ *   - Luffa-384: short name: <code>luffa384</code>
+ *   - Luffa-512: short name: <code>luffa512</code>
+ * - Shabal family: file <code>sph_shabal.h</code>
+ *   - Shabal-192: short name: <code>shabal192</code>
+ *   - Shabal-224: short name: <code>shabal224</code>
+ *   - Shabal-256: short name: <code>shabal256</code>
+ *   - Shabal-384: short name: <code>shabal384</code>
+ *   - Shabal-512: short name: <code>shabal512</code>
+ * - SHAvite-3 family: file <code>sph_shavite.h</code>
+ *   - SHAvite-224 (nominally "SHAvite-3 with 224-bit output"):
+ *     short name: <code>shabal224</code>
+ *   - SHAvite-256 (nominally "SHAvite-3 with 256-bit output"):
+ *     short name: <code>shabal256</code>
+ *   - SHAvite-384 (nominally "SHAvite-3 with 384-bit output"):
+ *     short name: <code>shabal384</code>
+ *   - SHAvite-512 (nominally "SHAvite-3 with 512-bit output"):
+ *     short name: <code>shabal512</code>
+ * - SIMD family: file <code>sph_simd.h</code>
+ *   - SIMD-224: short name: <code>simd224</code>
+ *   - SIMD-256: short name: <code>simd256</code>
+ *   - SIMD-384: short name: <code>simd384</code>
+ *   - SIMD-512: short name: <code>simd512</code>
+ * - Skein family: file <code>sph_skein.h</code>
+ *   - Skein-224 (nominally specified as Skein-256-224): short name:
+ *     <code>skein224</code> (64)
+ *   - Skein-256 (nominally specified as Skein-256-256): short name:
+ *     <code>skein256</code> (64)
+ *   - Skein-384 (nominally specified as Skein-512-384): short name:
+ *     <code>skein384</code> (64)
+ *   - Skein-512 (nominally specified as Skein-512-512): short name:
+ *     <code>skein512</code> (64)
+ *
+ * For the second-round SHA-3 candidates, the functions are as specified
+ * for round 2, i.e. with the "tweaks" that some candidates added
+ * between round 1 and round 2. Also, some of the submitted packages for
+ * round 2 contained errors, in the specification, reference code, or
+ * both. <code>sphlib</code> implements the corrected versions.
  */
 
 /** @hideinitializer
@@ -801,6 +834,7 @@ typedef int32_t sph_s32;
 typedef uint_fast32_t sph_u32;
 typedef int_fast32_t sph_s32;
 #endif
+#if !SPH_NO_64
 #ifdef UINT64_MAX
 typedef uint64_t sph_u64;
 typedef int64_t sph_s64;
@@ -808,11 +842,13 @@ typedef int64_t sph_s64;
 typedef uint_fast64_t sph_u64;
 typedef int_fast64_t sph_s64;
 #endif
+#endif
 
 #define SPH_C32(x)    ((sph_u32)(x))
+#if !SPH_NO_64
 #define SPH_C64(x)    ((sph_u64)(x))
-
 #define SPH_64  1
+#endif
 
 #else
 
@@ -838,6 +874,8 @@ typedef long sph_s32;
 #define SPH_C32(x)    ((sph_u32)(x ## UL))
 
 #endif
+
+#if !SPH_NO_64
 
 /*
  * We want a 64-bit type. We use "unsigned long" if it is wide enough (as
@@ -875,11 +913,14 @@ typedef long long sph_s64;
 
 #endif
 
+#endif
+
 /*
- * If the "unsigned long" type has length 64 bits or more, then this
- * is a "true" 64-bit architectures. FIXME: check on 64-bit Windows.
+ * If the "unsigned long" type has length 64 bits or more, then this is
+ * a "true" 64-bit architectures. This is also true with Visual C on
+ * amd64, even though the "long" type is limited to 32 bits.
  */
-#if defined SPH_64 && ((ULONG_MAX >> 31) >> 31) >= 3
+#if SPH_64 && (((ULONG_MAX >> 31) >> 31) >= 3 || defined _M_X64)
 #define SPH_64_TRUE   1
 #endif
 
@@ -893,7 +934,7 @@ typedef long long sph_s64;
 #define SPH_ROTL32(x, n)   SPH_T32(((x) << (n)) | ((x) >> (32 - (n))))
 #define SPH_ROTR32(x, n)   SPH_ROTL32(x, (32 - (n)))
 
-#ifdef SPH_64
+#if SPH_64
 
 #define SPH_T64(x)    ((x) & SPH_C64(0xFFFFFFFFFFFFFFFF))
 #define SPH_ROTL64(x, n)   SPH_T64(((x) << (n)) | ((x) >> (64 - (n))))
@@ -916,94 +957,205 @@ typedef long long sph_s64;
 #endif
 
 /*
- * We define some macros which qualify the architecture.
+ * We define some macros which qualify the architecture. These macros
+ * may be explicit set externally (e.g. as compiler parameters). The
+ * code below sets those macros if they are not already defined.
+ *
+ * Most macros are boolean, thus evaluate to either zero or non-zero.
+ * The SPH_UPTR macro is special, in that it evaluates to a C type,
+ * or is not defined.
  *
  * SPH_UPTR             if defined: unsigned type to cast pointers into
  *
- * SPH_UNALIGNED        defined if unaligned accesses are efficient
- * SPH_LITTLE_ENDIAN    defined if architecture is known to be little-endian
- * SPH_BIG_ENDIAN       defined if architecture is known to be big-endian
- * SPH_LITTLE_FAST      little-endian decoding is fast
- * SPH_BIG_FAST         big-endian decoding is fast
+ * SPH_UNALIGNED        non-zero if unaligned accesses are efficient
+ * SPH_LITTLE_ENDIAN    non-zero if architecture is known to be little-endian
+ * SPH_BIG_ENDIAN       non-zero if architecture is known to be big-endian
+ * SPH_LITTLE_FAST      non-zero if little-endian decoding is fast
+ * SPH_BIG_FAST         non-zero if big-endian decoding is fast
  *
  * If SPH_UPTR is defined, then encoding and decoding of 32-bit and 64-bit
- * values will try to be "smart". SPH_LITTLE_ENDIAN or SPH_BIG_ENDIAN
- * _must_ be defined in those situations. The 32-bit and 64-bit types
- * _must_ have an exact width.
+ * values will try to be "smart". Either SPH_LITTLE_ENDIAN or SPH_BIG_ENDIAN
+ * _must_ be non-zero in those situations. The 32-bit and 64-bit types
+ * _must_ also have an exact width.
  *
  * SPH_SPARCV9_GCC_32   UltraSPARC-compatible with gcc, 32-bit mode
  * SPH_SPARCV9_GCC_64   UltraSPARC-compatible with gcc, 64-bit mode
  * SPH_SPARCV9_GCC      UltraSPARC-compatible with gcc
  * SPH_I386_GCC         x86-compatible (32-bit) with gcc
- * SPH_I386_MSVC        x86-compatible (32-bit) with Microsoft Visual C 8
+ * SPH_I386_MSVC        x86-compatible (32-bit) with Microsoft Visual C
  * SPH_AMD64_GCC        x86-compatible (64-bit) with gcc
- * SPH_ARM_GCC          ARM-compatible, little-endian, with gcc
+ * SPH_AMD64_MSVC       x86-compatible (64-bit) with Microsoft Visual C
+ *
+ * TODO: enhance automatic detection, for more architectures and compilers.
+ * Endianness is the most important. SPH_UNALIGNED and SPH_UPTR help with
+ * some very fast functions (e.g. MD4) when using unaligned input data.
+ * The CPU-specific-with-GCC macros are useful only for inline assembly,
+ * normally restrained to this header file.
  */
-#undef SPH_UNALIGNED
-#undef SPH_LITTLE_ENDIAN
-#undef SPH_BIG_ENDIAN
-#if defined __i386__
-#define SPH_UNALIGNED       1
-#define SPH_LITTLE_ENDIAN   1
-#define SPH_UPTR            sph_u32
+
+/*
+ * 32-bit x86, aka "i386 compatible".
+ */
+#if defined __i386__ || defined _M_IX86
+
+#define SPH_DETECT_UNALIGNED         1
+#define SPH_DETECT_LITTLE_ENDIAN     1
+#define SPH_DETECT_UPTR              sph_u32
 #ifdef __GNUC__
-#define SPH_I386_GCC        1
+#define SPH_DETECT_I386_GCC          1
 #endif
-#elif defined SPH_I386_MSVC
-#define SPH_UNALIGNED       1
-#define SPH_LITTLE_ENDIAN   1
-#define SPH_UPTR            sph_u32
-#elif defined __x86_64
-#define SPH_UNALIGNED       1
-#define SPH_LITTLE_ENDIAN   1
-#define SPH_UPTR            sph_u64
+#ifdef _MSC_VER
+#define SPH_DETECT_I386_MSVC         1
+#endif
+
+/*
+ * 64-bit x86, hereafter known as "amd64".
+ */
+#elif defined __x86_64 || defined _M_X64
+
+#define SPH_DETECT_UNALIGNED         1
+#define SPH_DETECT_LITTLE_ENDIAN     1
+#define SPH_DETECT_UPTR              sph_u64
 #ifdef __GNUC__
-#define SPH_AMD64_GCC       1
+#define SPH_DETECT_AMD64_GCC         1
 #endif
-#elif defined __sparcv9
+#ifdef _MSC_VER
+#define SPH_DETECT_AMD64_MSVC        1
+#endif
+
+/*
+ * 64-bit Sparc architecture (implies v9).
+ */
+#elif ((defined __sparc__ || defined __sparc) && defined __arch64__) \
+	|| defined __sparcv9
+
+#define SPH_DETECT_BIG_ENDIAN        1
+#define SPH_DETECT_UPTR              sph_u64
 #ifdef __GNUC__
-#define SPH_SPARCV9_GCC_64  1
+#define SPH_DETECT_SPARCV9_GCC_64    1
+#define SPH_DETECT_LITTLE_FAST       1
 #endif
-#define SPH_BIG_ENDIAN      1
-#define SPH_LITTLE_FAST     1
-#define SPH_UPTR            sph_u64
-#elif defined __sparc
-#define SPH_BIG_ENDIAN      1
-#define SPH_UPTR            sph_u32
+
+/*
+ * 32-bit Sparc.
+ */
+#elif (defined __sparc__ || defined __sparc) \
+	&& !(defined __sparcv9 || defined __arch64__)
+
+#define SPH_DETECT_BIG_ENDIAN        1
+#define SPH_DETECT_UPTR              sph_u32
+#if defined __GNUC__ && defined __sparc_v9__
+#define SPH_DETECT_SPARCV9_GCC_32    1
+#define SPH_DETECT_LITTLE_FAST       1
+#endif
+
+/*
+ * ARM, little-endian.
+ */
 #elif defined __arm__ && __ARMEL__
-#define SPH_ARM_GCC         1
-#define SPH_LITTLE_ENDIAN   1
-#define SPH_UPTR            sph_u32
-#elif defined __ia64 || defined __ia64__ || defined __itanium__
+
+#define SPH_DETECT_LITTLE_ENDIAN     1
+
+/*
+ * MIPS, little-endian.
+ */
+#elif MIPSEL || _MIPSEL || __MIPSEL || __MIPSEL__
+
+#define SPH_DETECT_LITTLE_ENDIAN     1
+
+/*
+ * MIPS, big-endian.
+ */
+#elif MIPSEB || _MIPSEB || __MIPSEB || __MIPSEB__
+
+#define SPH_DETECT_BIG_ENDIAN        1
+
+/*
+ * PowerPC.
+ */
+#elif defined __powerpc__ || defined __POWERPC__ || defined __ppc__ \
+	|| defined _ARCH_PPC
 #if defined __BIG_ENDIAN__ || defined _BIG_ENDIAN
-#define SPH_BIG_ENDIAN      1
+#define SPH_DETECT_BIG_ENDIAN        1
+#elif defined __LITTLE_ENDIAN__ || defined _LITTLE_ENDIAN
+#define SPH_DETECT_LITTLE_ENDIAN     1
+#endif
+
+/*
+ * Itanium, 64-bit.
+ */
+#elif defined __ia64 || defined __ia64__ \
+	|| defined __itanium__ || defined _M_IA64
+
+#if defined __BIG_ENDIAN__ || defined _BIG_ENDIAN
+#define SPH_DETECT_BIG_ENDIAN        1
 #else
-#define SPH_LITTLE_ENDIAN   1
+#define SPH_DETECT_LITTLE_ENDIAN     1
 #endif
 #if defined __LP64__ || defined _LP64
-#define SPH_UPTR            sph_u64
+#define SPH_DETECT_UPTR              sph_u64
 #else
-#define SPH_UPTR            sph_u32
-#endif
-#elif MIPSEL || _MIPSEL || __MIPSEL || __MIPSEL__
-#define SPH_LITTLE_ENDIAN   1
-#elif MIPSEB || _MIPSEB || __MIPSEB || __MIPSEB__
-#define SPH_BIG_ENDIAN      1
+#define SPH_DETECT_UPTR              sph_u32
 #endif
 
-#ifdef SPH_LITTLE_ENDIAN
-#define SPH_LITTLE_FAST     1
-#endif
-#ifdef SPH_BIG_ENDIAN
-#define SPH_BIG_FAST        1
 #endif
 
-#if defined SPH_SPARCV9_GCC_32 || defined SPH_SPARCV9_GCC_64
-#define SPH_SPARCV9_GCC     1
-#define SPH_LITTLE_FAST     1
+#if defined SPH_DETECT_SPARCV9_GCC_32 || defined SPH_DETECT_SPARCV9_GCC_64
+#define SPH_DETECT_SPARCV9_GCC       1
 #endif
 
-#if defined SPH_I386_GCC && !defined SPH_NO_ASM
+#if defined SPH_DETECT_UNALIGNED && !defined SPH_UNALIGNED
+#define SPH_UNALIGNED         SPH_DETECT_UNALIGNED
+#endif
+#if defined SPH_DETECT_UPTR && !defined SPH_UPTR
+#define SPH_UPTR              SPH_DETECT_UPTR
+#endif
+#if defined SPH_DETECT_LITTLE_ENDIAN && !defined SPH_LITTLE_ENDIAN
+#define SPH_LITTLE_ENDIAN     SPH_DETECT_LITTLE_ENDIAN
+#endif
+#if defined SPH_DETECT_BIG_ENDIAN && !defined SPH_BIG_ENDIAN
+#define SPH_BIG_ENDIAN        SPH_DETECT_BIG_ENDIAN
+#endif
+#if defined SPH_DETECT_LITTLE_FAST && !defined SPH_LITTLE_FAST
+#define SPH_LITTLE_FAST       SPH_DETECT_LITTLE_FAST
+#endif
+#if defined SPH_DETECT_BIG_FAST && !defined SPH_BIG_FAST
+#define SPH_BIG_FAST    SPH_DETECT_BIG_FAST
+#endif
+#if defined SPH_DETECT_SPARCV9_GCC_32 && !defined SPH_SPARCV9_GCC_32
+#define SPH_SPARCV9_GCC_32    SPH_DETECT_SPARCV9_GCC_32
+#endif
+#if defined SPH_DETECT_SPARCV9_GCC_64 && !defined SPH_SPARCV9_GCC_64
+#define SPH_SPARCV9_GCC_64    SPH_DETECT_SPARCV9_GCC_64
+#endif
+#if defined SPH_DETECT_SPARCV9_GCC && !defined SPH_SPARCV9_GCC
+#define SPH_SPARCV9_GCC       SPH_DETECT_SPARCV9_GCC
+#endif
+#if defined SPH_DETECT_I386_GCC && !defined SPH_I386_GCC
+#define SPH_I386_GCC          SPH_DETECT_I386_GCC
+#endif
+#if defined SPH_DETECT_I386_MSVC && !defined SPH_I386_MSVC
+#define SPH_I386_MSVC         SPH_DETECT_I386_MSVC
+#endif
+#if defined SPH_DETECT_AMD64_GCC && !defined SPH_AMD64_GCC
+#define SPH_AMD64_GCC         SPH_DETECT_AMD64_GCC
+#endif
+#if defined SPH_DETECT_AMD64_MSVC && !defined SPH_AMD64_MSVC
+#define SPH_AMD64_MSVC        SPH_DETECT_AMD64_MSVC
+#endif
+
+#if SPH_LITTLE_ENDIAN && !defined SPH_LITTLE_FAST
+#define SPH_LITTLE_FAST              1
+#endif
+#if SPH_BIG_ENDIAN && !defined SPH_BIG_FAST
+#define SPH_BIG_FAST                 1
+#endif
+
+#if defined SPH_UPTR && !(SPH_LITTLE_ENDIAN || SPH_BIG_ENDIAN)
+#error SPH_UPTR defined, but endianness is not known.
+#endif
+
+#if SPH_I386_GCC && !SPH_NO_ASM
 
 /*
  * On x86 32-bit, with gcc, we use the bswapl opcode to byte-swap 32-bit
@@ -1017,7 +1169,7 @@ sph_bswap32(sph_u32 x)
 	return x;
 }
 
-#ifdef SPH_64
+#if SPH_64
 
 static SPH_INLINE sph_u64
 sph_bswap64(sph_u64 x)
@@ -1028,7 +1180,7 @@ sph_bswap64(sph_u64 x)
 
 #endif
 
-#elif defined SPH_AMD64_GCC && !defined SPH_NO_ASM
+#elif SPH_AMD64_GCC && !SPH_NO_ASM
 
 /*
  * On x86 64-bit, with gcc, we use the bswapl opcode to byte-swap 32-bit
@@ -1042,7 +1194,7 @@ sph_bswap32(sph_u32 x)
 	return x;
 }
 
-#ifdef SPH_64
+#if SPH_64
 
 static SPH_INLINE sph_u64
 sph_bswap64(sph_u64 x)
@@ -1059,7 +1211,7 @@ sph_bswap64(sph_u64 x)
  * implementation below.
  *
 
-#elif defined SPH_I386_MSVC && !defined SPH_NO_ASM
+#elif SPH_I386_MSVC && !SPH_NO_ASM
 
 static __inline sph_u32 __declspec(naked) __fastcall
 sph_bswap32(sph_u32 x)
@@ -1071,7 +1223,7 @@ sph_bswap32(sph_u32 x)
 	}
 }
 
-#ifdef SPH_64
+#if SPH_64
 
 static SPH_INLINE sph_u64
 sph_bswap64(sph_u64 x)
@@ -1097,7 +1249,7 @@ sph_bswap32(sph_u32 x)
 	return x;
 }
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * Byte-swap a 64-bit value.
@@ -1120,7 +1272,7 @@ sph_bswap64(sph_u64 x)
 
 #endif
 
-#if defined SPH_SPARCV9_GCC && !defined SPH_NO_ASM
+#if SPH_SPARCV9_GCC && !SPH_NO_ASM
 
 /*
  * On UltraSPARC systems, native ordering is big-endian, but it is
@@ -1193,14 +1345,14 @@ static SPH_INLINE void
 sph_enc32be(void *dst, sph_u32 val)
 {
 #if defined SPH_UPTR
-#ifdef SPH_UNALIGNED
-#ifdef SPH_LITTLE_ENDIAN
+#if SPH_UNALIGNED
+#if SPH_LITTLE_ENDIAN
 	val = sph_bswap32(val);
 #endif
 	*(sph_u32 *)dst = val;
 #else
-	if (((SPH_UPTR)val & 3) == 0) {
-#ifdef SPH_LITTLE_ENDIAN
+	if (((SPH_UPTR)dst & 3) == 0) {
+#if SPH_LITTLE_ENDIAN
 		val = sph_bswap32(val);
 #endif
 		*(sph_u32 *)dst = val;
@@ -1229,9 +1381,9 @@ sph_enc32be(void *dst, sph_u32 val)
 static SPH_INLINE void
 sph_enc32be_aligned(void *dst, sph_u32 val)
 {
-#if defined SPH_LITTLE_ENDIAN
+#if SPH_LITTLE_ENDIAN
 	*(sph_u32 *)dst = sph_bswap32(val);
-#elif defined SPH_BIG_ENDIAN
+#elif SPH_BIG_ENDIAN
 	*(sph_u32 *)dst = val;
 #else
 	((unsigned char *)dst)[0] = (val >> 24);
@@ -1251,15 +1403,15 @@ static SPH_INLINE sph_u32
 sph_dec32be(const void *src)
 {
 #if defined SPH_UPTR
-#ifdef SPH_UNALIGNED
-#ifdef SPH_LITTLE_ENDIAN
+#if SPH_UNALIGNED
+#if SPH_LITTLE_ENDIAN
 	return sph_bswap32(*(const sph_u32 *)src);
 #else
 	return *(const sph_u32 *)src;
 #endif
 #else
 	if (((SPH_UPTR)src & 3) == 0) {
-#ifdef SPH_LITTLE_ENDIAN
+#if SPH_LITTLE_ENDIAN
 		return sph_bswap32(*(const sph_u32 *)src);
 #else
 		return *(const sph_u32 *)src;
@@ -1289,9 +1441,9 @@ sph_dec32be(const void *src)
 static SPH_INLINE sph_u32
 sph_dec32be_aligned(const void *src)
 {
-#if defined SPH_LITTLE_ENDIAN
+#if SPH_LITTLE_ENDIAN
 	return sph_bswap32(*(const sph_u32 *)src);
-#elif defined SPH_BIG_ENDIAN
+#elif SPH_BIG_ENDIAN
 	return *(const sph_u32 *)src;
 #else
 	return ((sph_u32)(((const unsigned char *)src)[0]) << 24)
@@ -1311,14 +1463,14 @@ static SPH_INLINE void
 sph_enc32le(void *dst, sph_u32 val)
 {
 #if defined SPH_UPTR
-#ifdef SPH_UNALIGNED
-#ifdef SPH_BIG_ENDIAN
+#if SPH_UNALIGNED
+#if SPH_BIG_ENDIAN
 	val = sph_bswap32(val);
 #endif
 	*(sph_u32 *)dst = val;
 #else
-	if (((SPH_UPTR)val & 3) == 0) {
-#ifdef SPH_BIG_ENDIAN
+	if (((SPH_UPTR)dst & 3) == 0) {
+#if SPH_BIG_ENDIAN
 		val = sph_bswap32(val);
 #endif
 		*(sph_u32 *)dst = val;
@@ -1347,9 +1499,9 @@ sph_enc32le(void *dst, sph_u32 val)
 static SPH_INLINE void
 sph_enc32le_aligned(void *dst, sph_u32 val)
 {
-#if defined SPH_LITTLE_ENDIAN
+#if SPH_LITTLE_ENDIAN
 	*(sph_u32 *)dst = val;
-#elif defined SPH_BIG_ENDIAN
+#elif SPH_BIG_ENDIAN
 	*(sph_u32 *)dst = sph_bswap32(val);
 #else
 	((unsigned char *)dst)[0] = val;
@@ -1369,16 +1521,16 @@ static SPH_INLINE sph_u32
 sph_dec32le(const void *src)
 {
 #if defined SPH_UPTR
-#ifdef SPH_UNALIGNED
-#ifdef SPH_BIG_ENDIAN
+#if SPH_UNALIGNED
+#if SPH_BIG_ENDIAN
 	return sph_bswap32(*(const sph_u32 *)src);
 #else
 	return *(const sph_u32 *)src;
 #endif
 #else
 	if (((SPH_UPTR)src & 3) == 0) {
-#ifdef SPH_BIG_ENDIAN
-#if defined SPH_SPARCV9_GCC && !defined SPH_NO_ASM
+#if SPH_BIG_ENDIAN
+#if SPH_SPARCV9_GCC && !SPH_NO_ASM
 		sph_u32 tmp;
 
 		/*
@@ -1421,10 +1573,10 @@ sph_dec32le(const void *src)
 static SPH_INLINE sph_u32
 sph_dec32le_aligned(const void *src)
 {
-#if defined SPH_LITTLE_ENDIAN
+#if SPH_LITTLE_ENDIAN
 	return *(const sph_u32 *)src;
-#elif defined SPH_BIG_ENDIAN
-#if defined SPH_SPARCV9_GCC && !defined SPH_NO_ASM
+#elif SPH_BIG_ENDIAN
+#if SPH_SPARCV9_GCC && !SPH_NO_ASM
 	sph_u32 tmp;
 
 	__asm__ __volatile__ ("lda [%1]0x88,%0" : "=r" (tmp) : "r" (src));
@@ -1440,7 +1592,7 @@ sph_dec32le_aligned(const void *src)
 #endif
 }
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * Encode a 64-bit value into the provided buffer (big endian convention).
@@ -1452,14 +1604,14 @@ static SPH_INLINE void
 sph_enc64be(void *dst, sph_u64 val)
 {
 #if defined SPH_UPTR
-#ifdef SPH_UNALIGNED
-#ifdef SPH_LITTLE_ENDIAN
+#if SPH_UNALIGNED
+#if SPH_LITTLE_ENDIAN
 	val = sph_bswap64(val);
 #endif
 	*(sph_u64 *)dst = val;
 #else
-	if (((SPH_UPTR)val & 7) == 0) {
-#ifdef SPH_LITTLE_ENDIAN
+	if (((SPH_UPTR)dst & 7) == 0) {
+#if SPH_LITTLE_ENDIAN
 		val = sph_bswap64(val);
 #endif
 		*(sph_u64 *)dst = val;
@@ -1496,9 +1648,9 @@ sph_enc64be(void *dst, sph_u64 val)
 static SPH_INLINE void
 sph_enc64be_aligned(void *dst, sph_u64 val)
 {
-#if defined SPH_LITTLE_ENDIAN
+#if SPH_LITTLE_ENDIAN
 	*(sph_u64 *)dst = sph_bswap64(val);
-#elif defined SPH_BIG_ENDIAN
+#elif SPH_BIG_ENDIAN
 	*(sph_u64 *)dst = val;
 #else
 	((unsigned char *)dst)[0] = (val >> 56);
@@ -1522,15 +1674,15 @@ static SPH_INLINE sph_u64
 sph_dec64be(const void *src)
 {
 #if defined SPH_UPTR
-#ifdef SPH_UNALIGNED
-#ifdef SPH_LITTLE_ENDIAN
+#if SPH_UNALIGNED
+#if SPH_LITTLE_ENDIAN
 	return sph_bswap64(*(const sph_u64 *)src);
 #else
 	return *(const sph_u64 *)src;
 #endif
 #else
 	if (((SPH_UPTR)src & 7) == 0) {
-#ifdef SPH_LITTLE_ENDIAN
+#if SPH_LITTLE_ENDIAN
 		return sph_bswap64(*(const sph_u64 *)src);
 #else
 		return *(const sph_u64 *)src;
@@ -1568,9 +1720,9 @@ sph_dec64be(const void *src)
 static SPH_INLINE sph_u64
 sph_dec64be_aligned(const void *src)
 {
-#if defined SPH_LITTLE_ENDIAN
+#if SPH_LITTLE_ENDIAN
 	return sph_bswap64(*(const sph_u64 *)src);
-#elif defined SPH_BIG_ENDIAN
+#elif SPH_BIG_ENDIAN
 	return *(const sph_u64 *)src;
 #else
 	return ((sph_u64)(((const unsigned char *)src)[0]) << 56)
@@ -1594,14 +1746,14 @@ static SPH_INLINE void
 sph_enc64le(void *dst, sph_u64 val)
 {
 #if defined SPH_UPTR
-#ifdef SPH_UNALIGNED
-#ifdef SPH_BIG_ENDIAN
+#if SPH_UNALIGNED
+#if SPH_BIG_ENDIAN
 	val = sph_bswap64(val);
 #endif
 	*(sph_u64 *)dst = val;
 #else
-	if (((SPH_UPTR)val & 7) == 0) {
-#ifdef SPH_BIG_ENDIAN
+	if (((SPH_UPTR)dst & 7) == 0) {
+#if SPH_BIG_ENDIAN
 		val = sph_bswap64(val);
 #endif
 		*(sph_u64 *)dst = val;
@@ -1638,9 +1790,9 @@ sph_enc64le(void *dst, sph_u64 val)
 static SPH_INLINE void
 sph_enc64le_aligned(void *dst, sph_u64 val)
 {
-#if defined SPH_LITTLE_ENDIAN
+#if SPH_LITTLE_ENDIAN
 	*(sph_u64 *)dst = val;
-#elif defined SPH_BIG_ENDIAN
+#elif SPH_BIG_ENDIAN
 	*(sph_u64 *)dst = sph_bswap64(val);
 #else
 	((unsigned char *)dst)[0] = val;
@@ -1664,16 +1816,16 @@ static SPH_INLINE sph_u64
 sph_dec64le(const void *src)
 {
 #if defined SPH_UPTR
-#ifdef SPH_UNALIGNED
-#ifdef SPH_BIG_ENDIAN
+#if SPH_UNALIGNED
+#if SPH_BIG_ENDIAN
 	return sph_bswap64(*(const sph_u64 *)src);
 #else
 	return *(const sph_u64 *)src;
 #endif
 #else
 	if (((SPH_UPTR)src & 7) == 0) {
-#ifdef SPH_BIG_ENDIAN
-#if defined SPH_SPARCV9_GCC_64 && !defined SPH_NO_ASM
+#if SPH_BIG_ENDIAN
+#if SPH_SPARCV9_GCC_64 && !SPH_NO_ASM
 		sph_u64 tmp;
 
 		__asm__ __volatile__ (
@@ -1718,10 +1870,10 @@ sph_dec64le(const void *src)
 static SPH_INLINE sph_u64
 sph_dec64le_aligned(const void *src)
 {
-#if defined SPH_LITTLE_ENDIAN
+#if SPH_LITTLE_ENDIAN
 	return *(const sph_u64 *)src;
-#elif defined SPH_BIG_ENDIAN
-#if defined SPH_SPARCV9_GCC_64 && !defined SPH_NO_ASM
+#elif SPH_BIG_ENDIAN
+#if SPH_SPARCV9_GCC_64 && !SPH_NO_ASM
 	sph_u64 tmp;
 
 	__asm__ __volatile__ ("ldxa [%1]0x88,%0" : "=r" (tmp) : "r" (src));

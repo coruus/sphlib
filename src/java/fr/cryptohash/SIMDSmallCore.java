@@ -1,4 +1,4 @@
-// $Id: SIMDSmallCore.java 156 2010-04-26 17:55:11Z tp $
+// $Id: SIMDSmallCore.java 241 2010-06-21 15:04:01Z tp $
 
 package fr.cryptohash;
 
@@ -32,7 +32,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 156 $
+ * @version   $Revision: 241 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -773,22 +773,6 @@ abstract class SIMDSmallCore extends DigestEngine {
 				q[i] = (tq <= 128 ? tq : tq - 257);
 			}
 		}
-		/* obsolete
-		{
-			System.out.printf("q[]:\n");
-			for (int i = 0; i < 128; i ++) {
-				if (i == 0) {
-					System.out.printf("   ");
-				} else if (i % 12 == 0) {
-					System.out.printf("\n   ");
-				} else {
-					System.out.printf(" ");
-				}
-				System.out.printf("%5d", q[i]);
-			}
-			System.out.printf("\n");
-		}
-		*/
 
 		System.arraycopy(state, 0, tmpState, 0, 16);
 
@@ -799,19 +783,6 @@ abstract class SIMDSmallCore extends DigestEngine {
 			state[i + 3] ^= decodeLEInt(x, 4 * (i + 3));
 		}
 
-		/* obsolete
-		{
-			System.out.printf("State (0):\n");
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 0], state[ 1], state[ 2], state[ 3],
-				state[ 4], state[ 5], state[ 6], state[ 7]);
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 8], state[ 9], state[10], state[11],
-				state[12], state[13], state[14], state[15]);
-		}
-		*/
 		for (int u = 0; u < 32; u += 4) {
 			int v = wsp[(u >> 2) + 0];
 			w[u + 0] = ((((q[v + 2 * 0 + 0]) * 185) & 0xFFFF)
@@ -824,19 +795,6 @@ abstract class SIMDSmallCore extends DigestEngine {
 				+ (((q[v + 2 * 3 + 1]) * 185) << 16));
 		};
 		oneRound(0, 3, 23, 17, 27);
-		/* obsolete
-		{
-			System.out.printf("State (1):\n");
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 0], state[ 1], state[ 2], state[ 3],
-				state[ 4], state[ 5], state[ 6], state[ 7]);
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 8], state[ 9], state[10], state[11],
-				state[12], state[13], state[14], state[15]);
-		}
-		*/
 		for (int u = 0; u < 32; u += 4) {
 			int v = wsp[(u >> 2) + 8];
 			w[u + 0] = ((((q[v + 2 * 0 + 0]) * 185) & 0xFFFF)
@@ -849,19 +807,6 @@ abstract class SIMDSmallCore extends DigestEngine {
 				+ (((q[v + 2 * 3 + 1]) * 185) << 16));
 		};
 		oneRound(2, 28, 19, 22, 7);
-		/* obsolete
-		{
-			System.out.printf("State (2):\n");
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 0], state[ 1], state[ 2], state[ 3],
-				state[ 4], state[ 5], state[ 6], state[ 7]);
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 8], state[ 9], state[10], state[11],
-				state[12], state[13], state[14], state[15]);
-		}
-		*/
 		for (int u = 0; u < 32; u += 4) {
 			int v = wsp[(u >> 2) + 16];
 			w[u + 0] = ((((q[v + 2 * 0 + -128]) * 233) & 0xFFFF)
@@ -874,19 +819,6 @@ abstract class SIMDSmallCore extends DigestEngine {
 				+ (((q[v + 2 * 3 + -64]) * 233) << 16));
 		};
 		oneRound(1, 29, 9, 15, 5);
-		/* obsolete
-		{
-			System.out.printf("State (3):\n");
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 0], state[ 1], state[ 2], state[ 3],
-				state[ 4], state[ 5], state[ 6], state[ 7]);
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 8], state[ 9], state[10], state[11],
-				state[12], state[13], state[14], state[15]);
-		}
-		*/
 		for (int u = 0; u < 32; u += 4) {
 			int v = wsp[(u >> 2) + 24];
 			w[u + 0] = ((((q[v + 2 * 0 + -191]) * 233) & 0xFFFF)
@@ -899,19 +831,6 @@ abstract class SIMDSmallCore extends DigestEngine {
 				+ (((q[v + 2 * 3 + -127]) * 233) << 16));
 		};
 		oneRound(0, 4, 13, 10, 25);
-		/* obsolete
-		{
-			System.out.printf("State (4):\n");
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 0], state[ 1], state[ 2], state[ 3],
-				state[ 4], state[ 5], state[ 6], state[ 7]);
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 8], state[ 9], state[10], state[11],
-				state[12], state[13], state[14], state[15]);
-		}
-		*/
 
 		{
 			int tA0 = circularLeft(state[0], 4);
@@ -1037,18 +956,11 @@ abstract class SIMDSmallCore extends DigestEngine {
 			state[11] = state[7];
 			state[7] = tA3;
 		}
-		/* obsolete
-		{
-			System.out.printf("State (5):\n");
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 0], state[ 1], state[ 2], state[ 3],
-				state[ 4], state[ 5], state[ 6], state[ 7]);
-			System.out.printf(
-				" %08x %08x %08x %08x %08x %08x %08x %08x\n",
-				state[ 8], state[ 9], state[10], state[11],
-				state[12], state[13], state[14], state[15]);
-		}
-		*/
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "SIMD-" + (getDigestLength() << 3);
 	}
 }

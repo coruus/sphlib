@@ -1,4 +1,4 @@
-// $Id: SHABAL256.java 176 2010-05-07 16:05:14Z tp $
+// $Id: Shabal256.java 213 2010-06-03 02:48:09Z tp $
 
 package fr.cryptohash;
 
@@ -33,66 +33,23 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 176 $
+ * @version   $Revision: 213 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
-public class SHABAL256 extends SHABALCore {
-
-	private static final int[] A_init_256 = {
-		0x52F84552, 0xE54B7999, 0x2D8EE3EC, 0xB9645191,
-		0xE0078B86, 0xBB7C44C9, 0xD2B5C1CA, 0xB0D2EB8C,
-		0x14CE5A45, 0x22AF50DC, 0xEFFDBC6B, 0xEB21B74A
-	};
-
-	private static final int[] B_init_256 = {
-		0xB555C6EE, 0x3E710596, 0xA72A652F, 0x9301515F,
-		0xDA28C1FA, 0x696FD868, 0x9CB6BF72, 0x0AFE4002,
-		0xA6E03615, 0x5138C1D4, 0xBE216306, 0xB38B8890,
-		0x3EA8B96B, 0x3299ACE4, 0x30924DD4, 0x55CB34A5
-	};
-
-	private static final int[] C_init_256 = {
-		0xB405F031, 0xC4233EBA, 0xB3733979, 0xC0DD9D55,
-		0xC51C28AE, 0xA327B8E1, 0x56C56167, 0xED614433,
-		0x88B59D60, 0x60E2CEBA, 0x758B4B8B, 0x83E82A7F,
-		0xBC968828, 0xE6E00BF7, 0xBA839E55, 0x9B491C60
-	};
+public class Shabal256 extends ShabalGeneric {
 
 	/**
 	 * Create the engine.
 	 */
-	public SHABAL256()
+	public Shabal256()
 	{
+		super(256);
 	}
 
-	/** @see Digest */
-	public Digest copy()
+	/** @see ShabalGeneric */
+	ShabalGeneric dup()
 	{
-		return copyState(new SHABAL256());
-	}
-
-	/** @see Digest */
-	public int getDigestLength()
-	{
-		return 32;
-	}
-
-	/** @see SHABALCore */
-	int[] getInitA()
-	{
-		return A_init_256;
-	}
-
-	/** @see SHABALCore */
-	int[] getInitB()
-	{
-		return B_init_256;
-	}
-
-	/** @see SHABALCore */
-	int[] getInitC()
-	{
-		return C_init_256;
+		return new Shabal256();
 	}
 }

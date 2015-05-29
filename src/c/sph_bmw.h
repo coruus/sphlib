@@ -1,4 +1,4 @@
-/* $Id: sph_bmw.h 160 2010-05-02 04:34:15Z tp $ */
+/* $Id: sph_bmw.h 216 2010-06-08 09:46:57Z tp $ */
 /**
  * BMW interface. BMW (aka "Blue Midnight Wish") is a family of
  * functions which differ by their output size; this implementation
@@ -49,7 +49,7 @@
  */
 #define SPH_SIZE_bmw256   256
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * Output size (in bits) for BMW-384.
@@ -78,7 +78,7 @@ typedef struct {
 	unsigned char buf[64];    /* first field, for alignment */
 	size_t ptr;
 	sph_u32 H[16];
-#ifdef SPH_64
+#if SPH_64
 	sph_u64 bit_count;
 #else
 	sph_u32 bit_count_high, bit_count_low;
@@ -98,7 +98,7 @@ typedef sph_bmw_small_context sph_bmw224_context;
  */
 typedef sph_bmw_small_context sph_bmw256_context;
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * This structure is a context for BMW-384 and BMW-512 computations:
@@ -223,7 +223,7 @@ void sph_bmw256_close(void *cc, void *dst);
 void sph_bmw256_addbits_and_close(
 	void *cc, unsigned ub, unsigned n, void *dst);
 
-#ifdef SPH_64
+#if SPH_64
 
 /**
  * Initialize a BMW-384 context. This process performs no memory allocation.

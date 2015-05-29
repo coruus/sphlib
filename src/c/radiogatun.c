@@ -1,4 +1,4 @@
-/* $Id: radiogatun.c 173 2010-05-07 15:51:12Z tp $ */
+/* $Id: radiogatun.c 226 2010-06-16 17:28:08Z tp $ */
 /*
  * RadioGatun implementation.
  *
@@ -34,6 +34,10 @@
 #include <string.h>
 
 #include "sph_radiogatun.h"
+
+#if SPH_SMALL_FOOTPRINT && !defined SPH_SMALL_FOOTPRINT_RADIOGATUN
+#define SPH_SMALL_FOOTPRINT_RADIOGATUN   1
+#endif
 
 /* ======================================================================= */
 /*
@@ -395,6 +399,53 @@
 #define ACC_b(i, k)    ACC_b_(i, k)
 #define ACC_b_(i, k)   b ## i ## _ ## k
 
+#define ROUND_ELT(k, s)   do { \
+		if ((bj += 3) == 39) \
+			bj = 0; \
+		sc->b[bj + s] ^= a ## k; \
+	} while (0)
+
+#define ROUND_SF(j)   do { \
+		size_t bj = (j) * 3; \
+		ROUND_ELT(1, 0); \
+		ROUND_ELT(2, 1); \
+		ROUND_ELT(3, 2); \
+		ROUND_ELT(4, 0); \
+		ROUND_ELT(5, 1); \
+		ROUND_ELT(6, 2); \
+		ROUND_ELT(7, 0); \
+		ROUND_ELT(8, 1); \
+		ROUND_ELT(9, 2); \
+		ROUND_ELT(10, 0); \
+		ROUND_ELT(11, 1); \
+		ROUND_ELT(12, 2); \
+		MILL; \
+		bj = (j) * 3; \
+		a ## 13 ^= sc->b[bj + 0]; \
+		a ## 14 ^= sc->b[bj + 1]; \
+		a ## 15 ^= sc->b[bj + 2]; \
+	} while (0)
+
+#define INPUT_SF(j, p0, p1, p2)   do { \
+		size_t bj = ((j) + 1) * 3; \
+		if (bj == 39) \
+			bj = 0; \
+		sc->b[bj + 0] ^= (p0); \
+		sc->b[bj + 1] ^= (p1); \
+		sc->b[bj + 2] ^= (p2); \
+		a16 ^= (p0); \
+		a17 ^= (p1); \
+		a18 ^= (p2); \
+	} while (0)
+
+
+#if SPH_SMALL_FOOTPRINT_RADIOGATUN
+
+#define ROUND   ROUND_SF
+#define INPUT   INPUT_SF
+
+#else
+
 /*
  * Round function R, on base j. The value j is such that B[0] is actually
  * b[j] after the initial rotation. On the 13-round macro, j has the
@@ -428,6 +479,8 @@
 		a18 ^= (p2); \
 	} while (0)
 
+#endif
+
 #define MUL13(action)   do { \
 		action(0); \
 		action(1); \
@@ -444,24 +497,62 @@
 		action(12); \
 	} while (0)
 
-#define BELT_READ_ELT(i)   do { \
-		b ## i ## _0 = sc->b ## i ## _0; \
-		b ## i ## _1 = sc->b ## i ## _1; \
-		b ## i ## _2 = sc->b ## i ## _2; \
-	} while (0)
-
 #define MILL_READ_ELT(i)   do { \
-		a ## i = sc->a ## i; \
-	} while (0)
-
-#define BELT_WRITE_ELT(i)   do { \
-		sc->b ## i ## _0 = b ## i ## _0; \
-		sc->b ## i ## _1 = b ## i ## _1; \
-		sc->b ## i ## _2 = b ## i ## _2; \
+		a ## i = sc->a[i]; \
 	} while (0)
 
 #define MILL_WRITE_ELT(i)   do { \
-		sc->a ## i = a ## i; \
+		sc->a[i] = a ## i; \
+	} while (0)
+
+#define STATE_READ_SF   do { \
+		MUL19(MILL_READ_ELT); \
+	} while (0)
+
+#define STATE_WRITE_SF   do { \
+		MUL19(MILL_WRITE_ELT); \
+	} while (0)
+
+#define PUSH13_SF   do { \
+		WT DECL19(a); \
+		const unsigned char *buf; \
+ \
+		buf = data; \
+		STATE_READ_SF; \
+		while (len >= sizeof sc->data) { \
+			size_t mk; \
+			for (mk = 13; mk > 0; mk --) { \
+				WT p0 = INW(0, 0); \
+				WT p1 = INW(0, 1); \
+				WT p2 = INW(0, 2); \
+				INPUT_SF(mk - 1, p0, p1, p2); \
+				ROUND_SF(mk - 1); \
+				buf += (sizeof sc->data) / 13; \
+				len -= (sizeof sc->data) / 13; \
+			} \
+		} \
+		STATE_WRITE_SF; \
+		return len; \
+	} while (0)
+
+#if SPH_SMALL_FOOTPRINT_RADIOGATUN
+
+#define STATE_READ    STATE_READ_SF
+#define STATE_WRITE   STATE_WRITE_SF
+#define PUSH13        PUSH13_SF
+
+#else
+
+#define BELT_READ_ELT(i)   do { \
+		b ## i ## _0 = sc->b[3 * i + 0]; \
+		b ## i ## _1 = sc->b[3 * i + 1]; \
+		b ## i ## _2 = sc->b[3 * i + 2]; \
+	} while (0)
+
+#define BELT_WRITE_ELT(i)   do { \
+		sc->b[3 * i + 0] = b ## i ## _0; \
+		sc->b[3 * i + 1] = b ## i ## _1; \
+		sc->b[3 * i + 2] = b ## i ## _2; \
 	} while (0)
 
 #define STATE_READ   do { \
@@ -502,6 +593,33 @@
 		ROUND(M13_N(k)); \
 	} while (0)
 
+#endif
+
+#define BLANK13_SF   do { \
+		size_t mk = 13; \
+		while (mk -- > 0) \
+			ROUND_SF(mk); \
+	} while (0)
+
+#define BLANK1_SF   do { \
+		WT tmp0, tmp1, tmp2; \
+		ROUND_SF(12); \
+		tmp0 = sc->b[36]; \
+		tmp1 = sc->b[37]; \
+		tmp2 = sc->b[38]; \
+		memmove(sc->b + 3, sc->b, 36 * sizeof sc->b[0]); \
+		sc->b[0] = tmp0; \
+		sc->b[1] = tmp1; \
+		sc->b[2] = tmp2; \
+	} while (0)
+
+#if SPH_SMALL_FOOTPRINT_RADIOGATUN
+
+#define BLANK13   BLANK13_SF
+#define BLANK1    BLANK1_SF
+
+#else
+
 /*
  * Run 13 blank rounds. This macro expects the "a" and "b" state variables
  * to be alread declared.
@@ -533,13 +651,13 @@
 #define BLANK1   do { \
 		WT tmp0, tmp1, tmp2; \
 		ROUND(12); \
-		tmp0 = b1_0; \
-		tmp1 = b1_1; \
-		tmp2 = b1_2; \
+		tmp0 = b0_0; \
+		tmp1 = b0_1; \
+		tmp2 = b0_2; \
 		MUL12(BLANK1_ELT); \
-		b2_0 = tmp0; \
-		b2_1 = tmp1; \
-		b2_2 = tmp2; \
+		b1_0 = tmp0; \
+		b1_1 = tmp1; \
+		b1_2 = tmp2; \
 	} while (0)
 
 #define BLANK1_ELT(i)   do { \
@@ -548,14 +666,29 @@
 		ACC_b(M13_A(M13_N(i), 1), 2) = ACC_b(M13_N(i), 2); \
 	} while (0)
 
+#endif
+
+#define NO_TOKEN
+
 /*
  * Perform padding, then blank rounds, then output some words. This is
  * the body of sph_radiogatun32_close() and sph_radiogatun64_close().
  */
-#define CLOSE(width)   do { \
+#define CLOSE_SF(width)   CLOSE_GEN(width, \
+                          NO_TOKEN, STATE_READ_SF, BLANK1_SF, BLANK13_SF)
+
+#if SPH_SMALL_FOOTPRINT_RADIOGATUN
+#define CLOSE          CLOSE_SF
+#else
+#define CLOSE(width)   CLOSE_GEN(width, \
+                       WT DECL13(b);, STATE_READ, BLANK1, BLANK13)
+#endif
+
+#define CLOSE_GEN(width, WTb13, state_read, blank1, blank13)   do { \
 		unsigned ptr, num; \
 		unsigned char *out; \
-		WT DECL19(a), DECL13(b); \
+		WT DECL19(a); \
+		WTb13 \
  \
 		ptr = sc->data_ptr; \
 		sc->data[ptr ++] = 0x01; \
@@ -570,13 +703,13 @@
 			num --; \
 		} \
  \
-		STATE_READ; \
+		state_read; \
 		if (num >= 13) { \
-			BLANK13; \
+			blank13; \
 			num -= 13; \
 		} \
 		while (num -- > 0) \
-			BLANK1; \
+			blank1; \
  \
 		num = 0; \
 		out = dst; \
@@ -588,7 +721,7 @@
 			num += 2 * (width >> 3); \
 			if (num >= 32) \
 				break; \
-			BLANK1; \
+			blank1; \
 		} \
 		INIT; \
 	} while (0)
@@ -596,25 +729,33 @@
 /*
  * Initialize context structure.
  */
+#if SPH_LITTLE_ENDIAN || SPH_BIG_ENDIAN
+
 #define INIT   do { \
-		MUL19(INIT_a); \
-		MUL13(INIT_b); \
+		memset(sc->a, 0, sizeof sc->a); \
+		memset(sc->b, 0, sizeof sc->b); \
 		sc->data_ptr = 0; \
 	} while (0)
 
-#define INIT_a(i)   (sc->a ## i = 0)
-#define INIT_b(i)   do { \
-		sc->ACC_b(i, 0) = 0; \
-		sc->ACC_b(i, 1) = 0; \
-		sc->ACC_b(i, 2) = 0; \
+#else
+
+#define INIT   do { \
+		size_t u; \
+		for (u = 0; u < 19; u ++) \
+			sc->a[u] = 0; \
+		for (u = 0; u < 39; u ++) \
+			sc->b[u] = 0; \
+		sc->data_ptr = 0; \
 	} while (0)
+
+#endif
 
 /* ======================================================================= */
 /*
  * RadioGatun[32].
  */
 
-#ifndef SPH_NO_RG32
+#if !SPH_NO_RG32
 
 #undef WT
 #define WT           sph_u32
@@ -703,7 +844,7 @@ sph_radiogatun32(void *cc, const void *data, size_t len)
 		data = (const unsigned char *)data + t;
 		len -= t;
 	}
-#ifndef SPH_UNALIGNED
+#if !SPH_UNALIGNED
 	if (((SPH_UPTR)data & 3) != 0) {
 		radiogatun32_short(sc, data, len);
 		return;
@@ -732,9 +873,9 @@ sph_radiogatun32_close(void *cc, void *dst)
  * RadioGatun[64]. Compiled only if a 64-bit or more type is available.
  */
 
-#ifdef SPH_64
+#if SPH_64
 
-#ifndef SPH_NO_RG64
+#if !SPH_NO_RG64
 
 #undef WT
 #define WT           sph_u64
@@ -746,6 +887,18 @@ sph_radiogatun32_close(void *cc, void *dst)
 #define INW(i, j)    sph_dec64le_aligned(buf + (8 * (3 * (i) + (j))))
 #undef OUTW
 #define OUTW(b, v)   sph_enc64le(b, v)
+
+/*
+ * On 32-bit x86, register pressure is such that using the small
+ * footprint version is a net gain (x2 speed), because that variant
+ * uses fewer local variables.
+ */
+#if SPH_I386_MSVC || SPH_I386_GCC || defined __i386__
+#undef PUSH13
+#define PUSH13   PUSH13_SF
+#undef CLOSE
+#define CLOSE    CLOSE_SF
+#endif
 
 /*
  * Insert data by big chunks of 13*24 = 312 bytes. Returned value is the
@@ -823,7 +976,7 @@ sph_radiogatun64(void *cc, const void *data, size_t len)
 		data = (const unsigned char *)data + t;
 		len -= t;
 	}
-#ifndef SPH_UNALIGNED
+#if !SPH_UNALIGNED
 	if (((SPH_UPTR)data & 7) != 0) {
 		radiogatun64_short(sc, data, len);
 		return;

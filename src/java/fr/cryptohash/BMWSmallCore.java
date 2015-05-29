@@ -1,4 +1,4 @@
-// $Id: BMWSmallCore.java 166 2010-05-03 16:44:36Z tp $
+// $Id: BMWSmallCore.java 214 2010-06-03 17:25:08Z tp $
 
 package fr.cryptohash;
 
@@ -32,7 +32,7 @@ package fr.cryptohash;
  * ===========================(LICENSE END)=============================
  * </pre>
  *
- * @version   $Revision: 166 $
+ * @version   $Revision: 214 $
  * @author    Thomas Pornin &lt;thomas.pornin@cryptolog.com&gt;
  */
 
@@ -579,5 +579,11 @@ abstract class BMWSmallCore extends DigestEngine {
 		for (int i = 0; i < 16; i ++)
 			M[i] = decodeLEInt(data, i * 4);
 		compress(M);
+	}
+
+	/** @see Digest */
+	public String toString()
+	{
+		return "BMW-" + (getDigestLength() << 3);
 	}
 }
